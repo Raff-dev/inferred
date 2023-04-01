@@ -1,4 +1,0 @@
-{
-    "editor.rulers": [88],
-    "black-formatter.args": ["--pyproject=pyproject.toml"]
-}
