@@ -1,0 +1,29 @@
+[tool.autoflake]
+remove-all-unused-imports = true
+remove-unused-variables = true
+in-place = true
+ignore-init-module-imports = true
+exclude = "**/migrations/*"
+
+[tool.black]
+line-length = 88
+exclude = "migrations/*"
+
+[tool.isort]
+profile = "black"
+line_length = 88
+known_third_party = ["requests", "django", "rest_framework"]
+sections = ["FUTURE", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
+skip = ["manage.py", "migrations", ".env"]
+
+[tool.pylint.messages_control]
+max-line-length = 88
+good-names = ["_"]
+ignore-paths = '''
+    .*/migrations
+'''
+disable = [
+    "missing-function-docstring",
+    "missing-module-docstring",
+    "import-error",
+]

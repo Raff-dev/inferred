@@ -1,0 +1,44 @@
+version: "3.9"
+
+volumes:
+  postgres_data: {}
+
+services:
+  backend:
+    build: ./backend
+    container_name: inferred-django
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./backend:/app
+    ports:
+      - 8000:8000
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://db_user:db_password@db:5432/db_name
+    tty: true
+
+  postgres:
+    image: postgres
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    env_file:
+      - ./backend/.env
+    healthcheck:
+      test: [CMD-SHELL, pg_isready -U postgres]
+      interval: 1s
+      timeout: 5s
+      retries: 30
+
+  frontend:
+    build: ./frontend
+    command: npm run dev
+    ports:
+      - 3000:3000
+    volumes:
+      - ./frontend:/app
+    depends_on:
+      - backend
+    tty: true
