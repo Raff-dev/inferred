@@ -42,3 +42,11 @@ services:
     depends_on:
       - backend
     tty: true
+
+  mock:
+    build: ./mock
+    command: python mock.py
+    volumes:
+      - ./mock:/app
+    depends_on:
+      - backend

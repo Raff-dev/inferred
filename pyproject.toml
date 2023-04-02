@@ -18,6 +18,7 @@ skip = ["manage.py", "migrations", ".env"]
 
 [tool.pylint.messages_control]
 max-line-length = 88
+variable-rgx = "[a-z0-9_]{1,30}$"
 good-names = ["_"]
 ignore-paths = '''
     .*/migrations
@@ -25,5 +26,7 @@ ignore-paths = '''
 disable = [
     "missing-function-docstring",
     "missing-module-docstring",
+    "missing-class-docstring",
+    "too-few-public-methods",
     "import-error",
 ]
