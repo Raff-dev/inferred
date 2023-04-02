@@ -3,11 +3,17 @@ version: "3.9"
 volumes:
   postgres_data: {}
 
+networks:
+  database: {}
+
 services:
   backend:
     build: ./backend
     container_name: inferred-django
     command: python manage.py runserver 0.0.0.0:8000
+    networks:
+      - default
+      - database
     volumes:
       - ./backend:/app
     ports:
@@ -15,13 +21,12 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    environment:
-      DATABASE_URL: postgresql://db_user:db_password@db:5432/db_name
-    tty: true
 
   postgres:
     image: postgres
     restart: always
+    networks:
+      - database
     volumes:
       - postgres_data:/var/lib/postgresql/data
     env_file:
@@ -41,7 +46,6 @@ services:
       - ./frontend:/app
     depends_on:
       - backend
-    tty: true
 
   mock:
     build: ./mock
