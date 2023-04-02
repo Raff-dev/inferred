@@ -2,25 +2,55 @@ version: "3.9"
 
 volumes:
   postgres_data: {}
+  redis_data: {}
 
 networks:
   database: {}
+  redis: {}
+
+x-django:  &django
+  build: ./backend
+  networks:
+    - default
+    - database
+    - redis
+  volumes:
+    - ./backend:/app
+  env_file: ./backend/.env
+  depends_on:
+    postgres:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+
 
 services:
   backend:
-    build: ./backend
-    container_name: inferred-django
-    command: python manage.py runserver 0.0.0.0:8000
-    networks:
-      - default
-      - database
-    volumes:
-      - ./backend:/app
+    <<: *django
+    container_name: inferred-backend
+    command: uvicorn inferred.asgi:application --host 0.0.0.0 --port 8000 --reload
     ports:
-      - 8000:8000
-    depends_on:
-      postgres:
-        condition: service_healthy
+    - 8000:8000
+
+  worker:
+    <<: *django
+    container_name: inferred-worker
+    command: celery -A inferred.celery worker --loglevel=info
+
+  redis:
+    image: redis
+    restart: always
+    networks:
+      - redis
+    volumes:
+      - redis_data:/data
+    ports:
+      - 6379:6379
+    healthcheck:
+      test: [ CMD, redis-cli, ping ]
+      interval: 1s
+      timeout: 5s
+      retries: 30
 
   postgres:
     image: postgres
@@ -32,7 +62,7 @@ services:
     env_file:
       - ./backend/.env
     healthcheck:
-      test: [CMD-SHELL, pg_isready -U postgres]
+      test: [ CMD-SHELL, pg_isready -U postgres ]
       interval: 1s
       timeout: 5s
       retries: 30
@@ -40,6 +70,9 @@ services:
   frontend:
     build: ./frontend
     command: npm run dev
+    networks:
+      - default
+      - redis
     ports:
       - 3000:3000
     volumes:
@@ -50,6 +83,9 @@ services:
   mock:
     build: ./mock
     command: python mock.py
+    networks:
+      - default
+      - redis
     volumes:
       - ./mock:/app
     depends_on:

@@ -1,6 +1,8 @@
+import redis
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
+from django.conf import settings
 
-from sensors.tasks import get_redis_connection
+SENSORS_CHANNEL_NAME = "sensors"
 
 
 class SensorDataConsumer(AsyncJsonWebsocketConsumer):
@@ -11,7 +13,11 @@ class SensorDataConsumer(AsyncJsonWebsocketConsumer):
 
     async def connect(self):
         await self.accept()
-        self.client, self.pubsub = get_redis_connection()
+        self.client = redis.Redis(
+            host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=0
+        )
+        self.pubsub = self.client.pubsub()
+        self.pubsub.subscribe(SENSORS_CHANNEL_NAME)
 
         for message in self.pubsub.listen():
             if message["type"] == "message":
