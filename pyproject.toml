@@ -15,10 +15,12 @@ line_length = 88
 known_third_party = ["requests", "django", "rest_framework"]
 sections = ["FUTURE", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
 skip = ["manage.py", "migrations", ".env"]
+src_paths = ["backend", "mock"]
 
 [tool.pylint.messages_control]
 max-line-length = 88
 variable-rgx = "[a-z0-9_]{1,30}$"
+argument-rgx = "[a-z0-9_]{1,30}$"
 good-names = ["_"]
 ignore-paths = '''
     .*/migrations
@@ -30,3 +32,4 @@ disable = [
     "too-few-public-methods",
     "import-error",
 ]
+recursive = true
