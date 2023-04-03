@@ -3,7 +3,7 @@ import time
 from datetime import datetime, timedelta
 
 import numpy as np
-import requests
+import redis
 
 NOISE_MAGNITUDE = 0.2
 API_URL = "http://backend:8000/api"
@@ -18,15 +18,14 @@ REDIS_DB = 0
 
 
 sensors = [
-    lambda seed, date: 0.5 * np.sin(2 * np.pi * np.arange(1) / (6 * 60)) + 0.5,
-    lambda seed, date: 0.9 * seed + NOISE_MAGNITUDE * np.random.randn(),
+    lambda seed, date: 0.9 * seed + 0.3 * np.random.randn(),
     lambda seed, date: np.random.randn() + 0.5 * seed,
-    lambda seed, date: seed
-    * np.exp((0.1 - 0.5 * 0.2**2) / 365 + np.sqrt(1 / 365) / 5 * np.random.randn()),
-    lambda seed, date: 0.1 * seed + np.sin(2 * np.pi * date.second / 60),
-    lambda seed, date: 0.1 * seed + np.linspace(0, 1, 1),
-    lambda seed, date: np.random.poisson(1, size=1),
-    lambda seed, date: np.random.binomial(4, 0.5, size=1),
+    lambda seed, date: seed + np.sqrt(date.second) * np.random.randn(),
+    lambda seed, date: 0.25 * seed + np.sin(2 * np.pi * date.second / 60),
+    lambda seed, date: 0.4 * seed + np.cos(2 * np.pi * date.second / 60),
+    lambda seed, date: np.random.poisson(125),
+    lambda seed, date: np.random.binomial(125, 0.5),
+    lambda seed, date: np.random.normal(125, 10),
 ]
 
 
@@ -59,6 +58,9 @@ def generate_data():
         for s, sensor in enumerate(sensors):
             sensor_read = sensor(data_seed[0, s], current_timestamp)
 
+            if not isinstance(sensor_read, (int, float)):
+                sensor_read = sensor_read.item()
+
             sensor_data[:, s] = np.append(sensor_data[1:, s], sensor_read)
             data_seed[:, s] = np.append(data_seed[1:, s], np.random.randn(1))
 
@@ -68,7 +70,7 @@ def generate_data():
 
             name = f"sensor_{s}"
             sensors_data[name] = {
-                "value": sensor_read.tolist()[0],
+                "value": sensor_read,
                 "prediction": prediction.tolist(),
             }
 
@@ -76,14 +78,15 @@ def generate_data():
 
 
 def main():
+    client = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB)
     for current_time, sensors_data in generate_data():
         payload = {
             "timestamp": current_time.isoformat(),
             "prediction_interval": PREDICTION_INTERVAL_MS,
             "sensors": sensors_data,
         }
-        print(payload)
-        requests.post(API_SENSORS, json=json.dumps(payload))
+        print(f"Publishing: {current_time}")
+        client.publish(CHANNEL_NAME, json.dumps(payload))
 
 
 if __name__ == "__main__":

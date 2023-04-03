@@ -29,8 +29,18 @@ SECRET_KEY = env("DJANGO_SECRET")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+REDIS_WEBSOCKET_HOST = "websocket"
+REDIS_WEBSOCKET_PORT = 6379
 
+REDIS_HOST = "redis"
+REDIS_PORT = 6379
+
+CELERY_REDIS_DATABASE = 1
+CELERY_BROKER_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}/{CELERY_REDIS_DATABASE}"
+CELERY_RESULT_BACKEND = f"redis://{REDIS_HOST}:{REDIS_PORT}/{CELERY_REDIS_DATABASE}"
+
+
+ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
     "corsheaders",
@@ -48,7 +58,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("redis", 6379)],
+            "hosts": [(REDIS_WEBSOCKET_HOST, REDIS_WEBSOCKET_PORT)],
         },
     }
 }
@@ -144,9 +154,3 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-REDIS_HOST = "redis"
-REDIS_PORT = 6379
-
-CELERY_BROKER_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}/0"
-CELERY_RESULT_BACKEND = f"redis://{REDIS_HOST}:{REDIS_PORT}/0"

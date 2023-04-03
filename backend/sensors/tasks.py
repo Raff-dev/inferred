@@ -55,3 +55,9 @@ def process_sensors_reads(data):
             )
 
     Tick.objects.bulk_create(ticks)
+
+
+@shared_task
+def add():
+    print("Hello World")
+    return 1 + 1

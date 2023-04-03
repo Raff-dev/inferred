@@ -7,13 +7,17 @@ volumes:
 networks:
   database: {}
   redis: {}
+  websocket: {}
 
-x-django:  &django
+x-django:
+  &django
   build: ./backend
   networks:
     - default
     - database
     - redis
+    - rabbitmq
+    - websocket
   volumes:
     - ./backend:/app
   env_file: ./backend/.env
@@ -23,22 +27,28 @@ x-django:  &django
     redis:
       condition: service_healthy
 
-
 services:
   backend:
     <<: *django
     container_name: inferred-backend
-    command: uvicorn inferred.asgi:application --host 0.0.0.0 --port 8000 --reload
+    # command: uvicorn inferred.asgi:application --host 0.0.0.0 --port 8000 --reload
+    command: python manage.py runserver 0.0.0.0:8000
     ports:
-    - 8000:8000
+      - 8000:8000
 
   worker:
     <<: *django
     container_name: inferred-worker
     command: celery -A inferred.celery worker --loglevel=info
 
+  beat:
+    <<: *django
+    container_name: inferred-beat
+    command: celery -A inferred.celery beat --loglevel=info
+
   redis:
-    image: redis
+    &redis
+    image: redis:7-alpine
     restart: always
     networks:
       - redis
@@ -51,6 +61,13 @@ services:
       interval: 1s
       timeout: 5s
       retries: 30
+
+  websocket:
+    <<: *redis
+    ports:
+      - 6380:6379
+    networks:
+      - websocket
 
   postgres:
     image: postgres
