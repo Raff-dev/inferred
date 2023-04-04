@@ -30,10 +30,9 @@ class SensorDataConsumer(WebsocketConsumer):
         thread.start()
 
     def disconnect(self, _):
-        self.pubsub.unsubscribe("sensors")
-        self.pubsub.close()
-        self.client.close()
         self.stop_event.set()
+        self.pubsub.unsubscribe(SENSORS_CHANNEL_NAME)
+        self.client.close()
 
     def listen(self):
         while self.pubsub.subscribed:

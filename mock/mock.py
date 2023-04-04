@@ -9,7 +9,7 @@ NOISE_MAGNITUDE = 0.2
 API_URL = "http://backend:8000/api"
 API_SENSORS = API_URL + "/sensor-reads/"
 LOOKAHEAD = 100
-PREDICTION_INTERVAL_MS = 3000  # milliseconds
+PREDICTION_INTERVAL_MS = 300  # milliseconds
 
 CHANNEL_NAME = "sensors"
 REDIS_HOST = "redis"
@@ -41,8 +41,9 @@ def real_time_date(start_time=None):
 
 
 def generate_data():
-    data_seed = np.random.randn(LOOKAHEAD, len(sensors))
-    sensor_data = np.zeros((LOOKAHEAD, len(sensors)))
+    n_sensors = len(sensors)
+    data_seed = np.random.randn(LOOKAHEAD, n_sensors)
+    sensor_data = np.zeros((LOOKAHEAD, n_sensors))
     start_timestamp = datetime.now()
     current_timestamp = start_timestamp
 

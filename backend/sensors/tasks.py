@@ -58,6 +58,6 @@ def process_sensors_reads(data):
 
 
 @shared_task
-def add():
-    print("Hello World")
-    return 1 + 1
+def test():
+    print("test")
+    return 0

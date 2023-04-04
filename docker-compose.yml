@@ -16,7 +16,6 @@ x-django:
     - default
     - database
     - redis
-    - rabbitmq
     - websocket
   volumes:
     - ./backend:/app

@@ -19,8 +19,12 @@ class Prediction(models.Model):
 class Tick(models.Model):
     timestamp = models.DateTimeField()
     value = models.DecimalField(max_digits=10, decimal_places=2)
-    dimension = models.ForeignKey(Dimension, on_delete=models.CASCADE)
-    prediction = models.ForeignKey(Prediction, on_delete=models.CASCADE, null=True)
+    dimension = models.ForeignKey(
+        Dimension, on_delete=models.CASCADE, related_name="ticks"
+    )
+    prediction = models.ForeignKey(
+        Prediction, on_delete=models.CASCADE, null=True, related_name="ticks"
+    )
 
     def __str__(self):
         return f"{self.timestamp} - {self.dimension.name}: {self.value}"
