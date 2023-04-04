@@ -10,6 +10,7 @@ API_URL = "http://backend:8000/api"
 API_SENSORS = API_URL + "/sensor-reads/"
 LOOKAHEAD = 100
 PREDICTION_INTERVAL_MS = 2000  # milliseconds
+SPEED_FACTOR = 4
 
 CHANNEL_NAME = "sensors"
 REDIS_HOST = "redis"
@@ -40,7 +41,7 @@ def real_time_date(start_time=None):
     while True:
         yield current_time
         current_time += timedelta(milliseconds=PREDICTION_INTERVAL_MS)
-        time.sleep(PREDICTION_INTERVAL_MS / 1000 / 4)
+        time.sleep(PREDICTION_INTERVAL_MS / 1000 / SPEED_FACTOR)
 
 
 def generate_data():
