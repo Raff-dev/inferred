@@ -1,156 +1,109 @@
-// import {
-//     CategoryScale,
-//     Chart as ChartJS,
-//     Legend,
-//     LineElement,
-//     LinearScale,
-//     PointElement,
-//     Title,
-//     Tooltip,
-// } from 'chart.js';
-// import React, { useEffect, useState } from 'react';
-// import { Line } from 'react-chartjs-2';
-
-// ChartJS.register(
-//     CategoryScale,
-//     LinearScale,
-//     PointElement,
-//     LineElement,
-//     Title,
-//     Tooltip,
-//     Legend
-// );
-
-// export const options = {
-//     responsive: true,
-//     plugins: {
-//         legend: {
-//             position: 'top',
-//         },
-//         title: {
-//             display: true,
-//             text: 'Chart.js Line Chart',
-//         },
-//     },
-// };
-
-// const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
-
-// export const data_ = {
-//     labels,
-//     datasets: [
-//         {
-//             label: 'Dataset 1',
-//             data: labels.map(() => Array.from({ length: 100 }, () => Math.floor(Math.random() * 100))),
-//             borderColor: 'rgb(255, 99, 132)',
-//             backgroundColor: 'rgba(255, 99, 132, 0.5)',
-//         },
-//         {
-//             label: 'Dataset 2',
-//             data: labels.map(() => Array.from({ length: 100 }, () => Math.floor(Math.random() * 100))),
-//             borderColor: 'rgb(53, 162, 235)',
-//             backgroundColor: 'rgba(53, 162, 235, 0.5)',
-//         },
-//     ],
-// };
-
-// const Graph = () => {
-//     const [socket, setSocket] = useState(null);
-//     const [message, setMessage] = useState(null);
-//     const [data, setData] = useState(data_);
-
-//     const onNewData = newData => {
-//         console.log(newData);
-//         setData(prevData => {
-//             const newDatasets = prevData.datasets.map((dataset, i) => {
-//                 return {
-//                     label: dataset.label,
-//                     data: [...dataset.data, newData[dataset.label]],
-//                     borderColor: 'rgb(53, 162, 235)',
-//                     backgroundColor: 'rgba(53, 162, 235, 0.5)',
-//                 };
-//             });
-
-//             const newLabels = [...prevData.labels, new Date().toLocaleTimeString()];
-//             return {
-//                 labels: newLabels,
-//                 datasets: newDatasets
-//             };
-//         });
-//     }
-
-//     useEffect(() => {
-//         if (!socket) return;
-
-//         socket.onmessage = event => {
-//             const message = JSON.parse(event.data);
-//             console.log(event);
-//             setMessage(message);
-//         };
-//     }, [socket]);
-
-//     useEffect(() => {
-//         const ws = new WebSocket('ws://localhost:8000/ws/sensors/');
-//         console.log(ws);
-//         setSocket(ws);
-//         return () => {
-//             ws.close();
-//         };
-//     }, []);
-
-//     const handleClick = () => {
-//         const message = { text: 'Hello, server!' };
-//         socket.send(JSON.stringify(message));
-//     };
-
-//     return (
-//         <div>
-//             <button onClick={handleClick}>Send message</button>
-//             <p>{message ? message.text : 'No message yet'}</p>
-//             <Line data={data} />
-//         </div>
-//     );
-// };
-
 import { LineChart, XAxis, YAxis } from 'recharts';
 
+import { curveCardinal } from 'd3-shape';
 import React, { useEffect, useState } from 'react';
-import { Line } from 'recharts';
+import { Area, AreaChart, CartesianGrid, Legend, Line } from 'recharts';
+const DATA_WINDOW_SIZE = 120;
+
+const cardinal = curveCardinal.tension(0.2);
+
+const parseDate = (value) => {
+  const date = new Date(value);
+  let seconds = date.getSeconds();
+  seconds = seconds < 10 ? "0" + seconds : seconds;
+  return seconds + ":" + Math.round(date.getMilliseconds() / 10);
+}
+
+const legendPayload = (color1, color2) => [
+  { value: 'Sensor Value', type: 'line', dataKey: 'value', color: color1 },
+  { value: 'Prediction', type: 'line', dataKey: 'prediction', color: color2 },
+];
+
 
 const Chart = () => {
-    const [data, setData] = useState([]);
+  const [data, setData] = useState([]);
 
-    useEffect(() => {
-        const ws = new WebSocket('ws://localhost:8000/ws/sensors/');
+  useEffect(() => {
+    const ws = new WebSocket('ws://localhost:8000/ws/sensors/');
 
-        ws.onmessage = (event) => {
-            const newData = JSON.parse(event.data);
-            setData((prevData) => [...prevData.slice(-100), newData]);
-        };
+    ws.onmessage = (event) => {
+      const newData = JSON.parse(event.data);
+      console.log(data)
 
-        return () => {
-            ws.close();
-        };
-    }, []);
+      setData((prevData) => [...prevData.slice(-DATA_WINDOW_SIZE), newData]);
+    };
 
-    const parseDate = (value) => {
-        const date = new Date(value);
-        return date.getSeconds() + ":" + Math.round(date.getMilliseconds()/10);
-    }
+    return () => {
+      ws.close();
+    };
+  }, []);
 
-    return (
-        <LineChart width={1000} height={400} data={data}>
-            {/* <CartesianGrid strokeDasharray="1 1" /> */}
-            <XAxis dataKey="timestamp" tickFormatter={parseDate} angle={-30} />
-            <YAxis />
-            {/* <Tooltip /> */}
-            {/* <Legend /> */}
-            <Line type="monotone" isAnimationActive={false} dot={false} dataKey="sensors.sensor_0.value" stroke="#ff0000" />
-            <Line type="monotone" isAnimationActive={false} dot={false} dataKey="sensors.sensor_2.value" stroke="#3164b5" />
-            {/* <Line type="monotone" dataKey="sensors.sensor_0.prediction" stroke="#0000ff" /> */}
-        </LineChart>
-    );
+  return (
+    <div style={{ backgroundColor: '#0003', borderRadius: 12, padding: 10, paddingRight: 50 }}>
+      {Object.keys(data[0]?.sensors || {}).map((sensorKey) => {
+        const dataKey = `sensors.${sensorKey}.value`;
+        const predictionKey = `sensors.${sensorKey}.prediction[99]`;
+        const props = { data: data, dataKey: dataKey, predictionKey: predictionKey }
+
+        return (
+          <div>
+            <h2>{sensorKey}</h2>
+            {sensorKey == "sensor_0" && <MyAreaChart {...props} /> || <MyLineChart {...props} />}
+          </div>
+        );
+      })}
+    </div>
+  );
 };
+
+
+const MyAreaChart = ({ data, dataKey, predictionKey }) => {
+  const primaryColor = "#8884d8";
+  const secondaryColor = "#82ca9f";
+
+  return (
+    <AreaChart
+      width={1000}
+      height={400}
+      data={data}
+      margin={{
+        top: 10,
+        right: 30,
+        left: 0,
+        bottom: 0,
+      }}
+    >
+      <XAxis dataKey="timestamp" tickFormatter={parseDate} angle={-30} />
+      <YAxis />
+      <Legend payload={legendPayload(primaryColor, secondaryColor)} verticalAlign="top"/>
+
+      {/* <Tooltip /> */}
+      <Area type={cardinal} isAnimationActive={false} dataKey={dataKey} stroke={primaryColor} fill={primaryColor} fillOpacity={0.15} />
+      <Area type={cardinal} isAnimationActive={false} dataKey={predictionKey} stroke={secondaryColor} fill={secondaryColor} fillOpacity={0.15} />
+    </AreaChart>
+  );
+}
+
+const MyLineChart = ({ data, dataKey, predictionKey }) => {
+  const primaryColor = "#3164b5c8";
+  const secondaryColor = "#6e4923cf";
+
+  return (
+    <LineChart
+      width={1000}
+      height={400}
+      data={data}>
+      <CartesianGrid stroke="#eee1" strokeDasharray="1 1" />
+      <XAxis dataKey="timestamp" tickFormatter={parseDate} angle={-30} />
+      <YAxis />
+      {/* <Tooltip /> */}
+      <Legend payload={legendPayload(primaryColor, secondaryColor)} verticalAlign="top"/>
+      <Line type={cardinal} isAnimationActive={false} dot={false} dataKey={dataKey} stroke={primaryColor} />
+      {/* <Line type="monotone" isAnimationActive={false} dot={false} dataKey="sensors.sensor_2.value" stroke="#3164b5" /> */}
+      <Line type={cardinal} isAnimationActive={false} dot={false} dataKey={predictionKey} stroke={secondaryColor} />
+    </LineChart>
+  )
+}
 
 export default Chart;
 
