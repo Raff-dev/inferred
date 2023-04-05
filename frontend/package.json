@@ -9,6 +9,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
+    "@mui/material": "^5.11.16",
     "@types/faker": "^6.6.9",
     "chart.js": "^4.2.1",
     "faker": "^5.5.3",

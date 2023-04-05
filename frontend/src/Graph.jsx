@@ -1,9 +1,22 @@
-import { LineChart, XAxis, YAxis } from 'recharts';
-
+import { FormControlLabel, Radio, RadioGroup } from '@mui/material';
+import Slider from '@mui/material/Slider';
 import { curveCardinal } from 'd3-shape';
 import React, { useEffect, useState } from 'react';
-import { Area, AreaChart, CartesianGrid, Legend, Line } from 'recharts';
-const DATA_WINDOW_SIZE = 120;
+import { Area, AreaChart, CartesianGrid, Legend, Line, LineChart, XAxis, YAxis } from 'recharts';
+
+
+const DAY = 24 * 60 * 60;
+const HOUR = 60 * 60;
+const MINUTE = 60;
+
+const DATA_WINDOW_SIZE_DEFAULT = HOUR;
+const WEB_SOCKET_URL = 'ws://localhost:8000/ws/sensors/';
+const PRIMARY_COLOR = "#3164b5c8";
+const SECONDARY_COLOR = "#6e4923cf";
+const CHARTS = {
+  line: [LineChart, Line],
+  area: [AreaChart, Area],
+};
 
 const cardinal = curveCardinal.tension(0.2);
 
@@ -19,50 +32,67 @@ const legendPayload = (color1, color2) => [
   { value: 'Prediction', type: 'line', dataKey: 'prediction', color: color2 },
 ];
 
-
-const Chart = () => {
+const ChartView = () => {
   const [data, setData] = useState([]);
+  const [windowData, setWindowData] = useState([]);
+  const [windowSize, setWindowSize] = useState(DATA_WINDOW_SIZE_DEFAULT);
+  const [chartType, setChartType] = useState('line');
+
+  const handleWindowSizeChange = (event, newValue) => {
+    setWindowSize(newValue);
+    setWindowData((prevData) => data.slice(-newValue));
+  }
+  const handleChartTypeChange = (event) => {
+    setChartType(event.target.value);
+  };
 
   useEffect(() => {
-    const ws = new WebSocket('ws://localhost:8000/ws/sensors/');
-
+    const ws = new WebSocket(WEB_SOCKET_URL);
     ws.onmessage = (event) => {
       const newData = JSON.parse(event.data);
-      console.log(data)
-
-      setData((prevData) => [...prevData.slice(-DATA_WINDOW_SIZE), newData]);
+      setData((prevData) => [...prevData, newData]);
+      setWindowData((prevData) => [...prevData.slice(-windowSize), newData]);
     };
 
     return () => {
       ws.close();
     };
-  }, []);
+  }, [windowSize]);
+
+  const sensorKey = "sensor_0";
+  const dataKey = `sensors.${sensorKey}.value`;
+  const predictionKey = `sensors.${sensorKey}.prediction[99]`;
+  const props = { data: windowData, dataKey: dataKey, predictionKey: predictionKey, chartType: chartType }
 
   return (
-    <div style={{ backgroundColor: '#0003', borderRadius: 12, padding: 10, paddingRight: 50 }}>
-      {Object.keys(data[0]?.sensors || {}).map((sensorKey) => {
-        const dataKey = `sensors.${sensorKey}.value`;
-        const predictionKey = `sensors.${sensorKey}.prediction[99]`;
-        const props = { data: data, dataKey: dataKey, predictionKey: predictionKey }
-
-        return (
-          <div>
-            <h2>{sensorKey}</h2>
-            {sensorKey == "sensor_0" && <MyAreaChart {...props} /> || <MyLineChart {...props} />}
-          </div>
-        );
-      })}
+    <div >
+      <RadioGroup row value={chartType} onChange={handleChartTypeChange} >
+        <FormControlLabel value="line" control={<Radio />} label="Line" />
+        <FormControlLabel value="area" control={<Radio />} label="Area" />
+      </RadioGroup>
+      <div style={{ backgroundColor: '#0003', borderRadius: 12, padding: 20, paddingRight: 50, marginBottom: 20 }}>
+        <h2>{sensorKey}</h2>
+        <MyCommonChart {...props} />
+      </div>
+      <Slider
+        value={windowSize}
+        size="small"
+        min={20}
+        max={MINUTE}
+        step={5}
+        marks
+        valueLabelDisplay="auto"
+        onChange={handleWindowSizeChange}
+      />
     </div>
   );
 };
 
-
-const MyAreaChart = ({ data, dataKey, predictionKey }) => {
-  const primaryColor = "#8884d8";
-  const secondaryColor = "#82ca9f";
+const MyCommonChart = ({ data, dataKey, predictionKey, chartType }) => {
+  const [Chart, ChartElement] = CHARTS[chartType];
 
   return (
-    <AreaChart
+    <Chart
       width={1000}
       height={400}
       data={data}
@@ -73,37 +103,15 @@ const MyAreaChart = ({ data, dataKey, predictionKey }) => {
         bottom: 0,
       }}
     >
+      <CartesianGrid stroke="#eee2" strokeDasharray="1 1" />
       <XAxis dataKey="timestamp" tickFormatter={parseDate} angle={-30} />
       <YAxis />
-      <Legend payload={legendPayload(primaryColor, secondaryColor)} verticalAlign="top"/>
-
-      {/* <Tooltip /> */}
-      <Area type={cardinal} isAnimationActive={false} dataKey={dataKey} stroke={primaryColor} fill={primaryColor} fillOpacity={0.15} />
-      <Area type={cardinal} isAnimationActive={false} dataKey={predictionKey} stroke={secondaryColor} fill={secondaryColor} fillOpacity={0.15} />
-    </AreaChart>
+      <Legend payload={legendPayload(PRIMARY_COLOR, SECONDARY_COLOR)} verticalAlign="top" />
+      <ChartElement type={cardinal} isAnimationActive={false} dataKey={dataKey} stroke={PRIMARY_COLOR} fill={PRIMARY_COLOR} fillOpacity={0.15} />
+      <ChartElement type={cardinal} isAnimationActive={false} dataKey={predictionKey} stroke={SECONDARY_COLOR} fill={SECONDARY_COLOR} fillOpacity={0.15} />
+    </Chart>
   );
 }
 
-const MyLineChart = ({ data, dataKey, predictionKey }) => {
-  const primaryColor = "#3164b5c8";
-  const secondaryColor = "#6e4923cf";
-
-  return (
-    <LineChart
-      width={1000}
-      height={400}
-      data={data}>
-      <CartesianGrid stroke="#eee1" strokeDasharray="1 1" />
-      <XAxis dataKey="timestamp" tickFormatter={parseDate} angle={-30} />
-      <YAxis />
-      {/* <Tooltip /> */}
-      <Legend payload={legendPayload(primaryColor, secondaryColor)} verticalAlign="top"/>
-      <Line type={cardinal} isAnimationActive={false} dot={false} dataKey={dataKey} stroke={primaryColor} />
-      {/* <Line type="monotone" isAnimationActive={false} dot={false} dataKey="sensors.sensor_2.value" stroke="#3164b5" /> */}
-      <Line type={cardinal} isAnimationActive={false} dot={false} dataKey={predictionKey} stroke={secondaryColor} />
-    </LineChart>
-  )
-}
-
-export default Chart;
+export default ChartView;
 
