@@ -55,9 +55,3 @@ def process_sensors_reads(data):
             )
 
     Tick.objects.bulk_create(ticks)
-
-
-@shared_task
-def test():
-    print("test")
-    return 0

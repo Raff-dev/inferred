@@ -52,10 +52,10 @@ services:
     container_name: inferred-worker
     command: celery -A inferred.celery worker --loglevel=info
 
-  beat:
+  capture:
     <<: *django
-    container_name: inferred-beat
-    command: celery -A inferred.celery beat --loglevel=info
+    container_name: inferred-capture
+    command: python manage.py capture_sensor_data
 
   redis:
     &redis

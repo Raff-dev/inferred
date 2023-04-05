@@ -7,6 +7,9 @@ class Dimension(models.Model):
     def __str__(self):
         return f"{self.name}"
 
+    class Meta:
+        constraints = [models.UniqueConstraint("name", name="unique_dimension")]
+
 
 class Prediction(models.Model):
     dimension = models.ForeignKey(Dimension, on_delete=models.CASCADE)
@@ -14,6 +17,14 @@ class Prediction(models.Model):
 
     def __str__(self):
         return f"{self.dimension.name} - {self.start_timestamp}"
+
+    class Meta:
+        ordering = ["start_timestamp", "dimension"]
+        constraints = [
+            models.UniqueConstraint(
+                "dimension", "start_timestamp", name="unique_prediction"
+            )
+        ]
 
 
 class Tick(models.Model):
@@ -28,3 +39,6 @@ class Tick(models.Model):
 
     def __str__(self):
         return f"{self.timestamp} - {self.dimension.name}: {self.value}"
+
+    class Meta:
+        ordering = ["timestamp", "dimension"]

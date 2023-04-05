@@ -1,16 +1,18 @@
 from invoke import Context, task
 
 CONTAINER_SHORT_NAMES = {
-    "back": "inferred-backend",
-    "front": "inferred-frontend",
+    "backend": "inferred-backend",
+    "frontend": "inferred-frontend",
     "mock": "inferred-mock",
+    "capture": "inferred-capture",
+    "worker": "inferred-worker",
 }
 
 
 @task
 def logs(ctx: Context, container_name: str):
     name = CONTAINER_SHORT_NAMES.get(container_name, container_name)
-    ctx.run(f"docker compose logs -f {name}", pty=True)
+    ctx.run(f"docker logs -f {name}", pty=True)
 
 
 @task
@@ -38,3 +40,8 @@ def bash(ctx: Context, container_name: str):
 @task
 def build(ctx: Context):
     ctx.run("docker compose up -d --build --remove-orphans", pty=True)
+
+
+# inv bash back
+# python manage.py flush
+# python manage.py shell -c "from django.contrib.auth.models import User; User.objects.create_superuser('admin', 'admin@example.com', 'admin')" > /dev/null 2>&1

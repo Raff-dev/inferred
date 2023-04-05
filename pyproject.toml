@@ -31,5 +31,6 @@ disable = [
     "missing-class-docstring",
     "too-few-public-methods",
     "import-error",
+    "line-too-long",
 ]
 recursive = true
