@@ -27,6 +27,18 @@ x-django:
       condition: service_healthy
 
 services:
+  mock:
+    build: ./mock
+    container_name: inferred-mock
+    command: python mock.py
+    networks:
+      - default
+      - redis
+    volumes:
+      - ./mock:/app
+    depends_on:
+      - backend
+
   backend:
     <<: *django
     container_name: inferred-backend
@@ -85,6 +97,7 @@ services:
 
   frontend:
     build: ./frontend
+    container_name: inferred-frontend
     command: npm run dev
     networks:
       - default
@@ -93,16 +106,5 @@ services:
       - 3000:3000
     volumes:
       - ./frontend:/app
-    depends_on:
-      - backend
-
-  mock:
-    build: ./mock
-    command: python mock.py
-    networks:
-      - default
-      - redis
-    volumes:
-      - ./mock:/app
     depends_on:
       - backend

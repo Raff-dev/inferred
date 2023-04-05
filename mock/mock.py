@@ -9,8 +9,8 @@ NOISE_MAGNITUDE = 0.2
 API_URL = "http://backend:8000/api"
 API_SENSORS = API_URL + "/sensor-reads/"
 LOOKAHEAD = 100
-PREDICTION_INTERVAL_MS = 2000  # milliseconds
-SPEED_FACTOR = 4
+PREDICTION_INTERVAL_MS = 1000  # milliseconds
+SPEED_FACTOR = 1
 
 CHANNEL_NAME = "sensors"
 REDIS_HOST = "redis"

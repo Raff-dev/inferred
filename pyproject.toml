@@ -21,7 +21,7 @@ src_paths = ["backend", "mock"]
 max-line-length = 88
 variable-rgx = "[a-z0-9_]{1,30}$"
 argument-rgx = "[a-z0-9_]{1,30}$"
-good-names = ["_"]
+good-names = ["_", "up"]
 ignore-paths = '''
     .*/migrations
 '''
