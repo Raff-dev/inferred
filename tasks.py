@@ -38,10 +38,28 @@ def bash(ctx: Context, container_name: str):
 
 
 @task
+def migrate(ctx: Context, make: bool = False, rm: bool = False):
+    if rm:
+        ctx.run(
+            'find . -path "*/migrations/*.py" -not -name "__init__.py" -delete',
+            pty=True,
+        )
+        make = True
+
+    if make:
+        ctx.run(
+            "docker exec -it inferred-backend python3 manage.py makemigrations",
+            pty=True,
+        )
+
+    ctx.run("docker exec -it inferred-backend python3 manage.py migrate", pty=True)
+
+
+@task
 def build(ctx: Context):
     ctx.run("docker compose up -d --build --remove-orphans", pty=True)
 
 
-# inv bash back
-# python manage.py flush
-# python manage.py shell -c "from django.contrib.auth.models import User; User.objects.create_superuser('admin', 'admin@example.com', 'admin')" > /dev/null 2>&1
+@task
+def flush(ctx: Context):
+    ctx.run("docker exec -it inferred-backend bash flush.sh", pty=True)
