@@ -40,17 +40,13 @@ def bash(ctx: Context, container_name: str):
 @task
 def migrate(ctx: Context, make: bool = False, rm: bool = False):
     if rm:
-        ctx.run(
-            'find . -path "*/migrations/*.py" -not -name "__init__.py" -delete',
-            pty=True,
-        )
+        cmd = 'find . -path "*/migrations/*.py" -not -name "__init__.py" -delete'
+        ctx.run(cmd, pty=True)
         make = True
 
     if make:
-        ctx.run(
-            "docker exec -it inferred-backend python3 manage.py makemigrations",
-            pty=True,
-        )
+        cmd = "docker exec -it inferred-backend python3 manage.py makemigrations"
+        ctx.run(cmd, pty=True)
 
     ctx.run("docker exec -it inferred-backend python3 manage.py migrate", pty=True)
 
