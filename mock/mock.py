@@ -86,6 +86,7 @@ def main():
     client = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB)
     for current_time, sensors_data in generate_data():
         payload = {
+            "simulation_model": "naive",
             "timestamp": current_time.isoformat(),
             "prediction_interval": PREDICTION_INTERVAL_MS,
             "sensors": sensors_data,

@@ -1,9 +1,8 @@
-import json
 from datetime import datetime, timedelta
 
 from celery import shared_task
 
-from sensors.models import Dimension, Prediction, Tick
+from sensors.models import Dimension, Prediction, SimulationModel, Tick
 
 
 @shared_task
@@ -25,10 +24,14 @@ def process_sensors_reads(data):
         },
     }
     """
-    data = json.loads(data)
     timestamp = data["timestamp"]
     sensors = data["sensors"]
     prediction_interval = data["prediction_interval"]
+    simulation_model_name = data["simulation_model"]
+
+    simulation_model, _ = SimulationModel.objects.get_or_create(
+        name=simulation_model_name
+    )
 
     ticks = []
     for sensor_name, sensor_data in sensors.items():
@@ -39,7 +42,9 @@ def process_sensors_reads(data):
         ticks.append(Tick(timestamp=timestamp, value=sensor_value, dimension=dimension))
 
         prediction = Prediction.objects.create(
-            dimension=dimension, start_timestamp=timestamp
+            simulation_model=simulation_model,
+            dimension=dimension,
+            start_timestamp=timestamp,
         )
 
         current_timestamp = datetime.fromisoformat(timestamp)

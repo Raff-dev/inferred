@@ -2,16 +2,18 @@ from django.db import models
 
 
 class Dimension(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
 
     def __str__(self):
         return f"{self.name}"
 
-    class Meta:
-        constraints = [models.UniqueConstraint("name", name="unique_dimension")]
+
+class SimulationModel(models.Model):
+    name = models.CharField(max_length=255, unique=True)
 
 
 class Prediction(models.Model):
+    simulation_model = models.ForeignKey(SimulationModel, on_delete=models.CASCADE)
     dimension = models.ForeignKey(Dimension, on_delete=models.CASCADE)
     start_timestamp = models.DateTimeField()
 
@@ -22,7 +24,10 @@ class Prediction(models.Model):
         ordering = ["start_timestamp", "dimension"]
         constraints = [
             models.UniqueConstraint(
-                "dimension", "start_timestamp", name="unique_prediction"
+                "simulation_model",
+                "dimension",
+                "start_timestamp",
+                name="unique_simulation_prediction",
             )
         ]
 
