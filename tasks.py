@@ -33,7 +33,6 @@ def restart(ctx: Context, container_name: str):
 @task
 def bash(ctx: Context, container_name: str):
     name = CONTAINER_SHORT_NAMES.get(container_name)
-    print(name)
     ctx.run(f"docker exec -it {name} bash", pty=True)
 
 

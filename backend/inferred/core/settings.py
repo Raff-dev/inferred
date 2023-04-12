@@ -15,7 +15,7 @@ from pathlib import Path
 import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 env = environ.Env()
 env.read_env(BASE_DIR / ".env")
@@ -52,7 +52,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "sensors",
+    "inferred.sensors",
 ]
 
 CHANNEL_LAYERS = {
@@ -78,7 +78,7 @@ MIDDLEWARE = [
 
 CORS_ORIGIN_ALLOW_ALL = True
 
-ROOT_URLCONF = "inferred.urls"
+ROOT_URLCONF = "inferred.core.urls"
 
 TEMPLATES = [
     {
@@ -96,9 +96,9 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "inferred.wsgi.application"
+WSGI_APPLICATION = "inferred.core.wsgi.application"
 
-ASGI_APPLICATION = "inferred.asgi.application"
+ASGI_APPLICATION = "inferred.core.asgi.application"
 
 
 # Database

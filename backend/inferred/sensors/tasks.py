@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 from celery import shared_task
 
-from sensors.models import Dimension, Prediction, SimulationModel, Tick
+from inferred.sensors.models import Dimension, Prediction, SimulationModel, Tick
 
 
 @shared_task

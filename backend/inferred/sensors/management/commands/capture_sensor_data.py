@@ -5,8 +5,8 @@ import redis
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from sensors.consumers import SENSORS_CHANNEL_NAME
-from sensors.tasks import process_sensors_reads
+from inferred.sensors.consumers import SENSORS_CHANNEL_NAME
+from inferred.sensors.tasks import process_sensors_reads
 
 
 def redis_queue(channel_name: str) -> Generator:
