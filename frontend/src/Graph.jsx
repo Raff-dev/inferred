@@ -32,7 +32,11 @@ const CHARTS = {
 const cardinal = curveCardinal.tension(0.2);
 
 const ChartView = () => {
-    const [data, setData] = useState([]);
+    const [data, setData] = useState({
+        timestamps: {},
+        sensors: {},
+        predictions: {},
+    });
     const [windowData, setWindowData] = useState([]);
     const [windowSize, setWindowSize] = useState(DATA_WINDOW_SIZE_DEFAULT);
     const [chartType, setChartType] = useState("line");
@@ -54,7 +58,7 @@ const ChartView = () => {
     function updateData(prevData, newData) {
         // return fakeData;
         const { sensors, timestamp, prediction_interval } = newData;
-        const updatedData = [...prevData];
+        const updatedData = { ...prevData };
 
         // remove ms from timestamp
         const timestampWithoutMs = timestamp.split(".")[0];
@@ -65,33 +69,28 @@ const ChartView = () => {
         );
         const currentTimestamp = timestamps[0];
 
-        if (updatedData.length === 0) {
-            updatedData.push({
-                name: "timestamps",
-                data: timestamps.map((timestamp) => ({ timestamp, value: null })),
+        if (updatedData.timestamps.data) {
+            updatedData.timestamps.data.push({
+                timestamp: currentTimestamp,
+                value: null,
             });
         } else {
-            const sortedTimestamps = updatedData.find(
-                (sensor) => sensor.name === "timestamps"
-            );
-            sortedTimestamps.data.push({ timestamp: currentTimestamp, value: null });
+            updatedData.timestamps = {
+                name: "timestamps",
+                data: timestamps.map((timestamp) => ({ timestamp, value: null })),
+            };
         }
 
         // Loop through each sensor in the newData object
         Object.entries(sensors).forEach(([sensorName, sensorData]) => {
-            // Find the corresponding sensor object in the updatedData array
-            const sensorObject = updatedData.find(
-                (sensor) => sensor.name === sensorName
-            );
-
-            // If the sensor object doesn't exist, create a new one and add it to the array
+            const sensorObject = updatedData.sensors[sensorName];
             if (!sensorObject) {
-                updatedData.push({
+                updatedData.sensors[sensorName] = {
                     name: sensorName,
                     data: [{ timestamp: currentTimestamp, value: sensorData.value }],
-                });
+                };
+                updatedData.predictions[sensorName] = [];
             } else {
-                // If the sensor object exists, add the new data to the existing data array
                 sensorObject.data.push({
                     timestamp: currentTimestamp,
                     value: sensorData.value,
@@ -99,8 +98,7 @@ const ChartView = () => {
             }
 
             const predicitonIndex = (sensorObject && sensorObject.data.length) || 0;
-            // Loop through each prediction value and add it as a new prediction object
-            updatedData.push({
+            updatedData.predictions[sensorName].push({
                 name: `${sensorName}_prediction_${predicitonIndex}`,
                 data: timestamps.map((timestamp, index) => ({
                     timestamp,
@@ -204,18 +202,12 @@ const MyCommonChart = ({ data, chartType, selectedSensor }) => {
 
     const legendPayload = [
         { value: "Sensor Value", type: "line", dataKey: "value", color: PRIMARY_COLOR },
-        {
-            value: "Prediction",
-            type: "line",
-            dataKey: "prediction",
-            color: SECONDARY_COLOR,
-        },
-        {
-            value: "Prediction",
-            type: "area",
-            dataKey: "prediction",
-            color: SECONDARY_COLOR,
-        },
+        { value: "Prediction", type: "line", color: SECONDARY_COLOR },
+    ];
+    const datas = [
+        data.timestamps || { name: "timestamps" },
+        data.sensors[selectedSensor] || { name: selectedSensor },
+        ...(data.predictions[selectedSensor] || []),
     ];
 
     return (
@@ -239,14 +231,14 @@ const MyCommonChart = ({ data, chartType, selectedSensor }) => {
             />
             <YAxis dataKey="value" />
             <Legend payload={legendPayload} verticalAlign="top" />
-            {data.map((series) => (
+            {datas.map((series) => (
                 <ChartElement
                     key={series.name}
                     data={series.data}
                     name={series.name}
                     dataKey="value"
                     stroke={
-                        series.name.includes("prediction")
+                        series.name?.includes("prediction")
                             ? SECONDARY_COLOR
                             : PRIMARY_COLOR
                     }
@@ -264,9 +256,9 @@ const MyCommonChart = ({ data, chartType, selectedSensor }) => {
 
 export default ChartView;
 
-const fakeData = [
-    {
-        name: "Null",
+const fakeData = {
+    timestamps: {
+        name: "timestamps",
         data: [
             { timestamp: "1", value: null },
             { timestamp: "2", value: null },
@@ -275,39 +267,45 @@ const fakeData = [
             { timestamp: "5", value: null },
         ],
     },
-    {
-        name: "sensor_0",
-        data: [
-            { timestamp: "1", value: Math.random() },
-            { timestamp: "2", value: Math.random() },
-            { timestamp: "3", value: Math.random() },
+    sensors: {
+        sensor_0: {
+            name: "sensor_0",
+            data: [
+                { timestamp: "1", value: Math.random() },
+                { timestamp: "2", value: Math.random() },
+                { timestamp: "3", value: Math.random() },
+            ],
+        },
+    },
+    predictions: {
+        sensor_0: [
+            {
+                name: "prediction_0",
+                data: [
+                    { timestamp: "1", value: Math.random() },
+                    { timestamp: "2", value: Math.random() },
+                    { timestamp: "3", value: Math.random() },
+                ],
+            },
+            {
+                name: "prediction_1",
+                data: [
+                    { timestamp: "2", value: Math.random() },
+                    { timestamp: "3", value: Math.random() },
+                    { timestamp: "4", value: Math.random() },
+                ],
+            },
+            {
+                name: "prediction_2",
+                data: [
+                    { timestamp: "3", value: Math.random() },
+                    { timestamp: "4", value: Math.random() },
+                    { timestamp: "5", value: Math.random() },
+                ],
+            },
         ],
     },
-    {
-        name: "sensor_0_prediction_0",
-        data: [
-            { timestamp: "1", value: Math.random() },
-            { timestamp: "2", value: Math.random() },
-            { timestamp: "3", value: Math.random() },
-        ],
-    },
-    {
-        name: "sensor_0_prediction_1",
-        data: [
-            { timestamp: "2", value: Math.random() },
-            { timestamp: "3", value: Math.random() },
-            { timestamp: "4", value: Math.random() },
-        ],
-    },
-    {
-        name: "sensor_0_prediction_2",
-        data: [
-            { timestamp: "3", value: Math.random() },
-            { timestamp: "4", value: Math.random() },
-            { timestamp: "5", value: Math.random() },
-        ],
-    },
-];
+};
 
 // {
 //     "timestamp": "2021-09-01T00:00:00Z",
