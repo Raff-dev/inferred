@@ -39,34 +39,77 @@ const ChartView = () => {
     const [selectedSensor, setSelectedSensor] = useState(null);
     const [sensors, setSensors] = useState([]);
 
-    const updateData = (prevData, newData) => {
-        const { sensors, timestamp } = newData;
+    function getTimestamps(start, count, interval) {
+        const timestamps = [];
+        let currentTimestamp = new Date(start).getTime();
 
-        const newEntry = () =>
-            Object.fromEntries(Object.keys(sensors).map((sensor) => [sensor, {}]));
+        for (let i = 0; i < count; i++) {
+            timestamps.push(new Date(currentTimestamp).toISOString());
+            currentTimestamp += interval;
+        }
 
-        if (!prevData.length) {
-            prevData = Array.from({ length: LOOKAHEAD }, newEntry);
+        return timestamps;
+    }
+
+    function updateData(prevData, newData) {
+        // return fakeData;
+        const { sensors, timestamp, prediction_interval } = newData;
+        const updatedData = [...prevData];
+
+        // remove ms from timestamp
+        const timestampWithoutMs = timestamp.split(".")[0];
+        const timestamps = getTimestamps(
+            timestampWithoutMs,
+            LOOKAHEAD,
+            prediction_interval
+        );
+        const currentTimestamp = timestamps[0];
+
+        if (updatedData.length === 0) {
+            updatedData.push({
+                name: "timestamps",
+                data: timestamps.map((timestamp) => ({ timestamp, value: null })),
+            });
         } else {
-            prevData.push(newEntry());
+            const sortedTimestamps = updatedData.find(
+                (sensor) => sensor.name === "timestamps"
+            );
+            sortedTimestamps.data.push({ timestamp: currentTimestamp, value: null });
         }
 
-        const predictionN = prevData.length - LOOKAHEAD;
-        const predictionKey = `prediction_${predictionN}`;
+        // Loop through each sensor in the newData object
+        Object.entries(sensors).forEach(([sensorName, sensorData]) => {
+            // Find the corresponding sensor object in the updatedData array
+            const sensorObject = updatedData.find(
+                (sensor) => sensor.name === sensorName
+            );
 
-        for (const [sensor, values] of Object.entries(sensors)) {
-            const indexVal = prevData.length - 1;
-            prevData[indexVal][sensor].value = values.value;
-            prevData[indexVal].timestamp = timestamp;
-
-            for (const [i, prediction] of values.prediction.entries()) {
-                const indexPred = prevData.length + i - LOOKAHEAD;
-                prevData[indexPred][sensor][predictionKey] =prediction;
+            // If the sensor object doesn't exist, create a new one and add it to the array
+            if (!sensorObject) {
+                updatedData.push({
+                    name: sensorName,
+                    data: [{ timestamp: currentTimestamp, value: sensorData.value }],
+                });
+            } else {
+                // If the sensor object exists, add the new data to the existing data array
+                sensorObject.data.push({
+                    timestamp: currentTimestamp,
+                    value: sensorData.value,
+                });
             }
-        }
 
-        return prevData;
-    };
+            const predicitonIndex = (sensorObject && sensorObject.data.length) || 0;
+            // Loop through each prediction value and add it as a new prediction object
+            updatedData.push({
+                name: `${sensorName}_prediction_${predicitonIndex}`,
+                data: timestamps.map((timestamp, index) => ({
+                    timestamp,
+                    value: sensorData.prediction[index],
+                })),
+            });
+        });
+        return updatedData;
+    }
 
     const handleWindowSizeChange = (event, newValue) => {
         setWindowSize(newValue);
@@ -139,22 +182,40 @@ const ChartView = () => {
     );
 };
 
-
 const MyCommonChart = ({ data, chartType, selectedSensor }) => {
     const [Chart, ChartElement] = CHARTS[chartType];
-    const lineDataKey = `${selectedSensor}.value`;
-    const timeDataKey = "timestamp";
 
     const parseDate = (value) => {
         const date = new Date(value);
+        let hours = date.getHours();
+        let minutes = date.getMinutes();
         let seconds = date.getSeconds();
         seconds = seconds < 10 ? "0" + seconds : seconds;
-        return seconds + ":" + Math.round(date.getMilliseconds() / 10);
+        return (
+            hours +
+            ":" +
+            minutes +
+            ":" +
+            seconds +
+            ":" +
+            Math.round(date.getMilliseconds() / 10)
+        );
     };
 
-    const legendPayload = (color1, color2) => [
-        { value: "Sensor Value", type: "line", dataKey: "value", color: color1 },
-        { value: "Prediction", type: "line", dataKey: "prediction", color: color2 },
+    const legendPayload = [
+        { value: "Sensor Value", type: "line", dataKey: "value", color: PRIMARY_COLOR },
+        {
+            value: "Prediction",
+            type: "line",
+            dataKey: "prediction",
+            color: SECONDARY_COLOR,
+        },
+        {
+            value: "Prediction",
+            type: "area",
+            dataKey: "prediction",
+            color: SECONDARY_COLOR,
+        },
     ];
 
     return (
@@ -169,42 +230,92 @@ const MyCommonChart = ({ data, chartType, selectedSensor }) => {
             }}
         >
             <CartesianGrid stroke="#eee2" strokeDasharray="1 1" />
-            <XAxis dataKey={timeDataKey} tickFormatter={parseDate} angle={-30} />
-            <YAxis />
-            <Legend
-                payload={legendPayload(PRIMARY_COLOR, SECONDARY_COLOR)}
-                verticalAlign="top"
+            <XAxis
+                dataKey="timestamp"
+                tickFormatter={parseDate}
+                angle={-20}
+                type="category"
+                allowDuplicatedCategory={false}
             />
-            <ChartElement
-                data={data}
-                type={cardinal}
-                isAnimationActive={false}
-                dataKey={lineDataKey}
-                stroke={PRIMARY_COLOR}
-                fill={PRIMARY_COLOR}
-                fillOpacity={0.15}
-            />
-            {/* <PredictionElements selectedSensor={selectedSensor} /> */}
+            <YAxis dataKey="value" />
+            <Legend payload={legendPayload} verticalAlign="top" />
+            {data.map((series) => (
+                <ChartElement
+                    key={series.name}
+                    data={series.data}
+                    name={series.name}
+                    dataKey="value"
+                    stroke={
+                        series.name.includes("prediction")
+                            ? SECONDARY_COLOR
+                            : PRIMARY_COLOR
+                    }
+                    type={cardinal}
+                    isAnimationActive={false}
+                    fill={SECONDARY_COLOR}
+                    fillOpacity={0.9}
+                    strokeOpacity={0.9}
+                    dot={false}
+                />
+            ))}
         </Chart>
     );
 };
 
-const PredictionElements = ({ selectedSensor }) => {
-    const predictionKeys = Array.of(LOOKAHEAD).map(
-        (i) => `sensors.${selectedSensor}.prediction_${i}`
-    );
-    return (
-        <>
-            <ChartElement
-                type={cardinal}
-                isAnimationActive={false}
-                dataKey={`sensors.sensor_0.prediction_0`}
-                stroke={SECONDARY_COLOR}
-                fill={SECONDARY_COLOR}
-                fillOpacity={0.15}
-            />
-        </>
-    );
-};
-
 export default ChartView;
+
+const fakeData = [
+    {
+        name: "Null",
+        data: [
+            { timestamp: "1", value: null },
+            { timestamp: "2", value: null },
+            { timestamp: "3", value: null },
+            { timestamp: "4", value: null },
+            { timestamp: "5", value: null },
+        ],
+    },
+    {
+        name: "sensor_0",
+        data: [
+            { timestamp: "1", value: Math.random() },
+            { timestamp: "2", value: Math.random() },
+            { timestamp: "3", value: Math.random() },
+        ],
+    },
+    {
+        name: "sensor_0_prediction_0",
+        data: [
+            { timestamp: "1", value: Math.random() },
+            { timestamp: "2", value: Math.random() },
+            { timestamp: "3", value: Math.random() },
+        ],
+    },
+    {
+        name: "sensor_0_prediction_1",
+        data: [
+            { timestamp: "2", value: Math.random() },
+            { timestamp: "3", value: Math.random() },
+            { timestamp: "4", value: Math.random() },
+        ],
+    },
+    {
+        name: "sensor_0_prediction_2",
+        data: [
+            { timestamp: "3", value: Math.random() },
+            { timestamp: "4", value: Math.random() },
+            { timestamp: "5", value: Math.random() },
+        ],
+    },
+];
+
+// {
+//     "timestamp": "2021-09-01T00:00:00Z",
+//     "prediction_interval": 1000,
+//     "sensors": {
+//         "sensor_0": {
+//             "value": 0.5,
+//             "prediction": [0.5, 0.5, ...]
+//         }
+//     },
+// }
