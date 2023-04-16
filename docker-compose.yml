@@ -63,8 +63,6 @@ services:
     restart: always
     networks:
       - redis
-    volumes:
-      - redis_data:/data
     ports:
       - 6379:6379
     healthcheck:
