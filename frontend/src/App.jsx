@@ -8,7 +8,6 @@ import {
     Routes,
 } from "react-router-dom";
 import About from "./About";
-import "./App.css";
 import Dashboard from "./Dashboard";
 import Graph from "./Graph";
 import "./index.css";
