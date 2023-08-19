@@ -1,14 +1,14 @@
 import Slider from "@mui/material/Slider";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { MyCommonChart } from "./CommonChart";
-import { SensorTabs } from "./SensorTabs";
 import {
     DATA_WINDOW_SIZE_DEFAULT,
     LOOKAHEAD,
     MINUTE,
     WEB_SOCKET_URL,
-} from "./constants";
+} from "../constants";
+import { MyCommonChart } from "./CommonChart";
+import { SensorTabs } from "./SensorTabs";
 
 export const StyledChartDiv = styled.div`
     background-color: #0003;

@@ -52,8 +52,18 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # third party
+    "rest_framework",
+    "rest_framework.authtoken",
+    # local
     "inferred.sensors",
 ]
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+    ],
+}
 
 CHANNEL_LAYERS = {
     "default": {

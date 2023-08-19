@@ -8,6 +8,7 @@ import {
     XAxis,
     YAxis,
 } from "recharts";
+import { TRIETARY_COLOR } from "../constants";
 
 const SensorLineChart = ({ data, sensorName }) => {
     console.log(sensorName);
@@ -26,7 +27,7 @@ const SensorLineChart = ({ data, sensorName }) => {
                     type="monotone"
                     dataKey={`${sensorName}.value`}
                     name={sensorName}
-                    stroke="#8884d8"
+                    stroke={TRIETARY_COLOR}
                     strokeWidth={2}
                     dot={{ r: 5 }}
                 />
