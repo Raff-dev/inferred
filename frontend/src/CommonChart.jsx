@@ -1,45 +1,28 @@
 import { curveCardinal } from "d3-shape";
 import React from "react";
-import {
-    Area,
-    AreaChart,
-    CartesianGrid,
-    Legend,
-    Line,
-    LineChart,
-    XAxis,
-    YAxis,
-} from "recharts";
-
-const PRIMARY_COLOR = "#3164b5c8";
-const SECONDARY_COLOR = "#6e4923cf";
-const CHARTS = {
-    line: [LineChart, Line],
-    area: [AreaChart, Area],
-};
+import { CartesianGrid, Legend, Line, LineChart, XAxis, YAxis } from "recharts";
+import { PRIMARY_COLOR, SECONDARY_COLOR } from "./constants";
 
 const cardinal = curveCardinal.tension(0.2);
 
-export const MyCommonChart = ({ data, chartType, selectedSensor }) => {
-    const [Chart, ChartElement] = CHARTS[chartType];
+export const parseDate = (value) => {
+    const date = new Date(value);
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+    let seconds = date.getSeconds();
+    seconds = seconds < 10 ? "0" + seconds : seconds;
+    return (
+        hours +
+        ":" +
+        minutes +
+        ":" +
+        seconds +
+        ":" +
+        Math.round(date.getMilliseconds() / 10)
+    );
+};
 
-    const parseDate = (value) => {
-        const date = new Date(value);
-        let hours = date.getHours();
-        let minutes = date.getMinutes();
-        let seconds = date.getSeconds();
-        seconds = seconds < 10 ? "0" + seconds : seconds;
-        return (
-            hours +
-            ":" +
-            minutes +
-            ":" +
-            seconds +
-            ":" +
-            Math.round(date.getMilliseconds() / 10)
-        );
-    };
-
+export const MyCommonChart = ({ data, selectedSensor }) => {
     const legendPayload = [
         { value: "Sensor Value", type: "line", dataKey: "value", color: PRIMARY_COLOR },
         { value: "Prediction", type: "line", color: SECONDARY_COLOR },
@@ -51,7 +34,7 @@ export const MyCommonChart = ({ data, chartType, selectedSensor }) => {
     ];
 
     return (
-        <Chart
+        <LineChart
             width={1200}
             height={400}
             margin={{
@@ -69,10 +52,10 @@ export const MyCommonChart = ({ data, chartType, selectedSensor }) => {
                 type="category"
                 allowDuplicatedCategory={false}
             />
-            <YAxis dataKey="value" />
+            <YAxis />
             <Legend payload={legendPayload} verticalAlign="top" />
             {datas.map((series) => (
-                <ChartElement
+                <Line
                     key={series.name}
                     data={series.data}
                     name={series.name}
@@ -90,6 +73,6 @@ export const MyCommonChart = ({ data, chartType, selectedSensor }) => {
                     dot={false}
                 />
             ))}
-        </Chart>
+        </LineChart>
     );
 };

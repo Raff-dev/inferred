@@ -1,17 +1,22 @@
-import { FormControlLabel, Radio, RadioGroup } from "@mui/material";
 import Slider from "@mui/material/Slider";
 import React, { useEffect, useState } from "react";
+import styled from "styled-components";
 import { MyCommonChart } from "./CommonChart";
 import { SensorTabs } from "./SensorTabs";
+import {
+    DATA_WINDOW_SIZE_DEFAULT,
+    LOOKAHEAD,
+    MINUTE,
+    WEB_SOCKET_URL,
+} from "./constants";
 
-const DAY = 24 * 60 * 60;
-const HOUR = 60 * 60;
-const MINUTE = 60;
-
-const LOOKAHEAD = 100;
-
-const DATA_WINDOW_SIZE_DEFAULT = HOUR;
-const WEB_SOCKET_URL = "ws://localhost:8000/ws/sensors/";
+export const StyledChartDiv = styled.div`
+    background-color: #0003;
+    border-radius: 12px;
+    padding: 20px;
+    padding-right: 50px;
+    margin-bottom: 20px;
+`;
 
 const ChartView = () => {
     const [data, setData] = useState({
@@ -21,7 +26,6 @@ const ChartView = () => {
     });
     const [windowData, setWindowData] = useState([]);
     const [windowSize, setWindowSize] = useState(DATA_WINDOW_SIZE_DEFAULT);
-    const [chartType, setChartType] = useState("line");
     const [selectedSensor, setSelectedSensor] = useState(null);
     const [sensors, setSensors] = useState([]);
 
@@ -96,10 +100,6 @@ const ChartView = () => {
         setWindowData((prevData) => data.slice(-newValue));
     };
 
-    const handleChartTypeChange = (event) => {
-        setChartType(event.target.value);
-    };
-
     useEffect(() => {
         const ws = new WebSocket(WEB_SOCKET_URL);
         ws.onmessage = (event) => {
@@ -110,7 +110,7 @@ const ChartView = () => {
                 setSensors(sensors);
                 setSelectedSensor(sensors[0]);
             }
-            console.log(data);
+            console.log(newData);
             setData((prevData) => updateData(prevData, newData));
             setWindowData((prevData) => [
                 ...prevData.slice(-windowSize - LOOKAHEAD),
@@ -123,8 +123,6 @@ const ChartView = () => {
         };
     }, [windowSize, selectedSensor]);
 
-    const props = { data, chartType, selectedSensor };
-
     return (
         <div>
             <SensorTabs
@@ -132,21 +130,9 @@ const ChartView = () => {
                 selectedSensor={selectedSensor}
                 setSelectedSensor={setSelectedSensor}
             />
-            <RadioGroup row value={chartType} onChange={handleChartTypeChange}>
-                <FormControlLabel value="line" control={<Radio />} label="Line" />
-                <FormControlLabel value="area" control={<Radio />} label="Area" />
-            </RadioGroup>
-            <div
-                style={{
-                    backgroundColor: "#0003",
-                    borderRadius: 12,
-                    padding: 20,
-                    paddingRight: 50,
-                    marginBottom: 20,
-                }}
-            >
+            <StyledChartDiv>
                 <h2>{selectedSensor}</h2>
-                <MyCommonChart {...props} />
+                <MyCommonChart data={data} selectedSensor={selectedSensor} />
                 <Slider
                     value={windowSize}
                     size="small"
@@ -157,7 +143,7 @@ const ChartView = () => {
                     valueLabelDisplay="auto"
                     onChange={handleWindowSizeChange}
                 />
-            </div>
+            </StyledChartDiv>
         </div>
     );
 };
