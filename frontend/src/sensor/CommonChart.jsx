@@ -1,26 +1,10 @@
 import { curveCardinal } from "d3-shape";
 import React from "react";
 import { CartesianGrid, Legend, Line, LineChart, XAxis, YAxis } from "recharts";
+import { parseDate } from "../Utils";
 import { PRIMARY_COLOR, SECONDARY_COLOR } from "../constants";
 
 const cardinal = curveCardinal.tension(0.2);
-
-export const parseDate = (value) => {
-    const date = new Date(value);
-    let hours = date.getHours();
-    let minutes = date.getMinutes();
-    let seconds = date.getSeconds();
-    seconds = seconds < 10 ? "0" + seconds : seconds;
-    return (
-        hours +
-        ":" +
-        minutes +
-        ":" +
-        seconds +
-        ":" +
-        Math.round(date.getMilliseconds() / 10)
-    );
-};
 
 export const SensorChart = ({ data, selectedSensor }) => {
     const legendPayload = [

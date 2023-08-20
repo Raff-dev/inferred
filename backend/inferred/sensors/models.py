@@ -33,6 +33,11 @@ class Prediction(models.Model):
 
 
 class Tick(models.Model):
+    """
+    This table would take up vast amounts of space in production.
+    One could limit size of the fields and normalize the data.
+    """
+
     timestamp = models.DateTimeField()
     value = models.DecimalField(max_digits=10, decimal_places=2)
     dimension = models.ForeignKey(
@@ -47,3 +52,6 @@ class Tick(models.Model):
 
     class Meta:
         ordering = ["timestamp", "dimension"]
+        indexes = [
+            models.Index(fields=["timestamp", "dimension"]),
+        ]

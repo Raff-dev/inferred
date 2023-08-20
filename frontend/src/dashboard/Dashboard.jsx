@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     CartesianGrid,
     Legend,
@@ -8,28 +8,30 @@ import {
     XAxis,
     YAxis,
 } from "recharts";
-import { TRIETARY_COLOR } from "../constants";
+import { parseDate } from "../Utils";
+import { TRIETARY_COLOR, WEB_SOCKET_URL } from "../constants";
 
 const SensorLineChart = ({ data, sensorName }) => {
-    console.log(sensorName);
     return (
         <ResponsiveContainer width="100%" height={300}>
             <LineChart data={data}>
                 <CartesianGrid stroke="#eee2" strokeDasharray="1 1" />
                 <XAxis
                     dataKey="timestamp"
+                    tickFormatter={parseDate}
                     type="category"
+                    angle={-20}
                     allowDuplicatedCategory={false}
                 />
                 <YAxis datakey="value" />
-                <Legend />
+                <Legend verticalAlign="top" />
                 <Line
                     type="monotone"
-                    dataKey={`${sensorName}.value`}
+                    dataKey={sensorName}
                     name={sensorName}
                     stroke={TRIETARY_COLOR}
-                    strokeWidth={2}
-                    dot={{ r: 5 }}
+                    isAnimationActive={false}
+                    dot={false}
                 />
             </LineChart>
         </ResponsiveContainer>
@@ -37,14 +39,14 @@ const SensorLineChart = ({ data, sensorName }) => {
 };
 
 const SensorsGrid = ({ data }) => {
-    const sensorNames =
-        (data.sensors &&
-            Object.keys(data.sensors[0])
-                .filter((name) => name != "timestamp")
-                .sort()) ||
-        [];
-    const [visibleSensors, setVisibleSensors] = useState(sensorNames);
+    let sensorNames = [];
+    if (data.length) {
+        sensorNames = Object.keys(data[0])
+            .filter((name) => name != "timestamp")
+            .sort();
+    }
 
+    const [visibleSensors, setVisibleSensors] = useState(sensorNames);
     const handleSensorToggle = (sensorName) => {
         if (visibleSensors.includes(sensorName)) {
             setVisibleSensors(
@@ -74,7 +76,7 @@ const SensorsGrid = ({ data }) => {
                 {visibleSensors.map((sensorName) => (
                     <SensorLineChart
                         key={sensorName}
-                        data={data.sensors}
+                        data={data}
                         sensorName={sensorName}
                     />
                 ))}
@@ -84,36 +86,55 @@ const SensorsGrid = ({ data }) => {
 };
 
 const Dashboard = () => {
+    const [data, setData] = useState([]);
     const sensorData = {
-        simulation_model: "naive",
         timestamp: "2023-08-19T16:48:10.977452",
+        simulation_model: "naive",
         sensors: [
             {
                 timestamp: "2023-08-19T16:48:10",
-                sensor_0: { value: 7.23203574083519 },
-                sensor_1: { value: 0 },
-                sensor_2: { value: 0.4509955643059914 },
+                sensor_0: 7.23203574083519,
+                sensor_1: 0,
+                sensor_2: 0.4509955643059914,
             },
             {
                 timestamp: "2023-08-19T16:49:10",
-                sensor_0: { value: 7.43203574083519 },
-                sensor_1: { value: 1 },
-                sensor_2: { value: 0.6509955643059914 },
+                sensor_0: 7.43203574083519,
+                sensor_1: 1,
+                sensor_2: 0.6509955643059914,
             },
             {
                 timestamp: "2023-08-19T16:50:10",
-                sensor_0: { value: 7.43203574083519 },
-                sensor_1: { value: 1 },
-                sensor_2: { value: 0.6509955643059914 },
+                sensor_0: 7.43203574083519,
+                sensor_1: 1,
+                sensor_2: 0.6509955643059914,
             },
             // Add more data points here...
         ],
     };
 
+    useEffect(() => {
+        const ws = new WebSocket(WEB_SOCKET_URL);
+        ws.onmessage = (event) => {
+            const newData = JSON.parse(event.data);
+            console.log(newData);
+            const newChunk = { timestamp: newData.timestamp };
+            for (const sensor of Object.keys(newData.sensors)) {
+                newChunk[sensor] = newData.sensors[sensor].value;
+            }
+
+            setData((prevData) => [...prevData, newChunk]);
+        };
+
+        return () => {
+            ws.close();
+        };
+    }, []);
+
     return (
         <div>
             <h1>Sensors Data</h1>
-            <SensorsGrid data={sensorData} />
+            <SensorsGrid data={data} />
         </div>
     );
 };
