@@ -1,6 +1,12 @@
 import Slider from "@mui/material/Slider";
 import React, { useEffect, useState } from "react";
-import { DATA_WINDOW_SIZE_DEFAULT, MINUTE, WEB_SOCKET_URL } from "../constants";
+import {
+    DATA_WINDOW_SIZE_DEFAULT,
+    DATA_WINDOW_SIZE_MAX,
+    DATA_WINDOW_STEP,
+    MINUTE,
+    WEB_SOCKET_URL,
+} from "../constants";
 
 import { SensorLineChart } from "./SensorLineChart";
 
@@ -51,32 +57,6 @@ const Dashboard = () => {
     const [windowData, setWindowData] = useState([]);
     const [windowSize, setWindowSize] = useState(DATA_WINDOW_SIZE_DEFAULT);
 
-    const sensorData = {
-        timestamp: "2023-08-19T16:48:10.977452",
-        simulation_model: "naive",
-        sensors: [
-            {
-                timestamp: "2023-08-19T16:48:10",
-                sensor_0: 7.23203574083519,
-                sensor_1: 0,
-                sensor_2: 0.4509955643059914,
-            },
-            {
-                timestamp: "2023-08-19T16:49:10",
-                sensor_0: 7.43203574083519,
-                sensor_1: 1,
-                sensor_2: 0.6509955643059914,
-            },
-            {
-                timestamp: "2023-08-19T16:50:10",
-                sensor_0: 7.43203574083519,
-                sensor_1: 1,
-                sensor_2: 0.6509955643059914,
-            },
-            // Add more data points here...
-        ],
-    };
-
     useEffect(() => {
         setWindowData(data.slice(-windowSize));
     }, [windowSize, data]);
@@ -91,7 +71,7 @@ const Dashboard = () => {
             for (const sensor of newSensorNames) {
                 newChunk[sensor] = newData.sensors[sensor].value;
             }
-            setData((prevData) => [...prevData, newChunk]);
+            setData((prevData) => [...prevData, newChunk].slice(-DATA_WINDOW_SIZE_MAX));
             if (sensorNames.length === 0) setSensorNames(newSensorNames);
         };
 
@@ -106,9 +86,9 @@ const Dashboard = () => {
             <Slider
                 value={windowSize}
                 size="small"
-                min={20}
-                max={MINUTE}
-                step={5}
+                min={MINUTE}
+                max={DATA_WINDOW_SIZE_MAX}
+                step={DATA_WINDOW_STEP}
                 marks
                 valueLabelDisplay="auto"
                 onChange={(e) => setWindowSize(e.target.value)}
