@@ -18,6 +18,28 @@ const parseChartData = (timestamps, seriesErrorData) => {
     return parsedData;
 };
 
+const MetricsGrid = ({ scalarMetricsData }) => {
+    return (
+        <div className="metrics-grid">
+            {Object.keys(scalarMetricsData).map((model, index) => (
+                <div key={index} className="model-metrics">
+                    <h2>{model}</h2>
+                    <ul>
+                        {Object.keys(scalarMetricsData[model]).map(
+                            (metric, metricIndex) => (
+                                <li key={metricIndex}>
+                                    <strong>{metric}:</strong>{" "}
+                                    {scalarMetricsData[model][metric]}
+                                </li>
+                            )
+                        )}
+                    </ul>
+                </div>
+            ))}
+        </div>
+    );
+};
+
 const ModelComparison = () => {
     const timestamps = ["2021-10-01", "2021-10-02", "2021-10-03", "2021-10-04"];
     const originalData = [100, 150, 200, 250];
@@ -32,10 +54,12 @@ const ModelComparison = () => {
     const { errorNames, seriesErrorData, scalarMetricsData } = errorMetrics;
     const chartData = parseChartData(timestamps, seriesErrorData);
 
-    console.log(errorNames);
+    console.log("scalarMetricsData");
+    console.log(scalarMetricsData);
     return (
         <div>
             <h2>Metrics Comparison</h2>
+            <MetricsGrid scalarMetricsData={scalarMetricsData} />
             {errorNames.map((metricName) => (
                 <div key={metricName}>
                     <h3>{metricName}</h3>
