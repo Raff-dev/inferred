@@ -1,21 +1,23 @@
 import React from "react";
 import {
+    Area,
     CartesianGrid,
+    ComposedChart,
     Legend,
     Line,
-    LineChart,
     ResponsiveContainer,
     Tooltip,
     XAxis,
     YAxis,
 } from "recharts";
-import { TRIETARY_COLOR } from "../constants";
+import { PRIMARY_COLOR, TRIETARY_COLOR } from "../constants";
 
 const ModelComparisonLineChart = ({ data, metricName, modelNames }) => {
     console.log(data);
+
     return (
         <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={data}>
+            <ComposedChart data={data}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="timestamp" type="category" />
                 <YAxis />
@@ -25,20 +27,34 @@ const ModelComparisonLineChart = ({ data, metricName, modelNames }) => {
                     <Line
                         key={modelName}
                         type="monotone"
+                        // dataKey={`${modelName}.${metricName}`}
                         dataKey={`${modelName}.${metricName}`}
                         name={modelName}
-                        stroke={TRIETARY_COLOR}
+                        stroke={PRIMARY_COLOR}
+                        strokeWidth={3}
                     />
                 ))}
-            </LineChart>
+                {modelNames.map((modelName, index) => (
+                    <Area
+                        key={modelName + " Cumsum"}
+                        type="monotone"
+                        dataKey={`${modelName}.${metricName} Cumsum`}
+                        name={`${modelName} Cumulative`}
+                        stroke={TRIETARY_COLOR}
+                        fill={TRIETARY_COLOR}
+                        opacity={0.2}
+                    />
+                ))}
+            </ComposedChart>
         </ResponsiveContainer>
     );
 };
 
 const ModelComparisonCharts = ({ chartData, errorNames, modelNames }) => {
+    const errorNamesNoCumsum = errorNames.filter((e) => !e.includes("Cumsum"));
     return (
         <div>
-            {errorNames.map((metricName) => (
+            {errorNamesNoCumsum.map((metricName) => (
                 <div key={metricName}>
                     <h3>{metricName}</h3>
                     <ModelComparisonLineChart

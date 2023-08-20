@@ -30,12 +30,23 @@ export const calculateSeriesErrors = (originalData, prediction) => {
         (error, index) => (error / originalData[index]) * 100
     );
 
-    return {
+    const seriesErrorData = {
         "Arithmetic Error": errors,
         "Absolute Error": absoluteErrors,
         "Squared Errors": squaredErrors,
         "Percentage Error": percentageErrors,
     };
+
+    for (const [metric, values] of Object.entries(seriesErrorData)) {
+        seriesErrorData[metric + " Cumsum"] = values.map(
+            (
+                (sum) => (value) =>
+                    (sum += value)
+            )(0)
+        );
+    }
+
+    return seriesErrorData;
 };
 
 export const calculateErrorMetrics = (originalData, predictions, modelNames) => {
