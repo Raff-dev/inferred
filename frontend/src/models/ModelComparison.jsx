@@ -1,7 +1,9 @@
-import React from "react";
-import ModelComparisonLineChart from "../models/ModelComparisonLineChart";
+import React, { useState } from "react";
 
 import { calculateErrorMetrics } from "../models/Calculations";
+import ModelComparisonCharts from "./ModelComparisonCharts";
+import ModelSelection from "./ModelSelection";
+import ScalarMetrics from "./ScalarMetrics";
 
 const parseChartData = (timestamps, seriesErrorData) => {
     const parsedData = timestamps.map((timestamp, index) => {
@@ -18,28 +20,6 @@ const parseChartData = (timestamps, seriesErrorData) => {
     return parsedData;
 };
 
-const MetricsGrid = ({ scalarMetricsData }) => {
-    return (
-        <div className="metrics-grid">
-            {Object.keys(scalarMetricsData).map((model, index) => (
-                <div key={index} className="model-metrics">
-                    <h2>{model}</h2>
-                    <ul>
-                        {Object.keys(scalarMetricsData[model]).map(
-                            (metric, metricIndex) => (
-                                <li key={metricIndex}>
-                                    <strong>{metric}:</strong>{" "}
-                                    {scalarMetricsData[model][metric]}
-                                </li>
-                            )
-                        )}
-                    </ul>
-                </div>
-            ))}
-        </div>
-    );
-};
-
 const ModelComparison = () => {
     const timestamps = ["2021-10-01", "2021-10-02", "2021-10-03", "2021-10-04"];
     const originalData = [100, 150, 200, 250];
@@ -50,26 +30,26 @@ const ModelComparison = () => {
     };
 
     const modelNames = Object.keys(predictions);
-    const errorMetrics = calculateErrorMetrics(originalData, predictions, modelNames);
-    const { errorNames, seriesErrorData, scalarMetricsData } = errorMetrics;
+    const [selectedModels, setSelectedModels] = useState(modelNames);
+    const metrics = calculateErrorMetrics(originalData, predictions, selectedModels);
+    const { errorNames, seriesErrorData, scalarMetricsData } = metrics;
     const chartData = parseChartData(timestamps, seriesErrorData);
 
-    console.log("scalarMetricsData");
-    console.log(scalarMetricsData);
+    const handleModelSelect = (event) => setSelectedModels(event.target.value);
     return (
         <div>
             <h2>Metrics Comparison</h2>
-            <MetricsGrid scalarMetricsData={scalarMetricsData} />
-            {errorNames.map((metricName) => (
-                <div key={metricName}>
-                    <h3>{metricName}</h3>
-                    <ModelComparisonLineChart
-                        data={chartData}
-                        metricName={metricName}
-                        modelNames={modelNames}
-                    />
-                </div>
-            ))}
+            <ModelSelection
+                modelNames={modelNames}
+                selectedModels={selectedModels}
+                onModelSelect={handleModelSelect}
+            />
+            <ScalarMetrics scalarMetricsData={scalarMetricsData} />
+            <ModelComparisonCharts
+                chartData={chartData}
+                errorNames={errorNames}
+                modelNames={selectedModels} // Pass selected models to the chart component
+            />
         </div>
     );
 };

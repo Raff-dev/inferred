@@ -34,4 +34,22 @@ const ModelComparisonLineChart = ({ data, metricName, modelNames }) => {
         </ResponsiveContainer>
     );
 };
-export default ModelComparisonLineChart;
+
+const ModelComparisonCharts = ({ chartData, errorNames, modelNames }) => {
+    return (
+        <div>
+            {errorNames.map((metricName) => (
+                <div key={metricName}>
+                    <h3>{metricName}</h3>
+                    <ModelComparisonLineChart
+                        data={chartData}
+                        metricName={metricName}
+                        modelNames={modelNames}
+                    />
+                </div>
+            ))}
+        </div>
+    );
+};
+
+export default ModelComparisonCharts;
