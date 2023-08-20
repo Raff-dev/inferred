@@ -1,7 +1,3 @@
-export const PRIMARY_COLOR = "#3164b5c8";
-export const SECONDARY_COLOR = "#6e4923cf";
-export const TRIETARY_COLOR = "#8884d8";
-
 export const DAY = 24 * 60 * 60;
 export const HOUR = 60 * 60;
 export const MINUTE = 60;

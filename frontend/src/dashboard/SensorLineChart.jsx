@@ -9,7 +9,7 @@ import {
     YAxis,
 } from "recharts";
 import { parseDate } from "../Utils";
-import { TRIETARY_COLOR } from "../constants";
+import { TRIETARY_COLOR } from "../themes";
 
 export const SensorLineChart = ({ data, sensorName }) => {
     return (

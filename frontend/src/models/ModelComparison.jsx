@@ -4,6 +4,7 @@ import { calculateErrorMetrics } from "../models/Calculations";
 import ModelComparisonCharts from "./ModelComparisonCharts";
 import ModelSelection from "./ModelSelection";
 import ScalarMetrics from "./ScalarMetrics";
+import ScalarMetricsRadarChart from "./ScalarMetricsRadarChart";
 
 const parseChartData = (timestamps, seriesErrorData) => {
     const parsedData = timestamps.map((timestamp, index) => {
@@ -45,6 +46,10 @@ const ModelComparison = () => {
                 onModelSelect={handleModelSelect}
             />
             <ScalarMetrics scalarMetricsData={scalarMetricsData} />
+            <ScalarMetricsRadarChart
+                scalarMetricsData={scalarMetricsData}
+                modelNames={modelNames}
+            />
             <ModelComparisonCharts
                 chartData={chartData}
                 errorNames={errorNames}

@@ -10,7 +10,7 @@ import {
     XAxis,
     YAxis,
 } from "recharts";
-import { PRIMARY_COLOR, TRIETARY_COLOR } from "../constants";
+import { PRIMARY_COLOR, TRIETARY_COLOR } from "../themes";
 
 const ModelComparisonLineChart = ({ data, metricName, modelNames }) => {
     console.log(data);

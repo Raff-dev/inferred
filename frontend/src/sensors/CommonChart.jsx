@@ -2,7 +2,7 @@ import { curveCardinal } from "d3-shape";
 import React from "react";
 import { CartesianGrid, Legend, Line, LineChart, XAxis, YAxis } from "recharts";
 import { parseDate } from "../Utils";
-import { PRIMARY_COLOR, SECONDARY_COLOR } from "../constants";
+import { PRIMARY_COLOR, SECONDARY_COLOR } from "../themes";
 
 const cardinal = curveCardinal.tension(0.2);
 
