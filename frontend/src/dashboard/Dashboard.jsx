@@ -8,48 +8,7 @@ import {
     WEB_SOCKET_URL,
 } from "../constants";
 
-import { SensorLineChart } from "./SensorLineChart";
-
-const SensorsGrid = ({ data, sensorNames }) => {
-    const [visibleSensors, setVisibleSensors] = useState(sensorNames);
-
-    const handleSensorToggle = (sensorName) => {
-        if (visibleSensors.includes(sensorName)) {
-            setVisibleSensors(
-                visibleSensors.filter((name) => name !== sensorName).sort()
-            );
-        } else {
-            setVisibleSensors([...visibleSensors, sensorName].sort());
-        }
-    };
-
-    return (
-        <div>
-            <div>
-                {sensorNames.map((sensorName) => (
-                    <label key={sensorName}>
-                        <input
-                            value={sensorName}
-                            type="checkbox"
-                            checked={visibleSensors.includes(sensorName)}
-                            onChange={() => handleSensorToggle(sensorName)}
-                        />
-                        {sensorName}
-                    </label>
-                ))}
-            </div>
-            <div style={{ display: "flex", flexWrap: "wrap" }}>
-                {visibleSensors.map((sensorName) => (
-                    <SensorLineChart
-                        key={sensorName}
-                        data={data}
-                        sensorName={sensorName}
-                    />
-                ))}
-            </div>
-        </div>
-    );
-};
+import SensorGrid from "./SensorGrid";
 
 const Dashboard = () => {
     const [data, setData] = useState([]);
@@ -93,7 +52,7 @@ const Dashboard = () => {
                 valueLabelDisplay="auto"
                 onChange={(e) => setWindowSize(e.target.value)}
             />
-            <SensorsGrid data={windowData} sensorNames={sensorNames} />
+            <SensorGrid data={windowData} sensorNames={sensorNames} />
         </div>
     );
 };

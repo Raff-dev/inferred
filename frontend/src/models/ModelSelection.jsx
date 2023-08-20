@@ -1,11 +1,6 @@
-import { Chip, MenuItem, Select, ThemeProvider, createTheme } from "@mui/material";
+import { Chip, MenuItem, Select, ThemeProvider } from "@mui/material";
 import React from "react";
-
-const darkTheme = createTheme({
-    palette: {
-        mode: "dark", // Set the theme mode to dark
-    },
-});
+import { darkTheme } from "../themes";
 
 const ModelSelection = ({ modelNames, selectedModels, onModelSelect }) => {
     return (
