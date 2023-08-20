@@ -10,7 +10,6 @@ const AuthWrapper = () => {
 
     const onLogin = ({ event, username, password }) => {
         event.preventDefault();
-        console.log("onLogin");
         axios
             .post(API_LOGIN_URL, { username: username, password: password })
             .then((response) => {

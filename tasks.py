@@ -27,7 +27,7 @@ def down(ctx: Context):
 
 @task
 def restart(ctx: Context, container_name: str):
-    ctx.run(f"docker compose restart {container_name or ''}", pty=True)
+    ctx.run(f"docker compose restart {container_name}", pty=True)
 
 
 @task
@@ -56,5 +56,7 @@ def build(ctx: Context):
 
 
 @task
-def flush(ctx: Context):
+def flush(ctx: Context, remake: bool = False):
     ctx.run("docker exec -it inferred-backend bash flush.sh", pty=True)
+    if remake:
+        migrate(ctx, make=True, rm=False)

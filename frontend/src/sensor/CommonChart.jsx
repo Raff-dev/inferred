@@ -22,7 +22,7 @@ export const parseDate = (value) => {
     );
 };
 
-export const MyCommonChart = ({ data, selectedSensor }) => {
+export const SensorChart = ({ data, selectedSensor }) => {
     const legendPayload = [
         { value: "Sensor Value", type: "line", dataKey: "value", color: PRIMARY_COLOR },
         { value: "Prediction", type: "line", color: SECONDARY_COLOR },

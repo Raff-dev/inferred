@@ -7,7 +7,7 @@ import {
     MINUTE,
     WEB_SOCKET_URL,
 } from "../constants";
-import { MyCommonChart } from "./CommonChart";
+import { SensorChart } from "./CommonChart";
 import { SensorTabs } from "./SensorTabs";
 
 export const StyledChartDiv = styled.div`
@@ -132,7 +132,7 @@ const ChartView = () => {
             />
             <StyledChartDiv>
                 <h2>{selectedSensor}</h2>
-                <MyCommonChart data={data} selectedSensor={selectedSensor} />
+                <SensorChart data={data} selectedSensor={selectedSensor} />
                 <Slider
                     value={windowSize}
                     size="small"
