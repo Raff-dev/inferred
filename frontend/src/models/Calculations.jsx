@@ -41,7 +41,7 @@ export const calculateSeriesErrors = (originalData, prediction) => {
         seriesErrorData[metric + " Cumsum"] = values.map(
             (
                 (sum) => (value) =>
-                    (sum += value)
+                    (sum += Math.abs(value))
             )(0)
         );
     }

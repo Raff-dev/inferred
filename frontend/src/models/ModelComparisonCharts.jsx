@@ -20,14 +20,15 @@ const ModelComparisonLineChart = ({ data, metricName, modelNames }) => {
             <ComposedChart data={data}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="timestamp" type="category" />
-                <YAxis />
+                <YAxis yAxisId="left" />
+                <YAxis yAxisId="right" orientation="right" />
                 <Tooltip />
                 <Legend />
                 {modelNames.map((modelName, index) => (
                     <Line
+                        yAxisId="left"
                         key={modelName}
                         type="monotone"
-                        // dataKey={`${modelName}.${metricName}`}
                         dataKey={`${modelName}.${metricName}`}
                         name={modelName}
                         stroke={PRIMARY_COLOR}
@@ -36,6 +37,7 @@ const ModelComparisonLineChart = ({ data, metricName, modelNames }) => {
                 ))}
                 {modelNames.map((modelName, index) => (
                     <Area
+                        yAxisId="right"
                         key={modelName + " Cumsum"}
                         type="monotone"
                         dataKey={`${modelName}.${metricName} Cumsum`}
