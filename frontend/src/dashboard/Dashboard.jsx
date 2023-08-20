@@ -1,42 +1,8 @@
+import Slider from "@mui/material/Slider";
 import React, { useEffect, useState } from "react";
-import {
-    CartesianGrid,
-    Legend,
-    Line,
-    LineChart,
-    ResponsiveContainer,
-    XAxis,
-    YAxis,
-} from "recharts";
-import { parseDate } from "../Utils";
-import { TRIETARY_COLOR, WEB_SOCKET_URL } from "../constants";
+import { DATA_WINDOW_SIZE_DEFAULT, MINUTE, WEB_SOCKET_URL } from "../constants";
 
-const SensorLineChart = ({ data, sensorName }) => {
-    return (
-        <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={data}>
-                <CartesianGrid stroke="#eee2" strokeDasharray="1 1" />
-                <XAxis
-                    dataKey="timestamp"
-                    tickFormatter={parseDate}
-                    type="category"
-                    angle={-20}
-                    allowDuplicatedCategory={false}
-                />
-                <YAxis datakey="value" />
-                <Legend verticalAlign="top" />
-                <Line
-                    type="monotone"
-                    dataKey={sensorName}
-                    name={sensorName}
-                    stroke={TRIETARY_COLOR}
-                    isAnimationActive={false}
-                    dot={false}
-                />
-            </LineChart>
-        </ResponsiveContainer>
-    );
-};
+import { SensorLineChart } from "./SensorLineChart";
 
 const SensorsGrid = ({ data, sensorNames }) => {
     const [visibleSensors, setVisibleSensors] = useState(sensorNames);
@@ -82,6 +48,8 @@ const SensorsGrid = ({ data, sensorNames }) => {
 const Dashboard = () => {
     const [data, setData] = useState([]);
     const [sensorNames, setSensorNames] = useState([]);
+    const [windowData, setWindowData] = useState([]);
+    const [windowSize, setWindowSize] = useState(DATA_WINDOW_SIZE_DEFAULT);
 
     const sensorData = {
         timestamp: "2023-08-19T16:48:10.977452",
@@ -110,6 +78,10 @@ const Dashboard = () => {
     };
 
     useEffect(() => {
+        setWindowData(data.slice(-windowSize));
+    }, [windowSize, data]);
+
+    useEffect(() => {
         const ws = new WebSocket(WEB_SOCKET_URL);
         ws.onmessage = (event) => {
             const newData = JSON.parse(event.data);
@@ -131,7 +103,17 @@ const Dashboard = () => {
     return (
         <div>
             <h1>Sensors Data</h1>
-            <SensorsGrid data={data} sensorNames={sensorNames} />
+            <Slider
+                value={windowSize}
+                size="small"
+                min={20}
+                max={MINUTE}
+                step={5}
+                marks
+                valueLabelDisplay="auto"
+                onChange={(e) => setWindowSize(e.target.value)}
+            />
+            <SensorsGrid data={windowData} sensorNames={sensorNames} />
         </div>
     );
 };
