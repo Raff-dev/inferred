@@ -38,15 +38,9 @@ const SensorLineChart = ({ data, sensorName }) => {
     );
 };
 
-const SensorsGrid = ({ data }) => {
-    let sensorNames = [];
-    if (data.length) {
-        sensorNames = Object.keys(data[0])
-            .filter((name) => name != "timestamp")
-            .sort();
-    }
-
+const SensorsGrid = ({ data, sensorNames }) => {
     const [visibleSensors, setVisibleSensors] = useState(sensorNames);
+
     const handleSensorToggle = (sensorName) => {
         if (visibleSensors.includes(sensorName)) {
             setVisibleSensors(
@@ -87,6 +81,8 @@ const SensorsGrid = ({ data }) => {
 
 const Dashboard = () => {
     const [data, setData] = useState([]);
+    const [sensorNames, setSensorNames] = useState([]);
+
     const sensorData = {
         timestamp: "2023-08-19T16:48:10.977452",
         simulation_model: "naive",
@@ -117,13 +113,14 @@ const Dashboard = () => {
         const ws = new WebSocket(WEB_SOCKET_URL);
         ws.onmessage = (event) => {
             const newData = JSON.parse(event.data);
-            console.log(newData);
             const newChunk = { timestamp: newData.timestamp };
-            for (const sensor of Object.keys(newData.sensors)) {
+
+            const newSensorNames = Object.keys(newData.sensors).sort();
+            for (const sensor of newSensorNames) {
                 newChunk[sensor] = newData.sensors[sensor].value;
             }
-
             setData((prevData) => [...prevData, newChunk]);
+            if (sensorNames.length === 0) setSensorNames(newSensorNames);
         };
 
         return () => {
@@ -134,7 +131,7 @@ const Dashboard = () => {
     return (
         <div>
             <h1>Sensors Data</h1>
-            <SensorsGrid data={data} />
+            <SensorsGrid data={data} sensorNames={sensorNames} />
         </div>
     );
 };
