@@ -31,6 +31,8 @@ const ModelComparison = () => {
         "Model A": [110, 140, 210, 240],
         "Model B": [105, 155, 190, 260],
         "Model C": [120, 135, 215, 245],
+        "Model D": [125, 145, 190, 258],
+        "Model E": [105, 125, 200, 225],
     };
 
     const modelNames = Object.keys(predictions);
@@ -57,13 +59,13 @@ const ModelComparison = () => {
             </Grid>
             <Grid container alignItems="center" spacing={8} marginTop={1}>
                 <Grid item xs={12} md={6}>
-                    <ScalarMetricsTable scalarMetricsData={scalarMetricsData} />
-                </Grid>
-                <Grid item xs={12} md={6}>
                     <ScalarMetricsRadarChart
                         scalarMetricsData={scalarMetricsData}
                         modelNames={modelNames}
                     />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                    <ScalarMetricsTable scalarMetricsData={scalarMetricsData} />
                 </Grid>
             </Grid>
             <ModelComparisonCharts
