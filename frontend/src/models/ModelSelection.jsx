@@ -1,11 +1,11 @@
-import { Chip, MenuItem, Select, ThemeProvider } from "@mui/material";
+import { Chip, MenuItem, Select } from "@mui/material";
+import Box from "@mui/material/Box";
 import React from "react";
-import { darkTheme } from "../themes";
-
 const ModelSelection = ({ modelNames, selectedModels, onModelSelect }) => {
     return (
-        <ThemeProvider theme={darkTheme}>
+        <Box sx={{ minWidth: 120 }} marginTop={3}>
             <Select
+                sx={{ width: "400px" }}
                 multiple
                 value={selectedModels}
                 onChange={onModelSelect}
@@ -23,7 +23,7 @@ const ModelSelection = ({ modelNames, selectedModels, onModelSelect }) => {
                     </MenuItem>
                 ))}
             </Select>
-        </ThemeProvider>
+        </Box>
     );
 };
 

@@ -10,7 +10,7 @@ import {
 import React from "react";
 import { darkTheme } from "../themes.jsx"; // Import the dark theme
 
-const ScalarMetrics = ({ scalarMetricsData }) => {
+const ScalarMetricsTable = ({ scalarMetricsData }) => {
     const modelNames = Object.keys(scalarMetricsData);
     const metrics = Object.keys(scalarMetricsData[modelNames[0]]);
 
@@ -19,7 +19,7 @@ const ScalarMetrics = ({ scalarMetricsData }) => {
             component={Paper}
             style={{ backgroundColor: darkTheme.palette.background.default }}
         >
-            <Table aria-label="Scalar Metrics Table">
+            <Table aria-label="Scalar Metrics Table" fixedHeader={true}>
                 <TableHead>
                     <TableRow>
                         <TableCell />
@@ -61,4 +61,4 @@ const ScalarMetrics = ({ scalarMetricsData }) => {
     );
 };
 
-export default ScalarMetrics;
+export default ScalarMetricsTable;

@@ -1,10 +1,13 @@
 import { Grid } from "@mui/material";
+import { ThemeProvider } from "@mui/material/styles";
 import React, { useState } from "react";
+import DurationPicker from "../controls/DurationPicker";
 import { calculateErrorMetrics } from "../models/Calculations";
+import { darkTheme } from "../themes";
 import ModelComparisonCharts from "./ModelComparisonCharts";
 import ModelSelection from "./ModelSelection";
-import ScalarMetrics from "./ScalarMetrics";
 import ScalarMetricsRadarChart from "./ScalarMetricsRadarChart";
+import ScalarMetricsTable from "./ScalarMetricsTable";
 
 const parseChartData = (timestamps, seriesErrorData) => {
     const parsedData = timestamps.map((timestamp, index) => {
@@ -38,16 +41,23 @@ const ModelComparison = () => {
 
     const handleModelSelect = (event) => setSelectedModels(event.target.value);
     return (
-        <div>
-            <h2>Metrics Comparison</h2>
-            <ModelSelection
-                modelNames={modelNames}
-                selectedModels={selectedModels}
-                onModelSelect={handleModelSelect}
-            />
-            <Grid container spacing={8} marginTop={1}>
+        <ThemeProvider theme={darkTheme}>
+            <h1>Metrics Comparison</h1>
+            <Grid container alignItems={"center"}>
                 <Grid item xs={12} md={6}>
-                    <ScalarMetrics scalarMetricsData={scalarMetricsData} />
+                    <DurationPicker />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                    <ModelSelection
+                        modelNames={modelNames}
+                        selectedModels={selectedModels}
+                        onModelSelect={handleModelSelect}
+                    />
+                </Grid>
+            </Grid>
+            <Grid container alignItems="center" spacing={8} marginTop={1}>
+                <Grid item xs={12} md={6}>
+                    <ScalarMetricsTable scalarMetricsData={scalarMetricsData} />
                 </Grid>
                 <Grid item xs={12} md={6}>
                     <ScalarMetricsRadarChart
@@ -61,7 +71,7 @@ const ModelComparison = () => {
                 errorNames={errorNames}
                 modelNames={selectedModels} // Pass selected models to the chart component
             />
-        </div>
+        </ThemeProvider>
     );
 };
 
