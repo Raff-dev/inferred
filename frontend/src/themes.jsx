@@ -11,8 +11,8 @@ export const SECONDARY_COLOR = "#6e4923cf";
 export const TRIETARY_COLOR = "#8884d8";
 
 export const NICE_COLORS = [
-    "#f7b6d2",
     "#ff9896",
+    "#f7b6d2",
     "#9467bd",
     "#1f77b4",
     "#e377c2",

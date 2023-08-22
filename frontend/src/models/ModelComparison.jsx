@@ -1,5 +1,5 @@
+import { Grid } from "@mui/material";
 import React, { useState } from "react";
-
 import { calculateErrorMetrics } from "../models/Calculations";
 import ModelComparisonCharts from "./ModelComparisonCharts";
 import ModelSelection from "./ModelSelection";
@@ -45,11 +45,17 @@ const ModelComparison = () => {
                 selectedModels={selectedModels}
                 onModelSelect={handleModelSelect}
             />
-            <ScalarMetrics scalarMetricsData={scalarMetricsData} />
-            <ScalarMetricsRadarChart
-                scalarMetricsData={scalarMetricsData}
-                modelNames={modelNames}
-            />
+            <Grid container spacing={8} marginTop={1}>
+                <Grid item xs={12} md={6}>
+                    <ScalarMetrics scalarMetricsData={scalarMetricsData} />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                    <ScalarMetricsRadarChart
+                        scalarMetricsData={scalarMetricsData}
+                        modelNames={modelNames}
+                    />
+                </Grid>
+            </Grid>
             <ModelComparisonCharts
                 chartData={chartData}
                 errorNames={errorNames}

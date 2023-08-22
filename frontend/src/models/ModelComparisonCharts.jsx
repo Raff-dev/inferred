@@ -10,7 +10,7 @@ import {
     XAxis,
     YAxis,
 } from "recharts";
-import { PRIMARY_COLOR, TRIETARY_COLOR } from "../themes";
+import { NICE_COLORS } from "../themes";
 
 const ModelComparisonLineChart = ({ data, metricName, modelNames }) => {
     console.log(data);
@@ -31,7 +31,7 @@ const ModelComparisonLineChart = ({ data, metricName, modelNames }) => {
                         type="monotone"
                         dataKey={`${modelName}.${metricName}`}
                         name={modelName}
-                        stroke={PRIMARY_COLOR}
+                        stroke={NICE_COLORS[index]}
                         strokeWidth={3}
                     />
                 ))}
@@ -42,9 +42,9 @@ const ModelComparisonLineChart = ({ data, metricName, modelNames }) => {
                         type="monotone"
                         dataKey={`${modelName}.${metricName} Cumsum`}
                         name={`${modelName} Cumulative`}
-                        stroke={TRIETARY_COLOR}
-                        fill={TRIETARY_COLOR}
-                        opacity={0.2}
+                        stroke={NICE_COLORS[index]}
+                        fill={NICE_COLORS[index]}
+                        opacity={0.3}
                     />
                 ))}
             </ComposedChart>

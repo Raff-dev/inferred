@@ -1,24 +1,64 @@
+import {
+    Paper,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+} from "@mui/material";
 import React from "react";
+import { darkTheme } from "../themes.jsx"; // Import the dark theme
 
 const ScalarMetrics = ({ scalarMetricsData }) => {
+    const modelNames = Object.keys(scalarMetricsData);
+    const metrics = Object.keys(scalarMetricsData[modelNames[0]]);
+
     return (
-        <div>
-            {Object.keys(scalarMetricsData).map((model, index) => (
-                <div key={index}>
-                    <h2>{model}</h2>
-                    <ul>
-                        {Object.keys(scalarMetricsData[model]).map(
-                            (metric, metricIndex) => (
-                                <li key={metricIndex}>
-                                    <strong>{metric}:</strong>{" "}
+        <TableContainer
+            component={Paper}
+            style={{ backgroundColor: darkTheme.palette.background.default }}
+        >
+            <Table aria-label="Scalar Metrics Table">
+                <TableHead>
+                    <TableRow>
+                        <TableCell />
+                        {metrics.map((metric) => (
+                            <TableCell
+                                key={metric}
+                                align="center"
+                                style={{ color: darkTheme.palette.text.primary }}
+                            >
+                                {metric}
+                            </TableCell>
+                        ))}
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {modelNames.map((model) => (
+                        <TableRow key={model}>
+                            <TableCell
+                                component="th"
+                                scope="row"
+                                style={{ color: darkTheme.palette.text.primary }}
+                            >
+                                <strong>{model}</strong>
+                            </TableCell>
+                            {metrics.map((metric) => (
+                                <TableCell
+                                    key={metric}
+                                    align="center"
+                                    style={{ color: darkTheme.palette.text.primary }}
+                                >
                                     {scalarMetricsData[model][metric]}
-                                </li>
-                            )
-                        )}
-                    </ul>
-                </div>
-            ))}
-        </div>
+                                </TableCell>
+                            ))}
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+        </TableContainer>
     );
 };
+
 export default ScalarMetrics;

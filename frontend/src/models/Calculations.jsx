@@ -14,12 +14,18 @@ export const calculateScalarMetrics = (seriesErrors) => {
     const directionalAccuracy =
         errors.filter((error) => error > 0).length / errors.length;
 
-    return {
+    let metrics = {
         "Root Mean Squared Error": rootMeanSquaredError,
         "Mean Absolute Error": meanAbsoluteError,
         "Mean Absolute Percentage Error": meanAbsolutePercentageError,
         "Directional Accuracy": directionalAccuracy,
     };
+
+    for (const [metric, value] of Object.entries(metrics)) {
+        metrics[metric] = Math.round(value * 1000) / 1000;
+    }
+
+    return metrics;
 };
 
 export const calculateSeriesErrors = (originalData, prediction) => {
