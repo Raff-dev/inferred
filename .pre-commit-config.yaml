@@ -30,8 +30,12 @@ repos:
     -   id: black
         verbose: true
 
--   repo: https://github.com/pycqa/pylint
-    rev: v3.0.0a6
+-   repo: local
     hooks:
     -   id: pylint
         verbose: true
+        name: pylint
+        entry: pylint -rn -sn
+        language: system
+        types: [python]
+
