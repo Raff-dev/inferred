@@ -17,6 +17,9 @@ sections = ["FUTURE", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
 skip = ["manage.py", "migrations", ".env"]
 src_paths = ["backend", "mock"]
 
+[tool.pylint.MASTER]
+load-plugins = ["pylint_django"]
+
 [tool.pylint.messages_control]
 max-line-length = 88
 variable-rgx = "[a-z0-9_]{1,30}$"
