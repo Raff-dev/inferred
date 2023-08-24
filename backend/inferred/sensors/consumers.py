@@ -1,6 +1,7 @@
 from datetime import datetime
 from queue import Queue
 from threading import Event, Thread
+from typing import Any
 
 import redis
 from channels.generic.websocket import WebsocketConsumer
@@ -10,7 +11,7 @@ SENSORS_CHANNEL_NAME = "sensors"
 
 
 class SensorDataConsumer(WebsocketConsumer):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any):
         super().__init__(*args, **kwargs)
         self.client = None
         self.pubsub = None

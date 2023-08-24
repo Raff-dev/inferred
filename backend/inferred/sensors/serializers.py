@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from inferred.sensors.models import Dimension, SimulationModel, Tick
+from inferred.sensors.models import Dimension, PredictionRead, SimulationModel
 
 
 class DimensionSerializer(serializers.ModelSerializer):
@@ -15,7 +15,9 @@ class SimulationModelSerializer(serializers.ModelSerializer):
         fields = ["name"]
 
 
-class TickSerializer(serializers.ModelSerializer):
+class PredictionReadSerializer(serializers.ModelSerializer):
+    timestamp = serializers.DateTimeField(source="prediction.read.timestamp")
+
     class Meta:
-        model = Tick
+        model = PredictionRead
         fields = ["timestamp", "value"]

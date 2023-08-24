@@ -8,6 +8,21 @@ class Dimension(models.Model):
         return f"{self.name}"
 
 
+class SensorRead(models.Model):
+    timestamp = models.DateTimeField()
+    value = models.DecimalField(max_digits=10, decimal_places=2)
+    dimension = models.ForeignKey(Dimension, on_delete=models.CASCADE)
+
+    def __str__(self) -> str:
+        return f"{self.timestamp} - {self.dimension.name}: {self.value}"
+
+    class Meta:
+        ordering = ["timestamp", "dimension"]
+        indexes = [
+            models.Index(fields=["timestamp", "dimension"]),
+        ]
+
+
 class SimulationModel(models.Model):
     name = models.CharField(max_length=255, unique=True)
 
@@ -17,48 +32,43 @@ class SimulationModel(models.Model):
 
 class Prediction(models.Model):
     simulation_model = models.ForeignKey(SimulationModel, on_delete=models.CASCADE)
-    dimension = models.ForeignKey(Dimension, on_delete=models.CASCADE)
-    start_timestamp = models.DateTimeField()
+    read = models.OneToOneField(SensorRead, on_delete=models.CASCADE)
+    interval = models.IntegerField()
 
     def __str__(self) -> str:
-        return f"{self.dimension.name} - {self.start_timestamp}"
+        return f"{self.simulation_model.name} - {self.read.dimension.name}: {self.read.timestamp} prediction"
 
     class Meta:
-        ordering = ["start_timestamp", "dimension"]
+        ordering = ["simulation_model", "read"]
         constraints = [
             models.UniqueConstraint(
                 "simulation_model",
-                "dimension",
-                "start_timestamp",
+                "read",
                 name="unique_simulation_prediction",
             )
         ]
         indexes = [
-            models.Index(fields=["simulation_model", "dimension"]),
-            models.Index(fields=["start_timestamp"]),
+            models.Index(fields=["read"]),
         ]
 
 
-class Tick(models.Model):
-    """
-    This table would take up vast amounts of space in production.
-    One could limit size of the fields and normalize the data.
-    """
-
-    timestamp = models.DateTimeField()
+class PredictionRead(models.Model):
     value = models.DecimalField(max_digits=10, decimal_places=2)
-    dimension = models.ForeignKey(
-        Dimension, on_delete=models.CASCADE, related_name="ticks"
-    )
-    prediction = models.ForeignKey(
-        Prediction, on_delete=models.CASCADE, null=True, related_name="ticks"
-    )
+    offset = models.IntegerField()
+    prediction = models.ForeignKey(Prediction, on_delete=models.CASCADE)
 
     def __str__(self) -> str:
-        return f"{self.timestamp} - {self.dimension.name}: {self.value}"
+        return f"{self.prediction.simulation_model.name} - {self.prediction.read.dimension.name}: {self.offset}"
 
     class Meta:
-        ordering = ["timestamp", "dimension"]
+        ordering = ["offset", "prediction"]
+        constraints = [
+            models.UniqueConstraint(
+                "prediction",
+                "offset",
+                name="unique_prediction_read",
+            )
+        ]
         indexes = [
-            models.Index(fields=["timestamp", "dimension"]),
+            models.Index(fields=["prediction", "offset"]),
         ]
