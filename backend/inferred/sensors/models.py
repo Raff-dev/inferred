@@ -4,12 +4,15 @@ from django.db import models
 class Dimension(models.Model):
     name = models.CharField(max_length=255, unique=True)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.name}"
 
 
 class SimulationModel(models.Model):
     name = models.CharField(max_length=255, unique=True)
+
+    def __str__(self) -> str:
+        return f"{self.name}"
 
 
 class Prediction(models.Model):
@@ -17,7 +20,7 @@ class Prediction(models.Model):
     dimension = models.ForeignKey(Dimension, on_delete=models.CASCADE)
     start_timestamp = models.DateTimeField()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.dimension.name} - {self.start_timestamp}"
 
     class Meta:
@@ -29,6 +32,10 @@ class Prediction(models.Model):
                 "start_timestamp",
                 name="unique_simulation_prediction",
             )
+        ]
+        indexes = [
+            models.Index(fields=["simulation_model", "dimension"]),
+            models.Index(fields=["start_timestamp"]),
         ]
 
 
@@ -47,7 +54,7 @@ class Tick(models.Model):
         Prediction, on_delete=models.CASCADE, null=True, related_name="ticks"
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.timestamp} - {self.dimension.name}: {self.value}"
 
     class Meta:
