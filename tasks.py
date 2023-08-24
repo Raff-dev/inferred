@@ -6,6 +6,7 @@ CONTAINER_SHORT_NAMES = {
     "mock": "inferred-mock",
     "capture": "inferred-capture",
     "worker": "inferred-worker",
+    "redis": "inferred-redis",
 }
 
 

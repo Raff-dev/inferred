@@ -4,13 +4,22 @@ import os
 import sys
 
 
+# pylint: disable=import-outside-toplevel
 def main():
     """Run administrative tasks."""
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "inferred.core.settings")
+
+    from django.conf import settings
+
+    if settings.DEBUG:
+        if os.environ.get("RUN_MAIN") or os.environ.get("WERKZEUG_RUN_MAIN"):
+            import debugpy
+
+            debugpy.listen(("0.0.0.0", 5678))
+            print("Attached!")
+
     try:
-        from django.core.management import (  # pylint: disable=import-outside-toplevel
-            execute_from_command_line,
-        )
+        from django.core.management import execute_from_command_line
     except ImportError as exc:
         raise ImportError(
             "Couldn't import Django. Are you sure it's installed and "
