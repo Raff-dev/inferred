@@ -19,6 +19,7 @@ src_paths = ["backend", "mock"]
 
 [tool.pylint.MASTER]
 load-plugins = ["pylint_django"]
+django-settings-module = "backend.core.settings"
 
 [tool.pylint.messages_control]
 max-line-length = 88
