@@ -1,19 +1,16 @@
 import json
 from typing import Generator
 
-import redis
-from django.conf import settings
 from django.core.management.base import BaseCommand
 
 from inferred.sensors.consumers import SENSORS_CHANNEL_NAME
 from inferred.sensors.tasks import process_sensors_reads
+from inferred.sensors.utils import create_redis_client
 
 
 def redis_queue(channel_name: str) -> Generator:
-    r = redis.Redis(
-        host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=settings.REDIS_DB
-    )
-    p = r.pubsub()
+    client = create_redis_client()
+    p = client.pubsub()
     p.subscribe(channel_name)
     for message in p.listen():
         if message["type"] != "message":

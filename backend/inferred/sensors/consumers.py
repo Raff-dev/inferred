@@ -3,9 +3,9 @@ from queue import Queue
 from threading import Event, Thread
 from typing import Any
 
-import redis
 from channels.generic.websocket import WebsocketConsumer
-from django.conf import settings
+
+from inferred.sensors.utils import create_redis_client
 
 SENSORS_CHANNEL_NAME = "sensors"
 
@@ -21,9 +21,7 @@ class SensorDataConsumer(WebsocketConsumer):
 
     def connect(self):
         self.accept()
-        self.client = redis.Redis(
-            host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=0
-        )
+        self.client = create_redis_client()
         self.pubsub = self.client.pubsub()
         self.pubsub.subscribe(SENSORS_CHANNEL_NAME)
 
