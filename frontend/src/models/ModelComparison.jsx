@@ -1,14 +1,10 @@
-import { Grid } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
-import React, { useEffect, useState } from "react";
-import DurationPicker from "../controls/DurationPicker";
+import React, { useState } from "react";
 import { calculateErrorMetrics } from "../models/Calculations";
 import { darkTheme } from "../themes";
+import ComparisonSelection from "./ComparisonSelection";
+import Metrics from "./Metrics";
 import ModelComparisonCharts from "./ModelComparisonCharts";
-import ModelSelection from "./ModelSelection";
-import ScalarMetricsRadarChart from "./ScalarMetricsRadarChart";
-import ScalarMetricsTable from "./ScalarMetricsTable";
-import SensorSelect from "./SensorSelect";
 import { parseChartData } from "./utils";
 
 const ModelComparison = () => {
@@ -29,15 +25,7 @@ const ModelComparison = () => {
     const [chartData, setChartData] = useState({});
     const [selectedSensor, setSelectedSensor] = useState("");
 
-    useEffect(() => {
-        console.log("selectedSensor");
-        console.log(selectedSensor);
-        console.log("selectedSensor");
-    }, [selectedSensor]);
-
     const handleConfirm = (date, duration) => {
-        console.log(date, duration);
-        // 2023-08-26T10:27 5
         const metrics = calculateErrorMetrics(
             originalData,
             predictions,
@@ -53,36 +41,16 @@ const ModelComparison = () => {
     const handleModelSelect = (event) => setSelectedModels(event.target.value);
     return (
         <ThemeProvider theme={darkTheme}>
-            <h1>Metrics Comparison</h1>
-            <Grid container alignItems={"center"}>
-                <Grid item xs={12} md={4}>
-                    <DurationPicker onConfirm={handleConfirm} />
-                </Grid>
-                <Grid item xs={12} md={4}>
-                    <ModelSelection
-                        modelNames={modelNames}
-                        selectedModels={selectedModels}
-                        onModelSelect={handleModelSelect}
-                    />
-                </Grid>
-                <Grid item xs={12} md={4}>
-                    <SensorSelect
-                        selectedSensor={selectedSensor}
-                        setSelectedSensor={setSelectedSensor}
-                    />
-                </Grid>
-            </Grid>
-            <Grid container alignItems="center" spacing={8} marginTop={1}>
-                <Grid item xs={12} md={6}>
-                    <ScalarMetricsRadarChart
-                        scalarMetricsData={scalarMetricsData}
-                        modelNames={modelNames}
-                    />
-                </Grid>
-                <Grid item xs={12} md={6}>
-                    <ScalarMetricsTable scalarMetricsData={scalarMetricsData} />
-                </Grid>
-            </Grid>
+            <h1>Model Comparison</h1>
+            <ComparisonSelection
+                modelNames={modelNames}
+                onConfirm={handleConfirm}
+                onModelSelect={handleModelSelect}
+                selectedSensor={selectedSensor}
+                setSelectedSensor={setSelectedSensor}
+                selectedModels={selectedModels}
+            />
+            <Metrics modelNames={modelNames} scalarMetricsData={scalarMetricsData} />
             <ModelComparisonCharts
                 chartData={chartData}
                 errorNames={errorNames}
