@@ -17,7 +17,6 @@ const ModelComparison = () => {
     const [selectedSensor, setSelectedSensor] = useState("");
 
     const handleConfirm = (date, duration) => {
-        console.log(date);
         axios
             .get("http://localhost:8000/api/model_predictions_comparison/", {
                 params: {

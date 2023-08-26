@@ -110,7 +110,6 @@ const ChartView = () => {
                 setSensors(sensors);
                 setSelectedSensor(sensors[0]);
             }
-            console.log(newData);
             setData((prevData) => updateData(prevData, newData));
             setWindowData((prevData) => [
                 ...prevData.slice(-windowSize - LOOKAHEAD),

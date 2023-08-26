@@ -13,8 +13,6 @@ import {
 import { NICE_COLORS } from "../themes";
 
 const ModelComparisonLineChart = ({ data, metricName, modelNames }) => {
-    console.log(data);
-
     return (
         <ResponsiveContainer width="100%" height={300}>
             <ComposedChart data={data}>

@@ -1,18 +1,24 @@
-import {
-    Button,
-    FormControl,
-    Grid,
-    InputLabel,
-    MenuItem,
-    Select,
-    TextField,
-} from "@mui/material";
+import { Button, FormControl, Grid, InputLabel, MenuItem, Select } from "@mui/material";
 import Box from "@mui/material/Box";
-import React from "react";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import dayjs from "dayjs";
+import React, { useState } from "react";
+const VALUES = {
+    60: "1 min",
+    300: "5 min",
+    900: "15 min",
+    1800: "30 min",
+    3600: "1 hour",
+    7200: "2 hours",
+};
 
 const DurationPicker = ({ onConfirm }) => {
-    const [selectedDate, setSelectedDate] = React.useState(new Date());
-    const [selectedDuration, setSelectedDuration] = React.useState(5);
+    const values = Object.keys(VALUES);
+    const defaultDuration = values[values.length - 1];
+    const currentDate = dayjs(Date.now() - defaultDuration * 1000);
+
+    const [selectedDate, setSelectedDate] = useState(currentDate);
+    const [selectedDuration, setSelectedDuration] = useState(defaultDuration);
 
     const handleDateChange = (event) => {
         setSelectedDate(event.target.value);
@@ -23,19 +29,18 @@ const DurationPicker = ({ onConfirm }) => {
     };
 
     const handleConfirm = () => {
-        onConfirm(selectedDate, selectedDuration);
+        const isoDate = selectedDate.toISOString();
+        onConfirm(isoDate, selectedDuration);
     };
 
     return (
         <Box sx={{ minWidth: 120 }} marginTop={3}>
             <Grid container spacing={2} alignItems="center">
                 <Grid item xs={12} md={6}>
-                    <TextField
+                    <DateTimePicker
                         label="Pick a Date & Time"
-                        type="datetime-local"
                         value={selectedDate}
-                        onChange={handleDateChange}
-                        fullWidth
+                        onChange={(newValue) => setSelectedDate(newValue)}
                     />
                 </Grid>
                 <Grid item xs={12} md={3}>
@@ -45,12 +50,11 @@ const DurationPicker = ({ onConfirm }) => {
                             value={selectedDuration}
                             onChange={handleDurationChange}
                         >
-                            <MenuItem value={1 * 60}>1 min</MenuItem>
-                            <MenuItem value={5 * 60}>5 min</MenuItem>
-                            <MenuItem value={15 * 60}>15 min</MenuItem>
-                            <MenuItem value={30 * 60}>30 min</MenuItem>
-                            <MenuItem value={60 * 60}>1 hour</MenuItem>
-                            <MenuItem value={120 * 60}>2 hours</MenuItem>
+                            {Object.entries(VALUES).map(([value, label]) => (
+                                <MenuItem key={value} value={value}>
+                                    {label}
+                                </MenuItem>
+                            ))}
                         </Select>
                     </FormControl>
                 </Grid>
