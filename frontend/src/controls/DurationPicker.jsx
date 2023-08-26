@@ -45,12 +45,12 @@ const DurationPicker = ({ onConfirm }) => {
                             value={selectedDuration}
                             onChange={handleDurationChange}
                         >
-                            <MenuItem value={1}>1 min</MenuItem>
-                            <MenuItem value={5}>5 min</MenuItem>
-                            <MenuItem value={15}>15 min</MenuItem>
-                            <MenuItem value={30}>30 min</MenuItem>
-                            <MenuItem value={60}>1 hour</MenuItem>
-                            <MenuItem value={120}>2 hours</MenuItem>
+                            <MenuItem value={1 * 60}>1 min</MenuItem>
+                            <MenuItem value={5 * 60}>5 min</MenuItem>
+                            <MenuItem value={15 * 60}>15 min</MenuItem>
+                            <MenuItem value={30 * 60}>30 min</MenuItem>
+                            <MenuItem value={60 * 60}>1 hour</MenuItem>
+                            <MenuItem value={120 * 60}>2 hours</MenuItem>
                         </Select>
                     </FormControl>
                 </Grid>

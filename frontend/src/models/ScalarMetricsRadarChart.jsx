@@ -10,10 +10,10 @@ import {
 } from "recharts";
 import { NICE_COLORS } from "../themes";
 
-const parseData = (scalarMetricsData) => {
-    if (scalarMetricsData.length === 0) return [];
-
-    const modelNames = Object.keys(scalarMetricsData);
+const parseData = (scalarMetricsData, modelNames) => {
+    if (scalarMetricsData.length === 0 || modelNames.length === 0) return [];
+    const modelData = scalarMetricsData[modelNames[0]];
+    if (modelData === undefined) return [];
     const metrics = Object.keys(scalarMetricsData[modelNames[0]]);
 
     // Calculate the maximum value for each metric to use as fullMark
@@ -37,9 +37,9 @@ const parseData = (scalarMetricsData) => {
 };
 
 const ScalarMetricsRadarChart = ({ scalarMetricsData, modelNames }) => {
-    const parsedData = parseData(scalarMetricsData);
+    const parsedData = parseData(scalarMetricsData, modelNames);
 
-    if (parsedData.length === 0) return <div>No data</div>;
+    if (parsedData.length === 0) return <div>No data.</div>;
 
     return (
         <ResponsiveContainer width="100%" height={400}>

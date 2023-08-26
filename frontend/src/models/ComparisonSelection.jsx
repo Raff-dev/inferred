@@ -19,16 +19,16 @@ const ComparisonSelection = ({
                 <DurationPicker onConfirm={onConfirm} />
             </Grid>
             <Grid item xs={12} md={4}>
+                <SensorSelect
+                    selectedSensor={selectedSensor}
+                    setSelectedSensor={setSelectedSensor}
+                />
+            </Grid>
+            <Grid item xs={12} md={4}>
                 <ModelSelection
                     modelNames={modelNames}
                     selectedModels={selectedModels}
                     onModelSelect={onModelSelect}
-                />
-            </Grid>
-            <Grid item xs={12} md={4}>
-                <SensorSelect
-                    selectedSensor={selectedSensor}
-                    setSelectedSensor={setSelectedSensor}
                 />
             </Grid>
         </Grid>

@@ -18,7 +18,7 @@ const ModelSelection = ({ modelNames, selectedModels, onModelSelect }) => {
                 sx={{ width: "400px" }}
                 multiple
                 value={selectedModels}
-                onChange={handleModelChange} // Use the custom handler
+                onChange={handleModelChange}
                 renderValue={(selected) => (
                     <div>
                         {selected.map((model) => (
