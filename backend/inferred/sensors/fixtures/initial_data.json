@@ -1,0 +1,100 @@
+[
+    {
+        "model": "sensors.dimension",
+        "pk": 1,
+        "fields": {
+            "name": "sensor_0"
+        }
+    },
+    {
+        "model": "sensors.dimension",
+        "pk": 2,
+        "fields": {
+            "name": "sensor_1"
+        }
+    },
+    {
+        "model": "sensors.dimension",
+        "pk": 3,
+        "fields": {
+            "name": "sensor_2"
+        }
+    },
+    {
+        "model": "sensors.dimension",
+        "pk": 4,
+        "fields": {
+            "name": "sensor_3"
+        }
+    },
+    {
+        "model": "sensors.dimension",
+        "pk": 5,
+        "fields": {
+            "name": "sensor_4"
+        }
+    },
+    {
+        "model": "sensors.dimension",
+        "pk": 6,
+        "fields": {
+            "name": "sensor_5"
+        }
+    },
+    {
+        "model": "sensors.dimension",
+        "pk": 7,
+        "fields": {
+            "name": "sensor_6"
+        }
+    },
+    {
+        "model": "sensors.dimension",
+        "pk": 8,
+        "fields": {
+            "name": "sensor_7"
+        }
+    },
+    {
+        "model": "sensors.dimension",
+        "pk": 9,
+        "fields": {
+            "name": "sensor_8"
+        }
+    },
+    {
+        "model": "sensors.dimension",
+        "pk": 10,
+        "fields": {
+            "name": "sensor_9"
+        }
+    },
+    {
+        "model": "sensors.dimension",
+        "pk": 11,
+        "fields": {
+            "name": "sensor_10"
+        }
+    },
+    {
+        "model": "sensors.simulationmodel",
+        "pk": 1,
+        "fields": {
+            "name": "naive"
+        }
+    },
+    {
+        "model": "sensors.simulationmodel",
+        "pk": 2,
+        "fields": {
+            "name": "average"
+        }
+    },
+    {
+        "model": "sensors.simulationmodel",
+        "pk": 3,
+        "fields": {
+            "name": "random"
+        }
+    }
+]

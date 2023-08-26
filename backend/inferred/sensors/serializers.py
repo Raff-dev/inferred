@@ -21,3 +21,11 @@ class PredictionReadSerializer(serializers.ModelSerializer):
     class Meta:
         model = PredictionRead
         fields = ["timestamp", "value"]
+
+
+class ReadSerializer(serializers.ModelSerializer):
+    timestamp = serializers.DateTimeField(source="timestamp")
+
+    class Meta:
+        model = PredictionRead
+        fields = ["timestamp", "value"]

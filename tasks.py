@@ -22,8 +22,8 @@ def up(ctx: Context):
 
 
 @task
-def down(ctx: Context):
-    ctx.run("docker compose down --remove-orphans", pty=True)
+def down(ctx: Context, v: bool = False):
+    ctx.run(f"docker compose down --remove-orphans {'-v' * v}", pty=True)
 
 
 @task
@@ -57,7 +57,5 @@ def build(ctx: Context):
 
 
 @task
-def flush(ctx: Context, remake: bool = False):
-    ctx.run("docker exec -it inferred-backend bash flush.sh", pty=True)
-    if remake:
-        migrate(ctx, make=True, rm=False)
+def flush(ctx: Context):
+    ctx.run("docker compose run --rm backend bash flush.sh", pty=True)
