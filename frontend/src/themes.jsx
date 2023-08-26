@@ -4,6 +4,15 @@ export const darkTheme = createTheme({
     palette: {
         mode: "dark", // Set the theme mode to dark
     },
+    components: {
+        MuiSelect: {
+            defaultProps: {
+                inputProps: {
+                    MenuProps: { disableScrollLock: true },
+                },
+            },
+        },
+    },
 });
 
 export const PRIMARY_COLOR = "#3164b5c8";

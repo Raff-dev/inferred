@@ -32,6 +32,8 @@ const ModelComparisonLineChart = ({ data, metricName, modelNames }) => {
                         stroke={NICE_COLORS[index]}
                         strokeWidth={3}
                         dot={false}
+                        animationDuration={0}
+                        animationBegin={0}
                     />
                 ))}
                 {modelNames.map((modelName, index) => (
@@ -44,6 +46,8 @@ const ModelComparisonLineChart = ({ data, metricName, modelNames }) => {
                         stroke={NICE_COLORS[index]}
                         fill={NICE_COLORS[index]}
                         opacity={0.3}
+                        animationDuration={0}
+                        animationBegin={0}
                     />
                 ))}
             </ComposedChart>
