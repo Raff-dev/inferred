@@ -31,6 +31,7 @@ const ModelComparisonLineChart = ({ data, metricName, modelNames }) => {
                         name={modelName}
                         stroke={NICE_COLORS[index]}
                         strokeWidth={3}
+                        dot={false}
                     />
                 ))}
                 {modelNames.map((modelName, index) => (
