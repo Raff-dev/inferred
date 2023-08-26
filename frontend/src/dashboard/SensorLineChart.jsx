@@ -8,8 +8,8 @@ import {
     XAxis,
     YAxis,
 } from "recharts";
-import { parseDate } from "../Utils";
 import { TRIETARY_COLOR } from "../themes";
+import { parseDate } from "../utils/utils";
 
 export const SensorLineChart = ({ data, sensorName }) => {
     return (

@@ -11,6 +11,8 @@ import {
 import { NICE_COLORS } from "../themes";
 
 const parseData = (scalarMetricsData) => {
+    if (scalarMetricsData.length === 0) return [];
+
     const modelNames = Object.keys(scalarMetricsData);
     const metrics = Object.keys(scalarMetricsData[modelNames[0]]);
 
@@ -36,9 +38,9 @@ const parseData = (scalarMetricsData) => {
 
 const ScalarMetricsRadarChart = ({ scalarMetricsData, modelNames }) => {
     const parsedData = parseData(scalarMetricsData);
-    console.log("parsedData");
-    console.log(parsedData);
-    console.log("parsedData");
+
+    if (parsedData.length === 0) return <div>No data</div>;
+
     return (
         <ResponsiveContainer width="100%" height={400}>
             <RadarChart cx="50%" cy="50%" outerRadius="80%" data={parsedData}>

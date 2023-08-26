@@ -12,7 +12,11 @@ import React from "react";
 
 const ScalarMetricsTable = ({ scalarMetricsData }) => {
     const modelNames = Object.keys(scalarMetricsData);
-    const metrics = Object.keys(scalarMetricsData[modelNames[0]]);
+    let metrics = [];
+
+    if (modelNames.length) {
+        metrics = Object.keys(scalarMetricsData[modelNames[0]]);
+    }
 
     return (
         <Box height={400} overflow="auto">

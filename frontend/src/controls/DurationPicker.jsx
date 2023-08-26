@@ -8,11 +8,11 @@ import {
     TextField,
 } from "@mui/material";
 import Box from "@mui/material/Box";
-import React, { useState } from "react";
+import React from "react";
 
-const DurationPicker = () => {
-    const [selectedDate, setSelectedDate] = useState(new Date());
-    const [selectedDuration, setSelectedDuration] = useState(5);
+const DurationPicker = ({ onConfirm }) => {
+    const [selectedDate, setSelectedDate] = React.useState(new Date());
+    const [selectedDuration, setSelectedDuration] = React.useState(5);
 
     const handleDateChange = (event) => {
         setSelectedDate(event.target.value);
@@ -23,9 +23,7 @@ const DurationPicker = () => {
     };
 
     const handleConfirm = () => {
-        // Handle the confirmed date and duration here
-        console.log("Selected Date:", selectedDate);
-        console.log("Selected Duration:", selectedDuration);
+        onConfirm(selectedDate, selectedDuration);
     };
 
     return (
