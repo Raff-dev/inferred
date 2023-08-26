@@ -71,7 +71,6 @@ class SensorPredictionsViewSet(viewsets.ViewSet):
             name__in=params.sim_model_names
         )
         dimension = get_object_or_404(Dimension, name=params.dim_name)
-        params.start_timestamp = aware_timestamp(params.start_timestamp)
         delta_time = datetime.timedelta(seconds=params.duration)
 
         reads = (
@@ -110,7 +109,8 @@ class SensorPredictionsViewSet(viewsets.ViewSet):
 
 class ComparisonQueryParams:
     def __init__(self, request: Request):
+        start_timestamp = request.query_params.get("start_timestamp")
         self.sim_model_names = request.query_params.getlist("simulation_models[]", [])
+        self.start_timestamp = aware_timestamp(start_timestamp)
         self.dim_name = request.query_params.get("dimension")
-        self.start_timestamp = request.query_params.get("start_timestamp")
         self.duration = int(request.query_params.get("duration"))
