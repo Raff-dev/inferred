@@ -29,40 +29,7 @@ class SimulationModelViewSet(viewsets.ModelViewSet):
 
 
 class SensorPredictionsViewSet(viewsets.ViewSet):
-    """
-    A viewset that provides predictions for a given sensor and simulation model.
-    """
-
-    @action(detail=False, methods=["GET"])
-    def sensor_predictions(self, request: Request):
-        sim_model_name = request.query_params.get("simulation_model")
-        dim_name = request.query_params.get("dimension")
-        start_timestamp = request.query_params.get("start_timestamp")
-        duration = int(request.query_params.get("duration"))
-
-        simulation_model = get_object_or_404(SimulationModel, name=sim_model_name)
-        dimension = get_object_or_404(Dimension, name=dim_name)
-        start_timestamp = aware_timestamp(start_timestamp)
-        delta_time = datetime.timedelta(seconds=duration)
-
-        reads = (
-            SensorRead.objects.filter(
-                timestamp__gte=start_timestamp,
-                timestamp__lte=start_timestamp + delta_time,
-                dimension=dimension,
-            )
-            .order_by("timestamp")
-            .select_related("prediction")
-        )
-
-        predictions = Prediction.objects.filter(
-            read__in=reads, simulation_model=simulation_model
-        )
-
-        prediction_reads = PredictionRead.objects.filter(
-            prediction__in=predictions, offset=0
-        ).values("prediction__read__timestamp", "value")
-        return Response(prediction_reads)
+    OFFSET = 80
 
     @action(detail=False, methods=["GET"])
     def model_predictions_comparison(self, request: Request):
@@ -71,7 +38,8 @@ class SensorPredictionsViewSet(viewsets.ViewSet):
             name__in=params.sim_model_names
         )
         dimension = get_object_or_404(Dimension, name=params.dim_name)
-        delta_time = datetime.timedelta(seconds=params.duration)
+
+        delta_time = datetime.timedelta(seconds=params.duration + self.OFFSET)
 
         reads = (
             SensorRead.objects.filter(
@@ -84,12 +52,15 @@ class SensorPredictionsViewSet(viewsets.ViewSet):
         )
 
         predictions = Prediction.objects.filter(
-            read__in=reads, simulation_model__in=simulation_models
+            read__in=reads[: len(reads) - self.OFFSET],
+            simulation_model__in=simulation_models,
         )
 
-        read_data = reads.values("timestamp", "value")
+        read_data = reads.values("timestamp", "value")[self.OFFSET :]
         prediction_reads = (
-            PredictionRead.objects.filter(prediction__in=predictions, offset=0)
+            PredictionRead.objects.filter(
+                prediction__in=predictions, offset=self.OFFSET
+            )
             .select_related("prediction")
             .values("value", "prediction__simulation_model__name")
         )

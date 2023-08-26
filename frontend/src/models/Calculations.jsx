@@ -32,8 +32,11 @@ export const calculateSeriesErrors = (originalData, prediction) => {
     const errors = prediction.map((value, index) => value - originalData[index]);
     const absoluteErrors = errors.map((error) => Math.abs(error));
     const squaredErrors = errors.map((error) => error * error);
+    const minOriginal = Math.min(...originalData);
+    const maxOriginal = Math.max(...originalData);
+
     const percentageErrors = errors.map(
-        (error, index) => (error / originalData[index]) * 100
+        (error, index) => (error / (minOriginal || maxOriginal)) * 100
     );
 
     const seriesErrorData = {

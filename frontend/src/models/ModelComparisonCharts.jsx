@@ -30,7 +30,7 @@ const ModelComparisonLineChart = ({ data, metricName, modelNames }) => {
                         dataKey={`${modelName}.${metricName}`}
                         name={modelName}
                         stroke={NICE_COLORS[index]}
-                        strokeWidth={3}
+                        strokeWidth={0.5}
                         dot={false}
                         animationDuration={0}
                         animationBegin={0}

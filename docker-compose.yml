@@ -9,8 +9,7 @@ networks:
   redis: {}
   websocket: {}
 
-x-django:
-  &django
+x-django: &django
   build: ./backend
   networks:
     - default
@@ -58,17 +57,14 @@ services:
     container_name: inferred-capture
     command: python manage.py capture_sensor_data
 
-  redis:
-    &redis
-    container_name: inferred-redis
+  redis: &redis
     image: redis:7-alpine
+    container_name: inferred-redis
     restart: always
     networks:
       - redis
-    ports:
-      - 6379:6379
     healthcheck:
-      test: [ CMD, redis-cli, ping ]
+      test: [CMD, redis-cli, ping]
       interval: 1s
       timeout: 5s
       retries: 30
@@ -92,7 +88,7 @@ services:
     env_file:
       - ./backend/.env
     healthcheck:
-      test: [ CMD-SHELL, pg_isready -U postgres ]
+      test: [CMD-SHELL, pg_isready -U postgres]
       interval: 1s
       timeout: 5s
       retries: 30
