@@ -7,15 +7,12 @@ volumes:
 networks:
   database: {}
   redis: {}
-  websocket: {}
 
 x-django: &django
   build: ./backend
   networks:
-    - default
     - database
     - redis
-    - websocket
   volumes:
     - ./backend:/app
   env_file: ./backend/.env
@@ -31,7 +28,6 @@ services:
     container_name: inferred-mock
     command: python mock.py
     networks:
-      - default
       - redis
     volumes:
       - ./mock:/app
@@ -74,11 +70,9 @@ services:
     container_name: inferred-websocket
     ports:
       - 6380:6379
-    networks:
-      - websocket
 
   postgres:
-    image: postgres
+    image: postgres:15.4
     container_name: inferred-postgres
     restart: always
     networks:
@@ -98,7 +92,6 @@ services:
     container_name: inferred-frontend
     command: npm run dev
     networks:
-      - default
       - redis
     ports:
       - 3000:3000

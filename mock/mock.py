@@ -1,5 +1,4 @@
 import json
-import time
 from datetime import datetime, timedelta
 
 import numpy as np
@@ -39,9 +38,9 @@ def real_time_date(start_time=None):
 
     current_time = start_time
     while True:
-        yield current_time
-        current_time += timedelta(milliseconds=PREDICTION_INTERVAL_MS)
-        time.sleep(PREDICTION_INTERVAL_MS / 1000 / SPEED_FACTOR)
+        if current_time < datetime.now():
+            yield current_time
+            current_time += timedelta(milliseconds=PREDICTION_INTERVAL_MS)
 
 
 def generate_data():
@@ -57,7 +56,7 @@ def generate_data():
             sensor_data[i, s] = sensor(data_seed[i, s], current_timestamp)
             current_timestamp += timedelta(milliseconds=PREDICTION_INTERVAL_MS)
 
-    for current_timestamp in real_time_date(current_timestamp):
+    for current_timestamp in real_time_date(start_timestamp):
         sensors_data = {}
 
         for s, sensor in enumerate(sensors):
