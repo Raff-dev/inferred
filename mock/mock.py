@@ -43,6 +43,88 @@ def real_time_date(start_time=None):
             current_time += timedelta(milliseconds=PREDICTION_INTERVAL_MS)
 
 
+class NoiseModel:
+    name = "noise"
+
+    def predict(
+        self, n: int, sensor_data: np.array, sensor_read: float, data_seed: np.array
+    ):
+        sensor_data[:, n] = np.append(sensor_data[1:, n], sensor_read)
+        data_seed[:, n] = np.append(data_seed[1:, n], np.random.randn(1))
+
+        noise = np.cumsum(np.random.randn(LOOKAHEAD))
+        ratio = np.max(np.abs(sensor_data[:, n])) / np.max(np.abs(noise))
+        prediction = sensor_data[:, n] + NOISE_MAGNITUDE * noise * ratio
+        return prediction.tolist()
+
+
+class NaiveModel:
+    name = "naive"
+
+    def predict(
+        self, n: int, sensor_data: np.array, sensor_read: float, data_seed: np.array
+    ):
+        # pylint: disable=unused-argument
+
+        sensor_data[:, n] = np.append(sensor_data[1:, n], sensor_read)
+        data_seed[:, n] = np.append(data_seed[1:, n], np.random.randn(1))
+
+        predictions = []
+        for _ in range(LOOKAHEAD):
+            prediction = (
+                sensor_data[-3:, n]
+            ).mean()  # Predict next value as mean of previous 3 values
+            predictions.append(prediction)
+            sensor_data[:, n] = np.append(sensor_data[1:, n], prediction)
+
+        return np.array(predictions).tolist()
+
+
+class RandomWalkModel:
+    name = "random_walk"
+
+    def __init__(self):
+        self.prev_value = None
+
+    def predict(
+        self, n: int, sensor_data: np.array, sensor_read: float, data_seed: np.array
+    ):
+        # pylint: disable=unused-argument
+        if self.prev_value is None:
+            self.prev_value = sensor_read
+
+        predictions = []
+        for _ in range(LOOKAHEAD):
+            next_value = self.prev_value + np.random.randn()
+            predictions.append(next_value)
+            self.prev_value = next_value
+
+        return np.array(predictions).tolist()
+
+
+class ExponentialSmoothingModel:
+    name = "exponential_smoothing"
+
+    def __init__(self, alpha: float = 0.1):
+        self.alpha = alpha
+        self.prev_value = None
+
+    def predict(
+        self, n: int, sensor_data: np.array, sensor_read: float, data_seed: np.array
+    ):
+        # pylint: disable=unused-argument
+        if self.prev_value is None:
+            self.prev_value = sensor_read
+
+        predictions = []
+        for _ in range(LOOKAHEAD):
+            next_value = self.alpha * sensor_read + (1 - self.alpha) * self.prev_value
+            predictions.append(next_value)
+            self.prev_value = next_value
+
+        return np.array(predictions).tolist()
+
+
 def generate_data():
     n_sensors = len(sensors)
     data_seed = np.random.randn(LOOKAHEAD, n_sensors)
@@ -51,32 +133,32 @@ def generate_data():
     current_timestamp = start_timestamp
 
     # initialize the data, so we can mock predictions
-    for s, sensor in enumerate(sensors):
+    for n, sensor_fun in enumerate(sensors):
         for i in range(LOOKAHEAD):
-            sensor_data[i, s] = sensor(data_seed[i, s], current_timestamp)
+            sensor_data[i, n] = sensor_fun(data_seed[i, n], current_timestamp)
             current_timestamp += timedelta(milliseconds=PREDICTION_INTERVAL_MS)
 
     for current_timestamp in real_time_date(start_timestamp):
-        sensors_data = {}
+        sensors_data = {"reads": {}, "models": {}}
 
-        for s, sensor in enumerate(sensors):
-            sensor_read = sensor(data_seed[0, s], current_timestamp)
+        for model_class in [
+            NoiseModel,
+            NaiveModel,
+            RandomWalkModel,
+            ExponentialSmoothingModel,
+        ]:
+            model = model_class()
+            sensors_data["models"][model.name] = {}
 
-            if not isinstance(sensor_read, (int, float)):
-                sensor_read = sensor_read.item()
+            for n, sensor_fun in enumerate(sensors):
+                sensor_read = sensor_fun(data_seed[0, n], current_timestamp)
+                if not isinstance(sensor_read, (int, float)):
+                    sensor_read = sensor_read.item()
 
-            sensor_data[:, s] = np.append(sensor_data[1:, s], sensor_read)
-            data_seed[:, s] = np.append(data_seed[1:, s], np.random.randn(1))
-
-            noise = np.cumsum(np.random.randn(LOOKAHEAD))
-            ratio = np.max(np.abs(sensor_data[:, s])) / np.max(np.abs(noise))
-            prediction = sensor_data[:, s] + NOISE_MAGNITUDE * noise * ratio
-
-            name = f"sensor_{s}"
-            sensors_data[name] = {
-                "value": sensor_read,
-                "prediction": prediction.tolist(),
-            }
+                prediction = model.predict(n, sensor_data, sensor_read, data_seed)
+                sensor_name = f"sensor_{n}"
+                sensors_data["reads"][sensor_name] = sensor_read
+                sensors_data["models"][model.name][sensor_name] = prediction
 
         yield current_timestamp, sensors_data
 
@@ -85,10 +167,9 @@ def main():
     client = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB)
     for current_time, sensors_data in generate_data():
         payload = {
-            "simulation_model": "naive",
             "timestamp": current_time.isoformat(),
-            "prediction_interval": PREDICTION_INTERVAL_MS,
-            "sensors": sensors_data,
+            "reads": sensors_data["reads"],
+            "models": sensors_data["models"],
         }
         print(f"Publishing: {current_time}")
         client.publish(CHANNEL_NAME, json.dumps(payload))
