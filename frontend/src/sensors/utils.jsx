@@ -1,16 +1,19 @@
-import { PREDICTION_INTERVAL } from "../constants";
+import { LOOKAHEAD, PREDICTION_INTERVAL } from "../constants";
 import { PRIMARY_COLOR, SECONDARY_COLOR } from "../themes";
 
-export const getTimestamps = (start, count) => {
-    const timestamps = [];
+export const getFutureTimestamps = (timestamps) => {
+    if (!timestamps.length) return [];
+    const start = timestamps[timestamps.length - 1];
+
+    const futureTimestamps = [];
     let currentTimestamp = new Date(start).getTime();
 
-    for (let i = 0; i < count; i++) {
-        timestamps.push(new Date(currentTimestamp).toISOString());
+    for (let i = 0; i < LOOKAHEAD; i++) {
+        futureTimestamps.push(new Date(currentTimestamp).toISOString());
         currentTimestamp += PREDICTION_INTERVAL;
     }
 
-    return timestamps;
+    return futureTimestamps;
 };
 
 export const legendPayload = [

@@ -29,7 +29,7 @@ const ModelComparisonLineChart = ({ data, metricName, modelNames }) => {
                         type="monotone"
                         dataKey={`${modelName}.${metricName}`}
                         name={modelName}
-                        stroke={NICE_COLORS[index]}
+                        stroke={NICE_COLORS[index % NICE_COLORS.length]}
                         strokeWidth={0.5}
                         dot={false}
                         animationDuration={0}
@@ -43,8 +43,8 @@ const ModelComparisonLineChart = ({ data, metricName, modelNames }) => {
                         type="monotone"
                         dataKey={`${modelName}.${metricName} Cumsum`}
                         name={`${modelName} Cumulative`}
-                        stroke={NICE_COLORS[index]}
-                        fill={NICE_COLORS[index]}
+                        stroke={NICE_COLORS[index % NICE_COLORS.length]}
+                        fill={NICE_COLORS[index % NICE_COLORS.length]}
                         opacity={0.3}
                         animationDuration={0}
                         animationBegin={0}
