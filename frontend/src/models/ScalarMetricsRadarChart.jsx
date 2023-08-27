@@ -52,8 +52,8 @@ const ScalarMetricsRadarChart = ({ scalarMetricsData, modelNames }) => {
                         key={model}
                         name={model}
                         dataKey={model}
-                        stroke={NICE_COLORS[index]}
-                        fill={NICE_COLORS[index]}
+                        stroke={NICE_COLORS[index % NICE_COLORS.length]}
+                        fill={NICE_COLORS[index % NICE_COLORS.length]}
                         fillOpacity={0.3}
                     />
                 ))}

@@ -31,7 +31,7 @@ const ChartView = () => {
                 setSelectedSensor(sensors[0]);
             }
 
-            setModels((prevModels) => [...prevModels, newData.models]);
+            setModels(newData.models);
             setReads((prevReads) => [...prevReads, newData.reads]);
             setTimestamps((prevTimestamps) => [
                 ...prevTimestamps,
