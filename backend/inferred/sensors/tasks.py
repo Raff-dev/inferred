@@ -17,52 +17,60 @@ def process_sensors_reads(data):
     {
         "timestamp": "2021-09-01T00:00:00Z",
         "prediction_interval": 1000, # milliseconds
-        "sensors": {
-            "sensor_0": {
-                "value" 0.5,
-                "prediction": [0.5, 0.5, ...]
-            }
-            "sensor_1": {
-                "value" 0.5,
-                "prediction": [0.5, 0.5, ...]
-            }
+        "reads": [],
+        "models": {
+            "model A": {
+                "sensor_0": [0.5, 0.5, ...],
+                "sensor_1": [0.5, 0.5, ...],
+                ...
+            },
             ...
         },
     }
     """
     timestamp_str = data["timestamp"]
-    sensors = data["sensors"]
-    prediction_interval = data["prediction_interval"]
-    simulation_model_name = data["simulation_model"]
-
+    models = data["models"]
     timestamp = aware_timestamp(timestamp_str)
-    simulation_model = SimulationModel.objects.get(name=simulation_model_name)
+    sensor_names = data["reads"].keys()
 
-    prediction_reads = []
-    for sensor_name, sensor_data in sensors.items():
-        sensor_value = sensor_data["value"]
-        prediction_values = sensor_data["prediction"]
+    dimensions = {
+        dimension.name: dimension
+        for dimension in Dimension.objects.filter(name__in=sensor_names)
+    }
 
-        dimension = Dimension.objects.get(name=sensor_name)
-        read = SensorRead.objects.create(
+    reads = {}
+    for sensor_name, value in data["reads"].items():
+        dimension = dimensions[sensor_name]
+        reads[sensor_name] = SensorRead.objects.create(
             timestamp=timestamp,
-            value=sensor_value,
+            value=value,
             dimension=dimension,
         )
 
-        prediction = Prediction.objects.create(
-            simulation_model=simulation_model,
-            read=read,
-            interval=prediction_interval,
-        )
+    prediction_reads = []
+    model_names = models.keys()
+    simulation_models = {
+        simulation_model.name: simulation_model
+        for simulation_model in SimulationModel.objects.filter(name__in=model_names)
+    }
 
-        for index, prediction_value in enumerate(prediction_values):
-            prediction_reads.append(
-                PredictionRead(
-                    value=prediction_value,
-                    prediction=prediction,
-                    offset=index,
-                )
+    for model_name, sensors in models.items():
+        simulation_model = simulation_models[model_name]
+
+        for sensor_name, sensor_data in sensors.items():
+            read = reads[sensor_name]
+            prediction = Prediction.objects.create(
+                simulation_model=simulation_model,
+                read=read,
             )
+
+            for index, prediction_value in enumerate(sensor_data):
+                prediction_reads.append(
+                    PredictionRead(
+                        value=prediction_value,
+                        prediction=prediction,
+                        offset=index,
+                    )
+                )
 
     PredictionRead.objects.bulk_create(prediction_reads)
