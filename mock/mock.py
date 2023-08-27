@@ -95,7 +95,7 @@ class RandomWalkModel:
 
         predictions = []
         for _ in range(LOOKAHEAD):
-            next_value = self.prev_value + np.random.randn()
+            next_value = self.prev_value + np.random.randn() / 10
             predictions.append(next_value)
             self.prev_value = next_value
 
