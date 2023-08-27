@@ -1,4 +1,11 @@
-import { Button, FormControl, Grid, InputLabel, MenuItem, Select } from "@mui/material";
+import {
+    Button,
+    FormControl,
+    Grid,
+    InputLabel,
+    MenuItem,
+    Select,
+} from "@mui/material";
 import Box from "@mui/material/Box";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import dayjs from "dayjs";
@@ -19,10 +26,6 @@ const DurationPicker = ({ onConfirm }) => {
 
     const [selectedDate, setSelectedDate] = useState(currentDate);
     const [selectedDuration, setSelectedDuration] = useState(defaultDuration);
-
-    const handleDateChange = (event) => {
-        setSelectedDate(event.target.value);
-    };
 
     const handleDurationChange = (event) => {
         setSelectedDuration(event.target.value);
@@ -59,7 +62,11 @@ const DurationPicker = ({ onConfirm }) => {
                     </FormControl>
                 </Grid>
                 <Grid item xs={12} md={3}>
-                    <Button variant="contained" onClick={handleConfirm} fullWidth>
+                    <Button
+                        variant="contained"
+                        onClick={handleConfirm}
+                        fullWidth
+                    >
                         Confirm
                     </Button>
                 </Grid>
