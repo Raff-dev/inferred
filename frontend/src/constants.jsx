@@ -6,6 +6,7 @@ export const DATA_WINDOW_SIZE_DEFAULT = MINUTE;
 export const DATA_WINDOW_SIZE_MAX = 60 * MINUTE;
 export const DATA_WINDOW_STEP = MINUTE;
 export const LOOKAHEAD = 100;
+export const PREDICTION_INTERVAL = 1000;
 
 export const WEB_SOCKET_URL = "ws://localhost:8000/ws/sensors/";
 export const API_LOGIN_URL = "http://localhost:8000/api-token-auth/";
