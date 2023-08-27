@@ -29,7 +29,7 @@ class SimulationModelViewSet(viewsets.ModelViewSet):
 
 
 class SensorPredictionsViewSet(viewsets.ViewSet):
-    OFFSET = 80
+    OFFSET = 1
 
     @action(detail=False, methods=["GET"])
     def model_predictions_comparison(self, request: Request):
@@ -40,27 +40,24 @@ class SensorPredictionsViewSet(viewsets.ViewSet):
         dimension = get_object_or_404(Dimension, name=params.dim_name)
 
         delta_time = datetime.timedelta(seconds=params.duration + self.OFFSET)
+        reads = SensorRead.objects.filter(
+            timestamp__gte=params.start_timestamp,
+            timestamp__lte=params.start_timestamp + delta_time,
+            dimension=dimension,
+        ).order_by("timestamp")
 
-        reads = (
-            SensorRead.objects.filter(
-                timestamp__gte=params.start_timestamp,
-                timestamp__lte=params.start_timestamp + delta_time,
-                dimension=dimension,
-            )
-            .order_by("timestamp")
-            .select_related("prediction")
-        )
+        if not reads.exists():
+            return Response({"reads": [], "timestamps": [], "models": {}})
 
+        offset = min(self.OFFSET, len(reads) - 1)
         predictions = Prediction.objects.filter(
-            read__in=reads[: len(reads) - self.OFFSET],
+            read__in=reads[: len(reads) - offset],
             simulation_model__in=simulation_models,
         )
 
-        read_data = reads.values("timestamp", "value")[self.OFFSET :]
+        read_data = reads.values("timestamp", "value")[offset:]
         prediction_reads = (
-            PredictionRead.objects.filter(
-                prediction__in=predictions, offset=self.OFFSET
-            )
+            PredictionRead.objects.filter(prediction__in=predictions, offset=offset)
             .select_related("prediction")
             .values("value", "prediction__simulation_model__name")
         )

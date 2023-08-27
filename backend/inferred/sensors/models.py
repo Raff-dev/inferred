@@ -25,6 +25,7 @@ class SensorRead(models.Model):
 
 class SimulationModel(models.Model):
     name = models.CharField(max_length=255, unique=True)
+    interval = models.IntegerField(default=1000)
 
     def __str__(self) -> str:
         return f"{self.name}"
@@ -32,8 +33,7 @@ class SimulationModel(models.Model):
 
 class Prediction(models.Model):
     simulation_model = models.ForeignKey(SimulationModel, on_delete=models.CASCADE)
-    read = models.OneToOneField(SensorRead, on_delete=models.CASCADE)
-    interval = models.IntegerField()
+    read = models.ForeignKey(SensorRead, on_delete=models.CASCADE)
 
     def __str__(self) -> str:
         return f"{self.simulation_model.name} - {self.read.dimension.name}: {self.read.timestamp} prediction"
@@ -42,8 +42,7 @@ class Prediction(models.Model):
         ordering = ["simulation_model", "read"]
         constraints = [
             models.UniqueConstraint(
-                "simulation_model",
-                "read",
+                fields=["simulation_model", "read"],
                 name="unique_simulation_prediction",
             )
         ]
@@ -64,8 +63,7 @@ class PredictionRead(models.Model):
         ordering = ["offset", "prediction"]
         constraints = [
             models.UniqueConstraint(
-                "prediction",
-                "offset",
+                fields=["prediction", "offset"],
                 name="unique_prediction_read",
             )
         ]
