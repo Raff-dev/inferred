@@ -20,7 +20,7 @@ const ModelComparison = () => {
         axios
             .get("http://localhost:8000/api/model_predictions_comparison/", {
                 params: {
-                    simulation_models: ["naive"],
+                    simulation_models: ["naive", "noise", "random_walk", "exponential_smoothing"],
                     dimension: selectedSensor,
                     start_timestamp: date, // You need to define startTimestamp
                     duration: duration, // You need to define duration

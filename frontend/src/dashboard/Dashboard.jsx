@@ -26,11 +26,13 @@ const Dashboard = () => {
             const newData = JSON.parse(event.data);
             const newChunk = { timestamp: newData.timestamp };
 
-            const newSensorNames = Object.keys(newData.sensors).sort();
+            const newSensorNames = Object.keys(newData.reads).sort();
             for (const sensor of newSensorNames) {
-                newChunk[sensor] = newData.sensors[sensor].value;
+                newChunk[sensor] = newData.reads[sensor];
             }
-            setData((prevData) => [...prevData, newChunk].slice(-DATA_WINDOW_SIZE_MAX));
+            setData((prevData) =>
+                [...prevData, newChunk].slice(-DATA_WINDOW_SIZE_MAX)
+            );
             if (sensorNames.length === 0) setSensorNames(newSensorNames);
         };
 
