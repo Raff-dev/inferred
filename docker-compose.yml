@@ -47,6 +47,8 @@ services:
     <<: *django
     container_name: inferred-worker
     command: celery -A inferred.core.celery worker --loglevel=info
+    ports:
+      - 5679:5679
 
   capture:
     <<: *django
