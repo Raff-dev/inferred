@@ -3,13 +3,20 @@
 ## Overview
 Welcome to Inferred, the snazzy dashboard for assessing the adequacy of simulation models in digital twin applications. We've got real-time data, Python, ReactJS, and more! 😎
 
-
 ## Key Features
 
 - **Real-Time Sensor Data**: Incorporating a high-throughput data pipeline capable of ingesting, processing, and displaying real-time sensor data.
 - **Simulation Model Analytics**: Utilizes statistical models and machine learning algorithms to validate and analyze simulation models against real-world data.
 - **Metrics and Comparisons**: Allows for the measurement and juxtaposition of various metrics, providing insights into system performance and reliability.
+  
+---
 
+<p float="left">
+  <img src="https://github.com/Raff-dev/inferred/assets/56380303/92432d3f-9b31-4a16-9e0a-43d94884f845" width="49%" />
+  <img src="https://github.com/Raff-dev/inferred/assets/56380303/87410904-b1cb-41d3-a175-3f40fc4fc014" width="49%" /> 
+</p>
+
+---
 
 Tech Stack 🛠️
 - Backend: [Django](https://www.djangoproject.com/)
