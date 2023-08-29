@@ -24,6 +24,7 @@ const ChartView = () => {
         const ws = new WebSocket(WEB_SOCKET_URL);
         ws.onmessage = (event) => {
             const newData = JSON.parse(event.data);
+            if (newData.past) return;
 
             if (selectedSensor === null) {
                 const sensors = Object.keys(newData.reads);

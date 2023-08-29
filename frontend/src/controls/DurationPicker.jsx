@@ -10,14 +10,6 @@ import Box from "@mui/material/Box";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import dayjs from "dayjs";
 import React, { useState } from "react";
-const VALUES = {
-    60: "1 min",
-    300: "5 min",
-    900: "15 min",
-    1800: "30 min",
-    3600: "1 hour",
-    7200: "2 hours",
-};
 
 const DurationPicker = ({ onConfirm }) => {
     const values = Object.keys(VALUES);
