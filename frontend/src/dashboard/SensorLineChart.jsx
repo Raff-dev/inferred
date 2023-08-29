@@ -1,6 +1,5 @@
 import React from "react";
 import {
-    CartesianGrid,
     Legend,
     Line,
     LineChart,
@@ -9,20 +8,12 @@ import {
     YAxis,
 } from "recharts";
 import { TRIETARY_COLOR } from "../themes";
-import { parseDate } from "../utils/utils";
 
 export const SensorLineChart = ({ data, sensorName }) => {
     return (
         <ResponsiveContainer width="100%" height={300}>
             <LineChart data={data}>
-                <CartesianGrid stroke="#eee2" strokeDasharray="1 1" />
-                <XAxis
-                    dataKey="timestamp"
-                    tickFormatter={parseDate}
-                    type="category"
-                    angle={-20}
-                    allowDuplicatedCategory={false}
-                />
+                <XAxis dataKey="timestamp" angle={-20} />
                 <YAxis datakey="value" />
                 <Legend verticalAlign="top" />
                 <Line
