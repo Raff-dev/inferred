@@ -8,6 +8,7 @@ import {
     DURATION_VALUES,
     WEB_SOCKET_URL,
 } from "../constants";
+import { parseDate } from "../utils/utils";
 
 import SensorGrid from "./SensorGrid";
 
@@ -35,7 +36,8 @@ const Dashboard = () => {
             return;
         }
 
-        const newChunk = { timestamp: newData.timestamp, ...newData.reads };
+        const timestamp = parseDate(newData.timestamp);
+        const newChunk = { timestamp, ...newData.reads };
         setData((prevData) => {
             return prevData.concat(newChunk).slice(-DATA_WINDOW_SIZE_MAX);
         });

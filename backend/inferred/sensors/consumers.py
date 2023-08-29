@@ -24,7 +24,7 @@ def get_grouped_sensor_data() -> tuple[list[dict[str, Any]], list[str]]:
     dimensions = set()
     grouped_data = defaultdict(lambda: defaultdict(dict))
     for item in sensor_data:
-        timestamp = item["timestamp"].isoformat()
+        timestamp = item["timestamp"].strftime("%H:%M:%S:%f")[:-3]
         dimension = item["dimension__name"]
         dimensions.add(dimension)
         value = float(item["value"])
