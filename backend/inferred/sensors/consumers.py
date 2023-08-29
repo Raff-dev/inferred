@@ -8,7 +8,7 @@ from typing import Any, Dict, List
 from channels.generic.websocket import WebsocketConsumer
 
 from inferred.sensors import utils
-from inferred.sensors.models import Dimension, SensorRead
+from inferred.sensors.models import SensorRead
 from inferred.sensors.utils import create_redis_client
 
 SENSORS_CHANNEL_NAME = "sensors"
@@ -21,10 +21,12 @@ def get_grouped_sensor_data() -> List[Dict[str, Any]]:
         "timestamp", "value", "dimension__name"
     )
 
+    dimensions = set()
     grouped_data = defaultdict(lambda: defaultdict(dict))
     for item in sensor_data:
         timestamp = item["timestamp"].isoformat()
         dimension = item["dimension__name"]
+        dimensions.add(dimension)
         value = float(item["value"])
 
         if "timestamp" not in grouped_data[timestamp]:
@@ -32,7 +34,7 @@ def get_grouped_sensor_data() -> List[Dict[str, Any]]:
 
         grouped_data[timestamp][dimension] = value
 
-    return list(grouped_data.values())
+    return list(grouped_data.values()), list(dimensions)
 
 
 class SensorDataConsumer(WebsocketConsumer):
@@ -59,8 +61,7 @@ class SensorDataConsumer(WebsocketConsumer):
         self.client.close()
 
     def listen(self):
-        dimensions = Dimension.objects.all().values_list("name")
-        reads = get_grouped_sensor_data()
+        reads, dimensions = get_grouped_sensor_data()
         past_data = {
             "reads": reads,
             "past": True,
