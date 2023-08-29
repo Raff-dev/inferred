@@ -31,8 +31,7 @@ const Dashboard = () => {
         const newData = JSON.parse(event.data);
         if (newData.past) {
             setData(newData.reads);
-            const sensorNames = Object.keys(newData.reads[0]).sort();
-            setSensorNames(sensorNames);
+            setSensorNames(newData.dimensions);
             return;
         }
 

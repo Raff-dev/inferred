@@ -8,7 +8,7 @@ from typing import Any, Dict, List
 from channels.generic.websocket import WebsocketConsumer
 
 from inferred.sensors import utils
-from inferred.sensors.models import SensorRead
+from inferred.sensors.models import Dimension, SensorRead
 from inferred.sensors.utils import create_redis_client
 
 SENSORS_CHANNEL_NAME = "sensors"
@@ -59,10 +59,12 @@ class SensorDataConsumer(WebsocketConsumer):
         self.client.close()
 
     def listen(self):
+        dimensions = Dimension.objects.all().values_list("name")
         reads = get_grouped_sensor_data()
         past_data = {
             "reads": reads,
             "past": True,
+            "dimensions": dimensions,
         }
         json_str_past_data = json.dumps(past_data)
         self.send(json_str_past_data)
