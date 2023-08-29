@@ -1,13 +1,38 @@
-from datetime import datetime
+import datetime
+import json
+from collections import defaultdict
 from queue import Queue
 from threading import Event, Thread
-from typing import Any
+from typing import Any, Dict, List
 
 from channels.generic.websocket import WebsocketConsumer
 
+from inferred.sensors import utils
+from inferred.sensors.models import SensorRead
 from inferred.sensors.utils import create_redis_client
 
 SENSORS_CHANNEL_NAME = "sensors"
+
+
+def get_grouped_sensor_data() -> List[Dict[str, Any]]:
+    two_hours_ago = utils.aware_now() - datetime.timedelta(hours=2)
+    reads = SensorRead.objects.filter(timestamp__gte=two_hours_ago)
+    sensor_data = reads.order_by("timestamp").values(
+        "timestamp", "value", "dimension__name"
+    )
+
+    grouped_data = defaultdict(lambda: defaultdict(dict))
+    for item in sensor_data:
+        timestamp = item["timestamp"].isoformat()
+        dimension = item["dimension__name"]
+        value = float(item["value"])
+
+        if "timestamp" not in grouped_data[timestamp]:
+            grouped_data[timestamp]["timestamp"] = timestamp
+
+        grouped_data[timestamp][dimension] = value
+
+    return list(grouped_data.values())
 
 
 class SensorDataConsumer(WebsocketConsumer):
@@ -34,6 +59,14 @@ class SensorDataConsumer(WebsocketConsumer):
         self.client.close()
 
     def listen(self):
+        reads = get_grouped_sensor_data()
+        past_data = {
+            "reads": reads,
+            "past": True,
+        }
+        json_str_past_data = json.dumps(past_data)
+        self.send(json_str_past_data)
+
         while self.pubsub.subscribed:
             response = self.pubsub.handle_message(
                 self.pubsub.parse_response(block=True)
@@ -45,7 +78,7 @@ class SensorDataConsumer(WebsocketConsumer):
             if response is None:
                 continue
 
-            print(f"New message: {datetime.now()}")
+            print(f"New message: {datetime.datetime.now()}")
             if response["type"] == "message":
                 data = response["data"].decode("utf-8")
                 self.send(data)
