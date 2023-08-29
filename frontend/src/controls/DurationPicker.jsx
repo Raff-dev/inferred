@@ -10,9 +10,10 @@ import Box from "@mui/material/Box";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import dayjs from "dayjs";
 import React, { useState } from "react";
+import { DURATION_VALUES } from "../constants";
 
 const DurationPicker = ({ onConfirm }) => {
-    const values = Object.keys(VALUES);
+    const values = Object.keys(DURATION_VALUES);
     const defaultDuration = values[values.length - 1];
     const currentDate = dayjs(Date.now() - defaultDuration * 1000);
 
@@ -45,11 +46,13 @@ const DurationPicker = ({ onConfirm }) => {
                             value={selectedDuration}
                             onChange={handleDurationChange}
                         >
-                            {Object.entries(VALUES).map(([value, label]) => (
-                                <MenuItem key={value} value={value}>
-                                    {label}
-                                </MenuItem>
-                            ))}
+                            {Object.entries(DURATION_VALUES).map(
+                                ([value, label]) => (
+                                    <MenuItem key={value} value={value}>
+                                        {label}
+                                    </MenuItem>
+                                )
+                            )}
                         </Select>
                     </FormControl>
                 </Grid>
