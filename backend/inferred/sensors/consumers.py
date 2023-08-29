@@ -3,7 +3,7 @@ import json
 from collections import defaultdict
 from queue import Queue
 from threading import Event, Thread
-from typing import Any, Dict, List
+from typing import Any
 
 from channels.generic.websocket import WebsocketConsumer
 
@@ -14,7 +14,7 @@ from inferred.sensors.utils import create_redis_client
 SENSORS_CHANNEL_NAME = "sensors"
 
 
-def get_grouped_sensor_data() -> List[Dict[str, Any]]:
+def get_grouped_sensor_data() -> tuple[list[dict[str, Any]], list[str]]:
     two_hours_ago = utils.aware_now() - datetime.timedelta(hours=2)
     reads = SensorRead.objects.filter(timestamp__gte=two_hours_ago)
     sensor_data = reads.order_by("timestamp").values(
