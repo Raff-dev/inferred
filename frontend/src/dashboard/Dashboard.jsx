@@ -10,6 +10,8 @@ import {
 } from "../constants";
 import { parseDate } from "../utils/utils";
 
+import { ThemeProvider } from "@mui/material/styles";
+import { darkTheme } from "../themes";
 import SensorGrid from "./SensorGrid";
 
 function valuetext(value) {
@@ -67,7 +69,7 @@ const Dashboard = () => {
     }, []);
 
     return (
-        <div>
+        <ThemeProvider theme={darkTheme}>
             <h1>Sensors Data</h1>
             <Typography id="duration-slider" gutterBottom>
                 Duration
@@ -83,7 +85,7 @@ const Dashboard = () => {
                 max={DATA_WINDOW_SIZE_MAX}
             />
             <SensorGrid data={windowData} sensorNames={sensorNames} />
-        </div>
+        </ThemeProvider>
     );
 };
 

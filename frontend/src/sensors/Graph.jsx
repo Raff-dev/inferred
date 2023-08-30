@@ -1,6 +1,8 @@
+import { ThemeProvider } from "@mui/material/styles";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { WEB_SOCKET_URL } from "../constants";
+import { darkTheme } from "../themes";
 import { SensorChart } from "./SensorChart";
 import { SensorTabs } from "./SensorTabs";
 
@@ -46,7 +48,7 @@ const ChartView = () => {
     }, [selectedSensor]);
 
     return (
-        <div>
+        <ThemeProvider theme={darkTheme}>
             <SensorTabs
                 sensors={sensors}
                 selectedSensor={selectedSensor}
@@ -61,7 +63,7 @@ const ChartView = () => {
                     selectedSensor={selectedSensor}
                 />
             </StyledChartDiv>
-        </div>
+        </ThemeProvider>
     );
 };
 
