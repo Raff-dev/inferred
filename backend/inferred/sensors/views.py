@@ -2,6 +2,7 @@ import datetime
 from collections import defaultdict
 
 from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.request import Request
@@ -14,8 +15,12 @@ from inferred.sensors.models import (
     SensorRead,
     SimulationModel,
 )
-from inferred.sensors.serializers import DimensionSerializer, SimulationModelSerializer
-from inferred.sensors.utils import aware_timestamp
+from inferred.sensors.serializers import (
+    DimensionSerializer,
+    SensorReadSerializer,
+    SimulationModelSerializer,
+)
+from inferred.sensors.utils import ComparisonQueryParams
 
 
 class DimensionViewSet(viewsets.ModelViewSet):
@@ -75,10 +80,11 @@ class SensorPredictionsViewSet(viewsets.ViewSet):
         return Response(result)
 
 
-class ComparisonQueryParams:
-    def __init__(self, request: Request):
-        start_timestamp = request.query_params.get("start_timestamp")
-        self.sim_model_names = request.query_params.getlist("simulation_models[]", [])
-        self.start_timestamp = aware_timestamp(start_timestamp)
-        self.dim_name = request.query_params.get("dimension")
-        self.duration = int(request.query_params.get("duration"))
+class SensorReadViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = SensorRead.objects.all().order_by("timestamp")
+    serializer_class = SensorReadSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = {
+        "timestamp": ["gte", "lte"],
+        "dimension__name": ["exact"],
+    }

@@ -4,6 +4,7 @@ from typing import Any
 import redis
 from django.conf import settings
 from django.utils import timezone
+from rest_framework.request import Request
 
 
 def aware_now() -> datetime:
@@ -24,3 +25,12 @@ def create_redis_client(
     **kwargs: Any
 ) -> redis.Redis:
     return redis.Redis(host=host, port=port, db=db, **kwargs)
+
+
+class ComparisonQueryParams:
+    def __init__(self, request: Request):
+        start_timestamp = request.query_params.get("start_timestamp")
+        self.sim_model_names = request.query_params.getlist("simulation_models[]", [])
+        self.start_timestamp = aware_timestamp(start_timestamp)
+        self.dim_name = request.query_params.get("dimension")
+        self.duration = int(request.query_params.get("duration"))
