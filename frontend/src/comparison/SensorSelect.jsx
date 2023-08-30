@@ -5,14 +5,19 @@ import Select from "@mui/material/Select";
 import React, { useEffect } from "react";
 import { Resource } from "../utils/Resource";
 
-const SensorSelect = ({ loading, payload, selectedSensor, setSelectedSensor }) => {
+const SensorSelect = ({
+    loading,
+    payload,
+    selectedSensor,
+    setSelectedSensor,
+}) => {
     useEffect(() => {
         if (payload.length) setSelectedSensor(payload[0].name);
     }, [loading]);
 
     if (loading) {
         return (
-            <Box sx={{ minWidth: 120 }} marginTop={3}>
+            <Box sx={{ minWidth: 120 }}>
                 <CircularProgress size={20} />
             </Box>
         );
@@ -23,7 +28,7 @@ const SensorSelect = ({ loading, payload, selectedSensor, setSelectedSensor }) =
     };
 
     return (
-        <Box sx={{ minWidth: 120 }} marginTop={3}>
+        <Box sx={{ minWidth: 120 }}>
             <Select value={selectedSensor} onChange={handleSensorChange}>
                 {payload.map((sensor) => (
                     <MenuItem key={sensor.name} value={sensor.name}>

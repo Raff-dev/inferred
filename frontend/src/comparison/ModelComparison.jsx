@@ -1,8 +1,8 @@
 import { ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
 import React, { useState } from "react";
-import { calculateErrorMetrics } from "../models/Calculations";
 import { darkTheme } from "../themes";
+import { calculateErrorMetrics } from "./Calculations";
 import ComparisonSelection from "./ComparisonSelection";
 import Metrics from "./Metrics";
 import ModelComparisonCharts from "./ModelComparisonCharts";
@@ -20,7 +20,12 @@ const ModelComparison = () => {
         axios
             .get("http://localhost:8000/api/model_predictions_comparison/", {
                 params: {
-                    simulation_models: ["naive", "noise", "random_walk", "exponential_smoothing"],
+                    simulation_models: [
+                        "naive",
+                        "noise",
+                        "random_walk",
+                        "exponential_smoothing",
+                    ],
                     dimension: selectedSensor,
                     start_timestamp: date, // You need to define startTimestamp
                     duration: duration, // You need to define duration
@@ -37,8 +42,12 @@ const ModelComparison = () => {
                     data.models,
                     selectedModels
                 );
-                const { errorNames, seriesErrorData, scalarMetricsData } = metrics;
-                const chartData = parseChartData(data.timestamps, seriesErrorData);
+                const { errorNames, seriesErrorData, scalarMetricsData } =
+                    metrics;
+                const chartData = parseChartData(
+                    data.timestamps,
+                    seriesErrorData
+                );
                 setErrorNames(errorNames);
                 setScalarMetricsData(scalarMetricsData);
                 setChartData(chartData);
@@ -60,7 +69,10 @@ const ModelComparison = () => {
                 setSelectedSensor={setSelectedSensor}
                 selectedModels={selectedModels}
             />
-            <Metrics modelNames={modelNames} scalarMetricsData={scalarMetricsData} />
+            <Metrics
+                modelNames={modelNames}
+                scalarMetricsData={scalarMetricsData}
+            />
             <ModelComparisonCharts
                 chartData={chartData}
                 errorNames={errorNames}

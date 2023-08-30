@@ -51,16 +51,8 @@ const Dashboard = () => {
     };
 
     useEffect(() => {
-        if (windowSize > 900) {
-            return;
-        }
-
         setWindowData(data.slice(-windowSize));
-    }, [data]);
-
-    useEffect(() => {
-        setWindowData(data.slice(-windowSize));
-    }, [windowSize]);
+    }, [data, windowSize]);
 
     useEffect(() => {
         const socket = new WebSocket(WEB_SOCKET_URL);

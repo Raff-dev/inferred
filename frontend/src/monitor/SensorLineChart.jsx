@@ -4,6 +4,7 @@ import {
     Line,
     LineChart,
     ResponsiveContainer,
+    Tooltip,
     XAxis,
     YAxis,
 } from "recharts";
@@ -16,6 +17,7 @@ export const SensorLineChart = ({ data, sensorName }) => {
                 <XAxis dataKey="timestamp" angle={-20} />
                 <YAxis datakey="value" />
                 <Legend verticalAlign="top" />
+                <Tooltip />
                 <Line
                     type="monotone"
                     dataKey={sensorName}

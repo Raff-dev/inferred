@@ -30,7 +30,7 @@ const DurationPicker = ({ onConfirm }) => {
     };
 
     return (
-        <Box sx={{ minWidth: 120 }} marginTop={3}>
+        <Box sx={{ minWidth: 120 }}>
             <Grid container spacing={2} alignItems="center">
                 <Grid item xs={12} md={6}>
                     <DateTimePicker

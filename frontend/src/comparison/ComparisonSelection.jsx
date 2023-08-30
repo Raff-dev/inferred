@@ -1,7 +1,7 @@
 // MetricsSelection.js (new component)
 import { Grid } from "@mui/material";
 import React from "react";
-import DurationPicker from "../controls/DurationPicker";
+import DurationPicker from "./DurationPicker";
 import ModelSelection from "./ModelSelection";
 import SensorSelect from "./SensorSelect";
 

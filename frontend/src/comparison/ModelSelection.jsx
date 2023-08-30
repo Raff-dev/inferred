@@ -13,7 +13,7 @@ const ModelSelection = ({ modelNames, selectedModels, onModelSelect }) => {
     };
 
     return (
-        <Box sx={{ minWidth: 120 }} marginTop={3}>
+        <Box sx={{ minWidth: 120 }}>
             <Select
                 sx={{ width: "400px" }}
                 multiple
