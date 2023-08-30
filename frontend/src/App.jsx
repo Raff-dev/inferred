@@ -7,10 +7,11 @@ import {
     Link as RouterLink,
     Routes,
 } from "react-router-dom";
-import Dashboard from "./dashboard/Dashboard";
+import ModelComparison from "./comparison/ModelComparison";
+import History from "./history/History";
 import "./index.css";
-import ModelComparison from "./models/ModelComparison";
-import Graph from "./sensors/Graph";
+import Monitor from "./monitor/Monitor";
+import Graph from "./prediction/Graph";
 
 function App({ onLogout }) {
     return (
@@ -18,13 +19,16 @@ function App({ onLogout }) {
             <AppBar position="static">
                 <Toolbar>
                     <Link component={RouterLink} to="/">
-                        <Button color="inherit">Dashboard</Button>
+                        <Button color="inherit">Monitor</Button>
                     </Link>
-                    <Link component={RouterLink} to="/sensors">
-                        <Button color="inherit">Sensors</Button>
+                    <Link component={RouterLink} to="/history">
+                        <Button color="inherit">History</Button>
                     </Link>
-                    <Link component={RouterLink} to="/models">
-                        <Button color="inherit">Models</Button>
+                    <Link component={RouterLink} to="/prediction">
+                        <Button color="inherit">Prediction</Button>
+                    </Link>
+                    <Link component={RouterLink} to="/comparison">
+                        <Button color="inherit">Comparison</Button>
                     </Link>
                     <Button color="inherit" onClick={onLogout}>
                         Logout
@@ -33,9 +37,10 @@ function App({ onLogout }) {
             </AppBar>
 
             <Routes>
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/sensors" element={<Graph />} />
-                <Route path="/models" element={<ModelComparison />} />
+                <Route path="/" element={<Monitor />} />
+                <Route path="/history" element={<History />} />
+                <Route path="/prediction" element={<Graph />} />
+                <Route path="/comparison" element={<ModelComparison />} />
             </Routes>
         </Router>
     );
