@@ -83,7 +83,7 @@ Need to boss around containers? Invoke's got you:
 - **Bash**: `inv bash <container_name>`
 - **Migrate**: `inv migrate [--make] [--rm]`
 - **Build**: `inv build`
-- **Flush**: `inv flush
+- **Flush**: `inv flush`
 
 ## License 📝
 MIT License, because we're all friends here.
