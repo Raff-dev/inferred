@@ -7,11 +7,11 @@ import {
     Link as RouterLink,
     Routes,
 } from "react-router-dom";
-import ModelComparison from "./comparison/ModelComparison";
-import History from "./history/History";
+import ModelComparisonView from "./comparison/ModelComparisonView";
+import History from "./history/HistoryView";
 import "./index.css";
-import Monitor from "./monitor/Monitor";
-import Graph from "./prediction/Graph";
+import Monitor from "./monitor/MonitorView";
+import Graph from "./prediction/PredictionView";
 
 function App({ onLogout }) {
     return (
@@ -40,7 +40,7 @@ function App({ onLogout }) {
                 <Route path="/" element={<Monitor />} />
                 <Route path="/history" element={<History />} />
                 <Route path="/prediction" element={<Graph />} />
-                <Route path="/comparison" element={<ModelComparison />} />
+                <Route path="/comparison" element={<ModelComparisonView />} />
             </Routes>
         </Router>
     );

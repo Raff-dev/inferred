@@ -17,7 +17,7 @@ import {
 import SensorSelection from "../comparison/SensorSelect";
 import { PRIMARY_COLOR, darkTheme } from "../themes";
 
-const HistoryComponent = () => {
+const HistoryView = () => {
     const [data, setData] = useState([]);
     const [fromDate, setFromDate] = useState(null);
     const [toDate, setToDate] = useState(null);
@@ -99,4 +99,4 @@ const HistoryComponent = () => {
     );
 };
 
-export default HistoryComponent;
+export default HistoryView;

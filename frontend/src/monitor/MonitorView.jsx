@@ -23,7 +23,7 @@ const marks = Object.entries(DURATION_VALUES).map(([value, label]) => ({
     label,
 }));
 
-const Dashboard = () => {
+const MonitorView = () => {
     const [data, setData] = useState([]);
     const [sensorNames, setSensorNames] = useState([]);
     const [windowData, setWindowData] = useState([]);
@@ -33,6 +33,10 @@ const Dashboard = () => {
     const onMessage = (event) => {
         const newData = JSON.parse(event.data);
         if (newData.past) {
+            for (const read of newData.reads) {
+                read.timestamp = parseDate(read.timestamp);
+            }
+
             setData(newData.reads);
             setSensorNames(newData.dimensions);
             return;
@@ -81,4 +85,4 @@ const Dashboard = () => {
     );
 };
 
-export default Dashboard;
+export default MonitorView;

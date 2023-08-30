@@ -40,9 +40,9 @@ export const SensorChart = ({ reads, models, timestamps, selectedSensor }) => {
             <CartesianGrid stroke="#eee2" strokeDasharray="1 1" />
             <XAxis
                 dataKey="timestamp"
-                tickFormatter={parseDate}
                 angle={-20}
                 type="category"
+                tickFormatter={parseDate}
                 allowDuplicatedCategory={false}
             />
             <YAxis />

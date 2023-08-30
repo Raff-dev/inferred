@@ -8,7 +8,7 @@ import Metrics from "./Metrics";
 import ModelComparisonCharts from "./ModelComparisonCharts";
 import { parseChartData } from "./utils";
 
-const ModelComparison = () => {
+const ModelComparisonView = () => {
     const [modelNames, setModelNames] = useState([]);
     const [selectedModels, setSelectedModels] = useState([]);
     const [errorNames, setErrorNames] = useState([]);
@@ -82,4 +82,4 @@ const ModelComparison = () => {
     );
 };
 
-export default ModelComparison;
+export default ModelComparisonView;

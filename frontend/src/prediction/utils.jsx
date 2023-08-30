@@ -3,8 +3,8 @@ import { PRIMARY_COLOR, SECONDARY_COLOR } from "../themes";
 
 export const getFutureTimestamps = (timestamps) => {
     if (!timestamps.length) return [];
-    const start = timestamps[timestamps.length - 1];
 
+    const start = timestamps[timestamps.length - 1];
     const futureTimestamps = [];
     let currentTimestamp = new Date(start).getTime();
 
