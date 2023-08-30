@@ -28,7 +28,6 @@ const MonitorView = () => {
     const [sensorNames, setSensorNames] = useState([]);
     const [windowData, setWindowData] = useState([]);
     const [windowSize, setWindowSize] = useState(DATA_WINDOW_SIZE_DEFAULT);
-    const [refreshEvery, setRefreshEvery] = useState(0);
 
     const onMessage = (event) => {
         const newData = JSON.parse(event.data);

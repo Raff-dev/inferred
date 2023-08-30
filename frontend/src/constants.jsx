@@ -15,6 +15,7 @@ export const API_LOGIN_URL = "http://localhost:8000/api-token-auth/";
 export const DURATION_VALUES = {
     60: "1 min",
     300: "5 min",
+    600: "10 min",
     900: "15 min",
     1800: "30 min",
     3600: "1 hour",
