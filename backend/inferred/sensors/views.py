@@ -8,6 +8,7 @@ from rest_framework.decorators import action
 from rest_framework.request import Request
 from rest_framework.response import Response
 
+from inferred.sensors.granulation import Granulation
 from inferred.sensors.models import (
     Dimension,
     Prediction,
@@ -88,3 +89,20 @@ class SensorReadViewSet(viewsets.ReadOnlyModelViewSet):
         "timestamp": ["gte", "lte"],
         "dimension__name": ["exact"],
     }
+
+    def list(self, request, *args, **kwargs):
+        granulation_method = request.query_params.get("granulation_method")
+        response = super().list(request, *args, **kwargs)
+
+        if granulation_method:
+            extra_param = request.query_params.get("extra_param")
+            granulation = Granulation(response.data, granulation_method, extra_param)
+            response.data = granulation.granulated_data
+
+        return response
+
+    @action(detail=False, methods=["GET"])
+    def granulation_methods(self, request: Request):
+        granulation = Granulation([], "")
+        methods = granulation.methods
+        return Response(methods)

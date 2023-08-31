@@ -28,6 +28,10 @@ def create_redis_client(
 
 
 class ComparisonQueryParams:
+    """
+    Helper class to parse and validate query parameters for the comparison endpoint.
+    """
+
     def __init__(self, request: Request):
         start_timestamp = request.query_params.get("start_timestamp")
         self.sim_model_names = request.query_params.getlist("simulation_models[]", [])
