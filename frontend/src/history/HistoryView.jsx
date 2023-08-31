@@ -27,7 +27,7 @@ const HistoryView = () => {
 
     useEffect(() => {
         const someTimeAgo = new Date();
-        someTimeAgo.setMinutes(someTimeAgo.getMinutes() - 60);
+        someTimeAgo.setMinutes(someTimeAgo.getMinutes() - 60 * 12);
         setFromDate(dayjs(someTimeAgo));
         setToDate(dayjs(new Date()));
     }, []);

@@ -108,5 +108,5 @@ class SensorReadViewSet(viewsets.ReadOnlyModelViewSet):
 
     @action(detail=False, methods=["GET"])
     def granulation_methods(self, request: Request):
-        methods = Granulation.methods + [self.NONE_GRANULATION_METHOD]
+        methods = [self.NONE_GRANULATION_METHOD] + Granulation.methods
         return Response([{"name": method} for method in methods])

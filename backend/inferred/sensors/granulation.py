@@ -67,7 +67,7 @@ class Granulation:
         len(output) == len(data) - window_size + 1
         """
         if window_size is None:
-            window_size = int(self.data_len * 0.5)
+            window_size = 5
 
         result = []
         for i in range(self.data_len - window_size + 1):
@@ -83,7 +83,7 @@ class Granulation:
         Divides data into segments apply the provided operation within each segment.
         """
         if segment_size is None:
-            segment_size = 50
+            segment_size = 3
 
         paa_data = [
             operation(self.data_values[i : i + segment_size])
