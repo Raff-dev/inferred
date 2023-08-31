@@ -29,6 +29,8 @@ class PredictionReadSerializer(serializers.ModelSerializer):
 
 
 class SensorReadSerializer(serializers.ModelSerializer):
+    timestamp = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
+
     class Meta:
         model = SensorRead
         fields = ["timestamp", "value"]

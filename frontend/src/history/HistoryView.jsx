@@ -89,7 +89,7 @@ const HistoryView = () => {
             </Grid>
             <ResponsiveContainer width="100%" height={800}>
                 <LineChart data={data} margin={{ right: 25, top: 10 }}>
-                    <XAxis dataKey="timestamp" />
+                    <XAxis dataKey="timestamp" angle={-20} />
                     <YAxis />
                     <CartesianGrid strokeDasharray="3 3" />
                     <Tooltip />
