@@ -14,14 +14,16 @@ import {
     XAxis,
     YAxis,
 } from "recharts"; // Import Recharts components
-import SensorSelection from "../comparison/SensorSelect";
+import SensorSelect from "../comparison/SensorSelect";
 import { PRIMARY_COLOR, darkTheme } from "../themes";
+import GranulationSelect from "./GranulationSelect";
 
 const HistoryView = () => {
     const [data, setData] = useState([]);
     const [fromDate, setFromDate] = useState(null);
     const [toDate, setToDate] = useState(null);
     const [selectedSensor, setSelectedSensor] = useState("");
+    const [selectedMethod, setSelectedMethod] = useState("");
 
     useEffect(() => {
         const someTimeAgo = new Date();
@@ -39,10 +41,11 @@ const HistoryView = () => {
                         dimension__name: selectedSensor,
                         timestamp__gte: fromDate.toISOString(),
                         timestamp__lte: toDate.toISOString(),
+                        granulation_method: selectedMethod,
                     },
                 }
             );
-            setData(response.data); // Assuming the response data is in the appropriate format
+            setData(response.data);
         } catch (error) {
             console.error("Error fetching data:", error);
         }
@@ -66,13 +69,19 @@ const HistoryView = () => {
                         onChange={setToDate}
                     />
                 </Grid>
-                <Grid item xs={6} md={3}>
-                    <SensorSelection
+                <Grid item xs={6} md={1}>
+                    <SensorSelect
                         selectedSensor={selectedSensor}
                         setSelectedSensor={setSelectedSensor}
                     />
                 </Grid>
-                <Grid item xs={6} md={3}>
+                <Grid item xs={6} md={2}>
+                    <GranulationSelect
+                        selectedMethod={selectedMethod}
+                        setSelectedMethod={setSelectedMethod}
+                    />
+                </Grid>
+                <Grid item xs={6} md={2}>
                     <Button variant="contained" onClick={onConfirm}>
                         Confirm
                     </Button>
