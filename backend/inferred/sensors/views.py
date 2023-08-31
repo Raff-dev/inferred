@@ -82,6 +82,8 @@ class SensorPredictionsViewSet(viewsets.ViewSet):
 
 
 class SensorReadViewSet(viewsets.ReadOnlyModelViewSet):
+    NONE_GRANULATION_METHOD = "none"
+
     queryset = SensorRead.objects.all().order_by("timestamp")
     serializer_class = SensorReadSerializer
     filter_backends = [DjangoFilterBackend]
@@ -94,7 +96,10 @@ class SensorReadViewSet(viewsets.ReadOnlyModelViewSet):
         granulation_method = request.query_params.get("granulation_method")
         response = super().list(request, *args, **kwargs)
 
-        if granulation_method:
+        if not response.data:
+            return response
+
+        if granulation_method and granulation_method != self.NONE_GRANULATION_METHOD:
             extra_param = request.query_params.get("extra_param")
             granulation = Granulation(response.data, granulation_method, extra_param)
             response.data = granulation.granulated_data
@@ -103,6 +108,5 @@ class SensorReadViewSet(viewsets.ReadOnlyModelViewSet):
 
     @action(detail=False, methods=["GET"])
     def granulation_methods(self, request: Request):
-        granulation = Granulation([], "")
-        methods = granulation.methods
-        return Response(methods)
+        methods = Granulation.methods + [self.NONE_GRANULATION_METHOD]
+        return Response([{"name": method} for method in methods])
