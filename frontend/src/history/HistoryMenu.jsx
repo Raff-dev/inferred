@@ -5,6 +5,7 @@ import axios from "axios"; // Make sure to install axios package
 import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
 import SensorSelect from "../comparison/SensorSelect";
+import GranulationParamSelect from "./GranulationParamSelect";
 import GranulationSelect from "./GranulationSelect";
 
 const HistoryMenu = ({ setData }) => {
@@ -12,6 +13,7 @@ const HistoryMenu = ({ setData }) => {
     const [toDate, setToDate] = useState(null);
     const [selectedSensor, setSelectedSensor] = useState("");
     const [selectedMethod, setSelectedMethod] = useState("");
+    const [selectedParam, setSelectedParam] = useState(null);
 
     useEffect(() => {
         const someTimeAgo = new Date();
@@ -30,6 +32,7 @@ const HistoryMenu = ({ setData }) => {
                         timestamp__gte: fromDate.toISOString(),
                         timestamp__lte: toDate.toISOString(),
                         granulation_method: selectedMethod,
+                        param: selectedParam,
                     },
                 }
             );
@@ -72,6 +75,13 @@ const HistoryMenu = ({ setData }) => {
                     <GranulationSelect
                         selectedMethod={selectedMethod}
                         setSelectedMethod={setSelectedMethod}
+                    />
+                </Grid>
+                <Grid item>
+                    <GranulationParamSelect
+                        selectedMethod={selectedMethod}
+                        selectedParam={selectedParam}
+                        setSelectedParam={setSelectedParam}
                     />
                 </Grid>
             </Grid>

@@ -48,7 +48,13 @@ class Granulation(metaclass=ABCMeta):
     @classmethod
     def choices(cls):
         return [
-            {"name": sub.name, "label": sub.label}
+            {
+                "name": sub.name,
+                "label": sub.label,
+                "param": sub.param,
+                "param_default": sub.param_default,
+                "param_choices": sub.param_choices,
+            }
             for sub in Granulation.subclasses.values()
         ]
 
@@ -74,7 +80,7 @@ class Granulation(metaclass=ABCMeta):
 class NoGranulation(Granulation):
     name = "none"
     label = "None"
-    param = "none"
+    param = "None"
     param_choices = []
     param_default = None
 
@@ -88,7 +94,7 @@ class NoGranulation(Granulation):
 class DownsamplingGranulation(Granulation):
     name = "downsampling"
     label = "Downsampling"
-    param = "factor"
+    param = "Factor"
     param_choices = [2, 3, 4, 5, 6, 7, 8, 9, 10]
     param_default = 2
 
@@ -101,7 +107,7 @@ class DownsamplingGranulation(Granulation):
 class MovingAverageGranulation(Granulation):
     name = "moving_average"
     label = "Moving Average"
-    param = "window_size"
+    param = "Window Size"
     param_choices = [2, 3, 5, 8, 13, 21, 34, 55]
     param_default = 5
 
@@ -118,7 +124,7 @@ class MovingAverageGranulation(Granulation):
 
 
 class PAAGranulationMixin:
-    param = "segment_size"
+    param = "Segment Size"
     param_choices = [2, 3, 4, 5, 6, 7, 8, 9, 10]
     param_default = 3
 

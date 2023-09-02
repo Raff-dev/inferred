@@ -8,7 +8,7 @@ from rest_framework.decorators import action
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from inferred.sensors.granulation import Granulation
+from inferred.sensors.granulation import Granulation, NoGranulation
 from inferred.sensors.models import (
     Dimension,
     Prediction,
@@ -82,8 +82,6 @@ class SensorPredictionsViewSet(viewsets.ViewSet):
 
 
 class SensorReadViewSet(viewsets.ReadOnlyModelViewSet):
-    NONE_GRANULATION_METHOD = {"name": "none", "label": "None"}
-
     queryset = SensorRead.objects.all().order_by("timestamp")
     serializer_class = SensorReadSerializer
     filter_backends = [DjangoFilterBackend]
@@ -93,17 +91,18 @@ class SensorReadViewSet(viewsets.ReadOnlyModelViewSet):
     }
 
     def list(self, request, *args, **kwargs):
-        method = request.query_params.get("granulation_method")
+        method_name = request.query_params.get("granulation_method")
         response = super().list(request, *args, **kwargs)
 
         if not response.data:
             return response
 
-        no_granulation = method == self.NONE_GRANULATION_METHOD["name"]
-        if method and not no_granulation:
-            extra_param = request.query_params.get("extra_param", None)
-            granulation_cls = Granulation.subclasses[method]
-            granulation_data = granulation_cls(response.data).compute(extra_param)
+        if method_name and method_name != NoGranulation.name:
+            param = request.query_params.get("param", None)
+            if param is not None:
+                param = int(param)
+            granulation_cls = Granulation.subclasses[method_name]
+            granulation_data = granulation_cls(response.data).compute(param)
             response.data = granulation_data
 
         return response
