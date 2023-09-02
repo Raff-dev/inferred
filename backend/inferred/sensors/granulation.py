@@ -1,9 +1,7 @@
 from abc import ABCMeta, abstractmethod
-from typing import Any, Callable, List, TypedDict
+from typing import Any, Callable, TypedDict
 
 from inferred.sensors.utils import aware_timestamp
-
-# pylint: disable=arguments-renamed
 
 
 class ReadsData(TypedDict):
@@ -13,15 +11,18 @@ class ReadsData(TypedDict):
 
 class Granulation(metaclass=ABCMeta):
     subclasses = {}
-    name: str = "Hehe"
+    name: str = None
     label: str = None
     param: str = None
+    param_choices: list = None
+    param_default: int = None
 
     def __init_subclass__(cls, **kwargs: Any):
         super().__init_subclass__(**kwargs)
 
-        for attr in ["name", "label", "param"]:
-            assert hasattr(cls, attr), f"GranulationBase '{attr}' is required"
+        for attr in ["name", "label", "param", "param_choices"]:
+            message = f"{cls.__name__}: '{attr}' is required in Granulation subclass"
+            assert getattr(cls, attr) is not None, message
 
         if cls.name in Granulation.subclasses:
             raise ValueError(f"GranulationBase subclass '{cls.name}' already exists")
@@ -51,8 +52,8 @@ class Granulation(metaclass=ABCMeta):
             for sub in Granulation.subclasses.values()
         ]
 
-    def compute(self, extra_param: int = None):
-        granulated_values = self.granulation(extra_param)
+    def compute(self, param: int):
+        granulated_values = self.granulation(param or self.param_default)
         if len(granulated_values) < 2:
             raise ValueError("Granulation resulted in no values")
 
@@ -66,7 +67,7 @@ class Granulation(metaclass=ABCMeta):
         return granulated_data
 
     @abstractmethod
-    def granulation(self, extra_param: int = None) -> List[float]:
+    def granulation(self, param: int) -> list[float]:
         ...
 
 
@@ -74,11 +75,13 @@ class NoGranulation(Granulation):
     name = "none"
     label = "None"
     param = "none"
+    param_choices = []
+    param_default = None
 
-    def compute(self, extra_param: int = None):
+    def compute(self, param: int):
         return self.data
 
-    def granulation(self, extra_param: int = None) -> List[float]:
+    def granulation(self, param: int) -> list[float]:
         ...
 
 
@@ -86,11 +89,11 @@ class DownsamplingGranulation(Granulation):
     name = "downsampling"
     label = "Downsampling"
     param = "factor"
+    param_choices = [2, 3, 4, 5, 6, 7, 8, 9, 10]
+    param_default = 2
 
-    def granulation(self, factor: int) -> List[float]:
-        if factor is None:
-            factor = 2
-
+    def granulation(self, param: int) -> list[float]:
+        factor = param
         result = self.data_values[::factor]
         return result
 
@@ -98,10 +101,12 @@ class DownsamplingGranulation(Granulation):
 class MovingAverageGranulation(Granulation):
     name = "moving_average"
     label = "Moving Average"
+    param = "window_size"
+    param_choices = [2, 3, 5, 8, 13, 21, 34, 55]
+    param_default = 5
 
-    def granulation(self, window_size: int) -> List[float]:
-        if window_size is None:
-            window_size = 5
+    def granulation(self, param: int) -> list[float]:
+        window_size = param
 
         result = []
         for i in range(self.data_len - window_size + 1):
@@ -114,25 +119,29 @@ class MovingAverageGranulation(Granulation):
 
 class PAAGranulationMixin:
     param = "segment_size"
+    param_choices = [2, 3, 4, 5, 6, 7, 8, 9, 10]
+    param_default = 3
 
     def _paa(
-        self, segment_size: int, operation: Callable[[List[float]], float]
-    ) -> List[float]:
-        if segment_size is None:
-            segment_size = 3
+        self, param: int, operation: Callable[[list[float]], float]
+    ) -> list[float]:
+        segment_size = param
 
-        paa_data = [
-            operation(self.data_values[i : i + segment_size])
-            for i in range(0, self.data_len, segment_size)
-        ]
-        return paa_data
+        result = []
+        for i in range(0, self.data_len, segment_size):
+            segment_data = self.data_values[i : i + segment_size]
+            aggregate = operation(segment_data)
+            result.append(aggregate)
+
+        return result
 
 
 class PAAminGranulation(PAAGranulationMixin, Granulation):
     name = "paa_min"
     label = "Piecewise Aggregate Approximation - MIN"
 
-    def granulation(self, segment_size: int) -> List[float]:
+    def granulation(self, param: int) -> list[float]:
+        segment_size = param
         return self._paa(segment_size, min)
 
 
@@ -140,7 +149,8 @@ class PAAmaxGranulation(PAAGranulationMixin, Granulation):
     name = "paa_max"
     label = "Piecewise Aggregate Approximation - MAX"
 
-    def granulation(self, segment_size: int) -> List[float]:
+    def granulation(self, param: int) -> list[float]:
+        segment_size = param
         return self._paa(segment_size, max)
 
 
@@ -148,5 +158,6 @@ class PAAavgGranulation(PAAGranulationMixin, Granulation):
     name = "paa_avg"
     label = "Piecewise Aggregate Approximation - AVG"
 
-    def granulation(self, segment_size: int) -> List[float]:
+    def granulation(self, param: int) -> list[float]:
+        segment_size = param
         return self._paa(segment_size, lambda x: sum(x) / len(x))

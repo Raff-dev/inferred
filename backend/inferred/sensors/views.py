@@ -101,7 +101,7 @@ class SensorReadViewSet(viewsets.ReadOnlyModelViewSet):
 
         no_granulation = method == self.NONE_GRANULATION_METHOD["name"]
         if method and not no_granulation:
-            extra_param = request.query_params.get("extra_param")
+            extra_param = request.query_params.get("extra_param", None)
             granulation_cls = Granulation.subclasses[method]
             granulation_data = granulation_cls(response.data).compute(extra_param)
             response.data = granulation_data
