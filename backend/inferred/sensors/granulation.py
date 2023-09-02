@@ -1,71 +1,105 @@
-from typing import Callable
-
-from rest_framework.exceptions import ValidationError
+from abc import ABCMeta, abstractmethod
+from typing import Any, Callable, List, TypedDict
 
 from inferred.sensors.utils import aware_timestamp
 
-
-def generate_evenly_divided_timestamps(
-    start_timestamp: str, end_timestamp: str, n: int
-) -> list:
-    start = aware_timestamp(start_timestamp)
-    end = aware_timestamp(end_timestamp)
-
-    delta = (end - start) / (n - 1)
-    timestamps = [start + i * delta for i in range(n)]
-
-    return [timestamp.strftime("%Y-%m-%d %H:%M:%S") for timestamp in timestamps]
+# pylint: disable=arguments-renamed
 
 
-class Granulation:
-    METHOD_STARTSWITH = "granulation_"
+class ReadsData(TypedDict):
+    timestamp: str
+    value: str
 
-    def __init__(self, data: list[float], method: str, extra_param: int = None):
-        if method not in self.methods:
-            raise ValidationError(f"Method {method} not supported")
 
-        self.data_values = [float(value["value"]) for value in data]
+class Granulation(metaclass=ABCMeta):
+    subclasses = {}
+    name: str = "Hehe"
+    label: str = None
+    param: str = None
+
+    def __init_subclass__(cls, **kwargs: Any):
+        super().__init_subclass__(**kwargs)
+
+        for attr in ["name", "label", "param"]:
+            assert hasattr(cls, attr), f"GranulationBase subclasses must have a {attr}"
+
+        if cls.name in Granulation.subclasses:
+            raise ValueError(f"GranulationBase subclass {cls.name} already exists")
+
+        Granulation.subclasses[cls.name] = cls
+
+    def __init__(self, data: ReadsData):
+        self.data = data
+        self.data_values = [float(read["value"]) for read in data]
         self.data_len = len(self.data_values)
+        self.start_timestamp = data[0]["timestamp"]
+        self.end_timestamp = data[-1]["timestamp"]
 
-        start_timestamp = data[0]["timestamp"]
-        end_timestamp = data[-1]["timestamp"]
+    def _generate_evenly_divided_timestamps(self, n: int) -> list:
+        start = aware_timestamp(self.start_timestamp)
+        end = aware_timestamp(self.end_timestamp)
 
-        method_name = self.METHOD_STARTSWITH + method
-        granulated_values = getattr(self, method_name)(extra_param)
-        timestamps = generate_evenly_divided_timestamps(
-            start_timestamp, end_timestamp, len(granulated_values)
-        )
+        delta = (end - start) / (n - 1)
+        timestamps = [start + i * delta for i in range(n)]
 
-        self.granulated_data = [
+        return [timestamp.strftime("%Y-%m-%d %H:%M:%S") for timestamp in timestamps]
+
+    @classmethod
+    def choices(cls):
+        return [
+            {"name": sub.name, "label": sub.label}
+            for sub in Granulation.subclasses.values()
+        ]
+
+    def compute(self, extra_param: int = None):
+        granulated_values = self.granulation(extra_param)
+        if len(granulated_values) < 2:
+            raise ValueError("Granulation resulted in no values")
+
+        len_granulated_values = len(granulated_values)
+        timestamps = self._generate_evenly_divided_timestamps(len_granulated_values)
+        granulated_data = [
             {"timestamp": timestamp, "value": value}
             for timestamp, value in zip(timestamps, granulated_values)
         ]
 
-    @classmethod
-    @property
-    def methods(cls):
-        return [
-            name.replace(cls.METHOD_STARTSWITH, "")
-            for name in dir(cls)
-            if name.startswith(cls.METHOD_STARTSWITH)
-        ]
+        return granulated_data
 
-    def granulation_downsampling(self, factor: int) -> list[float]:
-        """Apply granulation through downsampling to reduce data size."""
+    @abstractmethod
+    def granulation(self, extra_param: int = None) -> List[float]:
+        ...
+
+
+class NoGranulation(Granulation):
+    name = "none"
+    label = "None"
+    param = "none"
+
+    def compute(self, extra_param: int = None):
+        return self.data
+
+    def granulation(self, extra_param: int = None) -> List[float]:
+        ...
+
+
+class DownsamplingGranulation(Granulation):
+    name = "downsampling"
+    label = "Downsampling"
+    param = "factor"
+
+    def granulation(self, factor: int) -> List[float]:
         if factor is None:
             factor = 2
 
         result = self.data_values[::factor]
         return result
 
-    def granulation_moving_average(self, window_size: int) -> list[float]:
-        """
-        Apply granulation through moving averages to reduce data size.
-        Computes moving averages over each window of data points.
-        The resulting list contains the moving average granulated data points.
 
-        len(output) == len(data) - window_size + 1
-        """
+class MovingAverageGranulation(Granulation):
+    name = "moving_average"
+    label = "Moving Average"
+
+    def granulation(self, window_size: int) -> List[float]:
         if window_size is None:
             window_size = 5
 
@@ -74,14 +108,16 @@ class Granulation:
             window = self.data_values[i : i + window_size]
             average = sum(window) / window_size
             result.append(average)
+
         return result
 
-    def __apply_paa(
-        self, segment_size: int, operation: Callable[[list[float]], float]
-    ) -> list[float]:
-        """
-        Divides data into segments apply the provided operation within each segment.
-        """
+
+class PAAGranulationMixin:
+    param = "segment_size"
+
+    def _paa(
+        self, segment_size: int, operation: Callable[[List[float]], float]
+    ) -> List[float]:
         if segment_size is None:
             segment_size = 3
 
@@ -91,11 +127,26 @@ class Granulation:
         ]
         return paa_data
 
-    def granulation_paa_min(self, segment_size: int) -> list[float]:
-        return self.__apply_paa(segment_size, min)
 
-    def granulation_paa_max(self, segment_size: int) -> list[float]:
-        return self.__apply_paa(segment_size, max)
+class PAAminGranulation(PAAGranulationMixin, Granulation):
+    name = "paa_min"
+    label = "Piecewise Aggregate Approximation - MIN"
 
-    def granulation_paa_avg(self, segment_size: int) -> list[float]:
-        return self.__apply_paa(segment_size, lambda x: sum(x) / len(x))
+    def granulation(self, segment_size: int) -> List[float]:
+        return self._paa(segment_size, min)
+
+
+class PAAmaxGranulation(PAAGranulationMixin, Granulation):
+    name = "paa_max"
+    label = "Piecewise Aggregate Approximation - MAX"
+
+    def granulation(self, segment_size: int) -> List[float]:
+        return self._paa(segment_size, max)
+
+
+class PAAavgGranulation(PAAGranulationMixin, Granulation):
+    name = "paa_avg"
+    label = "Piecewise Aggregate Approximation - AVG"
+
+    def granulation(self, segment_size: int) -> List[float]:
+        return self._paa(segment_size, lambda x: sum(x) / len(x))

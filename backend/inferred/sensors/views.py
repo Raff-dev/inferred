@@ -82,7 +82,7 @@ class SensorPredictionsViewSet(viewsets.ViewSet):
 
 
 class SensorReadViewSet(viewsets.ReadOnlyModelViewSet):
-    NONE_GRANULATION_METHOD = "none"
+    NONE_GRANULATION_METHOD = {"name": "none", "label": "None"}
 
     queryset = SensorRead.objects.all().order_by("timestamp")
     serializer_class = SensorReadSerializer
@@ -93,20 +93,22 @@ class SensorReadViewSet(viewsets.ReadOnlyModelViewSet):
     }
 
     def list(self, request, *args, **kwargs):
-        granulation_method = request.query_params.get("granulation_method")
+        method = request.query_params.get("granulation_method")
         response = super().list(request, *args, **kwargs)
 
         if not response.data:
             return response
 
-        if granulation_method and granulation_method != self.NONE_GRANULATION_METHOD:
+        no_granulation = method == self.NONE_GRANULATION_METHOD["name"]
+        if method and not no_granulation:
             extra_param = request.query_params.get("extra_param")
-            granulation = Granulation(response.data, granulation_method, extra_param)
-            response.data = granulation.granulated_data
+            granulation_cls = Granulation.subclasses[method]
+            granulation_data = granulation_cls(response.data).compute(extra_param)
+            response.data = granulation_data
 
         return response
 
     @action(detail=False, methods=["GET"])
     def granulation_methods(self, request: Request):
-        methods = [self.NONE_GRANULATION_METHOD] + Granulation.methods
-        return Response([{"name": method} for method in methods])
+        methods = Granulation.choices()
+        return Response(methods)
