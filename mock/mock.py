@@ -9,7 +9,7 @@ API_URL = "http://backend:8000/api"
 API_SENSORS = API_URL + "/sensor-reads/"
 LOOKAHEAD = 100
 PREDICTION_INTERVAL_MS = 1000  # milliseconds
-FAST_MODE = True
+FAST_MODE = False
 
 CHANNEL_NAME = "sensors"
 REDIS_HOST = "redis"

@@ -1,5 +1,7 @@
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
+import FormControl from "@mui/material/FormControl";
+import FormHelperText from "@mui/material/FormHelperText";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import React, { useEffect } from "react";
@@ -17,7 +19,7 @@ const GranulationMethodSelect = ({
 
     if (loading) {
         return (
-            <Box sx={{ minWidth: 120 }}>
+            <Box sx={{ width: 160 }}>
                 <CircularProgress size={20} />
             </Box>
         );
@@ -28,15 +30,20 @@ const GranulationMethodSelect = ({
     };
 
     return (
-        <Box sx={{ minWidth: 120 }}>
-            <Select value={selectedMethod} onChange={handleMethodChange}>
+        <FormControl sx={{ width: 160 }}>
+            <Select
+                value={selectedMethod}
+                onChange={handleMethodChange}
+                MenuProps={{ width: 100 }}
+            >
                 {payload.map((method) => (
                     <MenuItem key={method.name} value={method.name}>
                         {method.label}
                     </MenuItem>
                 ))}
             </Select>
-        </Box>
+            <FormHelperText>Granulation Method</FormHelperText>
+        </FormControl>
     );
 };
 

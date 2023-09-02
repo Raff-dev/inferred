@@ -1,5 +1,6 @@
-import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
+import FormControl from "@mui/material/FormControl";
+import FormHelperText from "@mui/material/FormHelperText";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import React, { useEffect } from "react";
@@ -16,11 +17,7 @@ const SensorSelect = ({
     }, [loading]);
 
     if (loading) {
-        return (
-            <Box sx={{ minWidth: 120 }}>
-                <CircularProgress size={20} />
-            </Box>
-        );
+        return <CircularProgress size={20} />;
     }
 
     const handleSensorChange = (event) => {
@@ -28,7 +25,7 @@ const SensorSelect = ({
     };
 
     return (
-        <Box sx={{ minWidth: 120 }}>
+        <FormControl sx={{ minWidth: 120 }}>
             <Select value={selectedSensor} onChange={handleSensorChange}>
                 {payload.map((sensor) => (
                     <MenuItem key={sensor.name} value={sensor.name}>
@@ -36,7 +33,8 @@ const SensorSelect = ({
                     </MenuItem>
                 ))}
             </Select>
-        </Box>
+            <FormHelperText>Dimension</FormHelperText>
+        </FormControl>
     );
 };
 

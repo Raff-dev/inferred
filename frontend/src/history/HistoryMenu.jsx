@@ -1,4 +1,5 @@
 import { Button, Grid } from "@mui/material";
+import FormControl from "@mui/material/FormControl";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import axios from "axios"; // Make sure to install axios package
 import dayjs from "dayjs";
@@ -39,37 +40,47 @@ const HistoryMenu = ({ setData }) => {
     };
 
     return (
-        <Grid container>
-            <Grid item xs={6} md={3}>
-                <DateTimePicker
-                    label="Pick a Date & Time"
-                    value={fromDate}
-                    onChange={setFromDate}
-                />
+        <Grid
+            container
+            direction="column"
+            alignItems="center"
+            justifyContent="center"
+            spacing={3}
+        >
+            <Grid container spacing={2} item>
+                <Grid item>
+                    <DateTimePicker
+                        label="Start date & time"
+                        value={fromDate}
+                        onChange={setFromDate}
+                    />
+                </Grid>
+                <Grid item>
+                    <DateTimePicker
+                        label="End date & time"
+                        value={toDate}
+                        onChange={setToDate}
+                    />
+                </Grid>
+                <Grid item>
+                    <SensorSelect
+                        selectedSensor={selectedSensor}
+                        setSelectedSensor={setSelectedSensor}
+                    />
+                </Grid>
+                <Grid item>
+                    <GranulationSelect
+                        selectedMethod={selectedMethod}
+                        setSelectedMethod={setSelectedMethod}
+                    />
+                </Grid>
             </Grid>
-            <Grid item xs={6} md={3}>
-                <DateTimePicker
-                    label="Pick a Date & Time"
-                    value={toDate}
-                    onChange={setToDate}
-                />
-            </Grid>
-            <Grid item xs={6} md={1}>
-                <SensorSelect
-                    selectedSensor={selectedSensor}
-                    setSelectedSensor={setSelectedSensor}
-                />
-            </Grid>
-            <Grid item xs={6} md={2}>
-                <GranulationSelect
-                    selectedMethod={selectedMethod}
-                    setSelectedMethod={setSelectedMethod}
-                />
-            </Grid>
-            <Grid item xs={6} md={2}>
-                <Button variant="contained" onClick={onConfirm}>
-                    Confirm
-                </Button>
+            <Grid item>
+                <FormControl sx={{ width: 160 }}>
+                    <Button variant="contained" onClick={onConfirm}>
+                        Confirm
+                    </Button>
+                </FormControl>
             </Grid>
         </Grid>
     );
