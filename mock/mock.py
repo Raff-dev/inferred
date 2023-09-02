@@ -9,7 +9,7 @@ API_URL = "http://backend:8000/api"
 API_SENSORS = API_URL + "/sensor-reads/"
 LOOKAHEAD = 100
 PREDICTION_INTERVAL_MS = 1000  # milliseconds
-SPEED_FACTOR = 1
+FAST_MODE = True
 
 CHANNEL_NAME = "sensors"
 REDIS_HOST = "redis"
@@ -38,7 +38,7 @@ def real_time_date(start_time=None):
 
     current_time = start_time
     while True:
-        if current_time < datetime.now():
+        if FAST_MODE or current_time < datetime.now():
             yield current_time
             current_time += timedelta(milliseconds=PREDICTION_INTERVAL_MS)
 
@@ -65,15 +65,13 @@ class NaiveModel:
         self, n: int, sensor_data: np.array, sensor_read: float, data_seed: np.array
     ):
         # pylint: disable=unused-argument
-
         sensor_data[:, n] = np.append(sensor_data[1:, n], sensor_read)
         data_seed[:, n] = np.append(data_seed[1:, n], np.random.randn(1))
 
         predictions = []
         for _ in range(LOOKAHEAD):
-            prediction = (
-                sensor_data[-3:, n]
-            ).mean()  # Predict next value as mean of previous 3 values
+            # Predict next value as mean of previous 3 values
+            prediction = (sensor_data[-3:, n]).mean()
             predictions.append(prediction)
             sensor_data[:, n] = np.append(sensor_data[1:, n], prediction)
 
