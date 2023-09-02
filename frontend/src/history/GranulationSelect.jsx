@@ -32,7 +32,7 @@ const GranulationMethodSelect = ({
             <Select value={selectedMethod} onChange={handleMethodChange}>
                 {payload.map((method) => (
                     <MenuItem key={method.name} value={method.name}>
-                        {method.name}
+                        {method.label}
                     </MenuItem>
                 ))}
             </Select>
