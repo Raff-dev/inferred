@@ -21,10 +21,10 @@ class Granulation(metaclass=ABCMeta):
         super().__init_subclass__(**kwargs)
 
         for attr in ["name", "label", "param"]:
-            assert hasattr(cls, attr), f"GranulationBase subclasses must have a {attr}"
+            assert hasattr(cls, attr), f"GranulationBase '{attr}' is required"
 
         if cls.name in Granulation.subclasses:
-            raise ValueError(f"GranulationBase subclass {cls.name} already exists")
+            raise ValueError(f"GranulationBase subclass '{cls.name}' already exists")
 
         Granulation.subclasses[cls.name] = cls
 
