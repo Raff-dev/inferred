@@ -14,17 +14,17 @@ const ComparisonSelection = ({
     selectedModels,
 }) => {
     return (
-        <Grid container alignItems={"center"}>
-            <Grid item xs={12} md={4}>
+        <Grid container spacing={8}>
+            <Grid item>
                 <DurationPicker onConfirm={onConfirm} />
             </Grid>
-            <Grid item xs={12} md={4}>
+            <Grid item>
                 <SensorSelect
                     selectedSensor={selectedSensor}
                     setSelectedSensor={setSelectedSensor}
                 />
             </Grid>
-            <Grid item xs={12} md={4}>
+            <Grid item>
                 <ModelSelection
                     modelNames={modelNames}
                     selectedModels={selectedModels}

@@ -1,5 +1,5 @@
 import { Chip, MenuItem, Select } from "@mui/material";
-import Box from "@mui/material/Box";
+import FormControl from "@mui/material/FormControl";
 import React from "react";
 
 const ModelSelection = ({ modelNames, selectedModels, onModelSelect }) => {
@@ -13,9 +13,8 @@ const ModelSelection = ({ modelNames, selectedModels, onModelSelect }) => {
     };
 
     return (
-        <Box sx={{ minWidth: 120 }}>
+        <FormControl sx={{ minWidth: 400 }}>
             <Select
-                sx={{ width: "400px" }}
                 multiple
                 value={selectedModels}
                 onChange={handleModelChange}
@@ -33,7 +32,7 @@ const ModelSelection = ({ modelNames, selectedModels, onModelSelect }) => {
                     </MenuItem>
                 ))}
             </Select>
-        </Box>
+        </FormControl>
     );
 };
 
