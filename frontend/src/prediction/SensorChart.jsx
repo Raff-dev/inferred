@@ -1,9 +1,17 @@
 import { curveCardinal } from "d3-shape";
 import React from "react";
-import { CartesianGrid, Legend, Line, LineChart, XAxis, YAxis } from "recharts";
+import {
+    CartesianGrid,
+    Legend,
+    Line,
+    LineChart,
+    Tooltip,
+    XAxis,
+    YAxis,
+} from "recharts";
 import { NICE_COLORS, TRIETARY_COLOR } from "../themes";
 import { parseDate } from "../utils/utils";
-import { getFutureTimestamps, legendPayload } from "./utils";
+import { getFutureTimestamps } from "./utils";
 
 const cardinal = curveCardinal.tension(0.2);
 
@@ -26,6 +34,18 @@ export const SensorChart = ({ reads, models, timestamps, selectedSensor }) => {
         modelSeries[modelName] = [current, ...data];
     }
 
+    const legendPayload = Object.keys(models).map((modelName, index) => ({
+        value: modelName,
+        color: NICE_COLORS[index % NICE_COLORS.length],
+        dataKey: "value",
+    }));
+
+    legendPayload.unshift({
+        value: "Sensor Value",
+        dataKey: "value",
+        color: TRIETARY_COLOR,
+    });
+
     return (
         <LineChart
             width={1200}
@@ -46,6 +66,7 @@ export const SensorChart = ({ reads, models, timestamps, selectedSensor }) => {
                 allowDuplicatedCategory={false}
             />
             <YAxis />
+            <Tooltip />
             <Legend payload={legendPayload} verticalAlign="top" />
             <Line
                 data={readsSeries}
@@ -64,7 +85,7 @@ export const SensorChart = ({ reads, models, timestamps, selectedSensor }) => {
                         data={values}
                         dataKey="value"
                         type={cardinal}
-                        animationDuration={0}
+                        animationDuration={100}
                         dot={false}
                         stroke={NICE_COLORS[index % NICE_COLORS.length]}
                     />
