@@ -34,7 +34,8 @@ def get_grouped_sensor_data() -> tuple[list[dict[str, Any]], list[str]]:
 
         grouped_data[timestamp][dimension] = value
 
-    return list(grouped_data.values()), list(dimensions)
+    dimensions_sorted = sorted(dimensions, key=lambda x: int(x.split("_")[1]))
+    return list(grouped_data.values()), dimensions_sorted
 
 
 class SensorDataConsumer(WebsocketConsumer):

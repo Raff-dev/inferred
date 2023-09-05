@@ -46,11 +46,6 @@ const MonitorView = () => {
         setData((prevData) => {
             return prevData.concat(newChunk).slice(-DATA_WINDOW_SIZE_MAX);
         });
-
-        if (sensorNames.length === 0) {
-            const sensorNames = Object.keys(newData.reads).sort();
-            setSensorNames(sensorNames);
-        }
     };
 
     useEffect(() => {
