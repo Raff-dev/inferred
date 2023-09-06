@@ -18,6 +18,13 @@ Welcome to Inferred, the snazzy dashboard for assessing the adequacy of simulati
 
 ---
 
+<p float="left">
+<img  width="49%" alt="image" src="https://github.com/Raff-dev/inferred/assets/56380303/54edcaab-8f7d-463c-a8d8-3a67cc167b59">
+<img width="49%" alt="image" src="https://github.com/Raff-dev/inferred/assets/56380303/fcc64148-f9c7-429b-ad7c-dae7fc17bb2d">
+</p>
+
+---
+
 Tech Stack 🛠️
 - Backend: [Django](https://www.djangoproject.com/)
 - Frontend: [ReactJS](https://reactjs.org/)
