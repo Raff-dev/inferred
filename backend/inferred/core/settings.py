@@ -29,9 +29,6 @@ SECRET_KEY = env("DJANGO_SECRET")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-REDIS_WEBSOCKET_HOST = "websocket"
-REDIS_WEBSOCKET_PORT = 6379
-
 REDIS_HOST = "redis"
 REDIS_PORT = 6379
 REDIS_DB = 0
@@ -70,7 +67,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [(REDIS_WEBSOCKET_HOST, REDIS_WEBSOCKET_PORT)],
+            "hosts": [(REDIS_HOST, REDIS_PORT)],
         },
     }
 }

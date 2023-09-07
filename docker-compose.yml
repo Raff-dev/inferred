@@ -55,7 +55,7 @@ services:
     container_name: inferred-capture
     command: python manage.py capture_sensor_data
 
-  redis: &redis
+  redis:
     image: redis:7-alpine
     container_name: inferred-redis
     restart: always
@@ -66,12 +66,6 @@ services:
       interval: 1s
       timeout: 5s
       retries: 30
-
-  websocket:
-    <<: *redis
-    container_name: inferred-websocket
-    ports:
-      - 6380:6379
 
   postgres:
     image: postgres:15.4
