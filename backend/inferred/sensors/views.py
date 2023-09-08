@@ -35,8 +35,6 @@ class SimulationModelViewSet(viewsets.ModelViewSet):
 
 
 class SensorPredictionsViewSet(viewsets.ViewSet):
-    OFFSET = 1
-
     @action(detail=False, methods=["GET"])
     def model_predictions_comparison(self, request: Request):
         params = ComparisonQueryParams(request)
@@ -45,7 +43,7 @@ class SensorPredictionsViewSet(viewsets.ViewSet):
         )
         dimension = get_object_or_404(Dimension, name=params.dim_name)
 
-        delta_time = datetime.timedelta(seconds=params.duration + self.OFFSET)
+        delta_time = datetime.timedelta(seconds=params.duration + params.horizon)
         reads = SensorRead.objects.filter(
             timestamp__gte=params.start_timestamp,
             timestamp__lte=params.start_timestamp + delta_time,
@@ -55,7 +53,7 @@ class SensorPredictionsViewSet(viewsets.ViewSet):
         if not reads.exists():
             return Response({"reads": [], "timestamps": [], "models": {}})
 
-        offset = min(self.OFFSET, len(reads) - 1)
+        offset = min(params.horizon, len(reads) - 1)
         predictions = Prediction.objects.filter(
             read__in=reads[: len(reads) - offset],
             simulation_model__in=simulation_models,

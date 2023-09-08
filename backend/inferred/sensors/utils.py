@@ -38,3 +38,4 @@ class ComparisonQueryParams:
         self.start_timestamp = aware_timestamp(start_timestamp)
         self.dim_name = request.query_params.get("dimension")
         self.duration = int(request.query_params.get("duration"))
+        self.horizon = int(request.query_params.get("horizon"))
