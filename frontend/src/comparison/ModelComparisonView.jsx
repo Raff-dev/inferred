@@ -15,6 +15,7 @@ const ModelComparisonView = () => {
     const [scalarMetricsData, setScalarMetricsData] = useState([]);
     const [chartData, setChartData] = useState({});
     const [selectedSensor, setSelectedSensor] = useState("");
+    const [horizon, setHorizon] = useState(1);
 
     const handleConfirm = (date, duration) => {
         axios
@@ -27,8 +28,9 @@ const ModelComparisonView = () => {
                         "exponential_smoothing",
                     ],
                     dimension: selectedSensor,
-                    start_timestamp: date, // You need to define startTimestamp
-                    duration: duration, // You need to define duration
+                    start_timestamp: date,
+                    duration: duration,
+                    horizon: horizon,
                 },
             })
             .then((response) => {
@@ -68,6 +70,8 @@ const ModelComparisonView = () => {
                 selectedSensor={selectedSensor}
                 setSelectedSensor={setSelectedSensor}
                 selectedModels={selectedModels}
+                horizon={horizon}
+                setHorizon={setHorizon}
             />
             <Metrics
                 modelNames={modelNames}
