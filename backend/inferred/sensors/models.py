@@ -54,7 +54,9 @@ class Prediction(models.Model):
 class PredictionRead(models.Model):
     value = models.DecimalField(max_digits=10, decimal_places=2)
     offset = models.IntegerField()
-    prediction = models.ForeignKey(Prediction, on_delete=models.CASCADE)
+    prediction = models.ForeignKey(
+        Prediction, on_delete=models.CASCADE, related_name="prediction_reads"
+    )
 
     def __str__(self) -> str:
         return f"{self.prediction.simulation_model.name} - {self.prediction.read.dimension.name}: {self.offset}"

@@ -21,7 +21,7 @@ from inferred.sensors.serializers import (
     SensorReadSerializer,
     SimulationModelSerializer,
 )
-from inferred.sensors.utils import ComparisonQueryParams
+from inferred.sensors.utils import ComparisonQueryParams, PredictionTimelineQueryParams
 
 
 class DimensionViewSet(viewsets.ModelViewSet):
@@ -76,6 +76,32 @@ class SensorPredictionsViewSet(viewsets.ViewSet):
             "timestamps": [value["timestamp"] for value in read_data],
             "models": models,
         }
+        return Response(result)
+
+    @action(detail=False, methods=["GET"])
+    def prediction_timeline(self, request: Request) -> Response:
+        params = PredictionTimelineQueryParams(request)
+        dimension = get_object_or_404(Dimension, name=params.dim_name)
+        simulation_model = get_object_or_404(
+            SimulationModel, name=params.sim_model_name
+        )
+
+        reads = SensorRead.objects.filter(
+            timestamp__gte=params.from_timestamp,
+            timestamp__lte=params.to_timestamp,
+            dimension=dimension,
+        )
+
+        predictions = Prediction.objects.filter(
+            read__in=reads, simulation_model=simulation_model
+        ).prefetch_related("prediction_reads")
+        result = [
+            {
+                "timestamp": prediction.read.timestamp,
+                "predictions": prediction.prediction_reads,
+            }
+            for prediction in predictions
+        ]
         return Response(result)
 
 
