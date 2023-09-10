@@ -95,10 +95,13 @@ class SensorPredictionsViewSet(viewsets.ViewSet):
         predictions = Prediction.objects.filter(
             read__in=reads, simulation_model=simulation_model
         ).prefetch_related("prediction_reads")
+
         result = [
             {
-                "timestamp": prediction.read.timestamp,
-                "predictions": prediction.prediction_reads,
+                "start_timestamp": prediction.read.timestamp,
+                "predictions": [
+                    read.value for read in prediction.prediction_reads.all()
+                ],
             }
             for prediction in predictions
         ]
