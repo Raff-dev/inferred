@@ -12,14 +12,19 @@ import {
 } from "recharts";
 import { PRIMARY_COLOR, darkTheme } from "../themes";
 import HistoryMenu from "./HistoryMenu";
+import HistoryPrediction from "./HistoryPrediction";
 
 const HistoryView = () => {
     const [data, setData] = useState([]);
+    const [predictionData, setPredictionData] = useState([]);
 
     return (
         <ThemeProvider theme={darkTheme}>
             <h1>History</h1>
-            <HistoryMenu setData={setData} />
+            <HistoryMenu
+                setData={setData}
+                setPredictionData={setPredictionData}
+            />
             <ResponsiveContainer width="100%" height={800}>
                 <LineChart data={data} margin={{ right: 25, top: 10 }}>
                     <XAxis dataKey="timestamp" angle={-20} />
@@ -37,6 +42,7 @@ const HistoryView = () => {
                     />
                 </LineChart>
             </ResponsiveContainer>
+            <HistoryPrediction predictionData={predictionData} />
         </ThemeProvider>
     );
 };

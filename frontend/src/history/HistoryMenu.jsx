@@ -8,7 +8,7 @@ import SensorSelect from "../comparison/SensorSelect";
 import GranulationParamSelect from "./GranulationParamSelect";
 import GranulationSelect from "./GranulationSelect";
 
-const HistoryMenu = ({ setData }) => {
+const HistoryMenu = ({ setData, setPredictionData }) => {
     const [fromDate, setFromDate] = useState(null);
     const [toDate, setToDate] = useState(null);
     const [selectedSensor, setSelectedSensor] = useState("");
@@ -22,7 +22,7 @@ const HistoryMenu = ({ setData }) => {
         setToDate(dayjs(new Date()));
     }, []);
 
-    const onConfirm = async () => {
+    const onConfirmSetData = async () => {
         try {
             const response = await axios.get(
                 `http://localhost:8000/api/sensor_reads/`,
@@ -40,6 +40,30 @@ const HistoryMenu = ({ setData }) => {
         } catch (error) {
             console.error("Error fetching data:", error);
         }
+    };
+
+    const onConfirmSetPredictionData = async () => {
+        try {
+            const response = await axios.get(
+                `http://localhost:8000/api/prediction_timeline/`,
+                {
+                    params: {
+                        simulation_model: "naive",
+                        dimension: selectedSensor,
+                        from_timestamp: fromDate.toISOString(),
+                        to_timestamp: toDate.toISOString(),
+                    },
+                }
+            );
+            setPredictionData(response.data);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    };
+
+    const onConfirm = async () => {
+        onConfirmSetData();
+        onConfirmSetPredictionData();
     };
 
     return (

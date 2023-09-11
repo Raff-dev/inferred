@@ -81,12 +81,16 @@ class SensorPredictionsViewSet(viewsets.ViewSet):
     @action(detail=False, methods=["GET"])
     def prediction_timeline(self, request: Request) -> Response:
         params = PredictionTimelineQueryParams(request)
-        predictions = Prediction.objects.filter(
-            read__timestamp__gte=params.from_timestamp,
-            read__timestamp__lte=params.to_timestamp,
-            read__dimension__name=params.dim_name,
-            simulation_model__name=params.sim_model_name,
-        ).prefetch_related("prediction_reads")
+        predictions = (
+            Prediction.objects.filter(
+                read__timestamp__gte=params.from_timestamp,
+                read__timestamp__lte=params.to_timestamp,
+                read__dimension__name=params.dim_name,
+                simulation_model__name=params.sim_model_name,
+            )
+            .prefetch_related("prediction_reads")
+            .order_by("read__timestamp")
+        )
 
         result = [
             {
