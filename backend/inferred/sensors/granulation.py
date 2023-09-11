@@ -82,7 +82,7 @@ class NoGranulation(Granulation):
     label = "None"
     param = "None"
     param_choices = []
-    param_default = None
+    param_default = ""
 
     def compute(self, param: int):
         return self.data
