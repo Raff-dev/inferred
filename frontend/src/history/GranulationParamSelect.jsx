@@ -27,19 +27,20 @@ const GranulationParamSelect = ({
         param_choices: [],
         param_default: "",
     };
+
     useEffect(() => {
-        if (methodParams.param_choices.length)
-            setSelectedParam(methodParams.param_default);
+        setSelectedParam(methodParams.param_default);
     }, [loading, selectedMethod]);
 
     const handleParamChange = (event) => {
         setSelectedParam(event.target.value);
     };
 
+    const value = selectedMethod == "none" ? "" : selectedParam;
     return (
         <FormControl sx={{ width: 160 }}>
             <Select
-                value={selectedParam}
+                value={value}
                 onChange={handleParamChange}
                 MenuProps={{ width: 100 }}
                 disabled={selectedMethod == "none"}
