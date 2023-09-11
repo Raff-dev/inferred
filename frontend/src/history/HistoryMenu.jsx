@@ -49,7 +49,7 @@ const HistoryMenu = ({ setData, setPredictionData }) => {
                 `http://localhost:8000/api/prediction_timeline/`,
                 {
                     params: {
-                        simulation_model: "naive",
+                        simulation_model: selectedModel,
                         dimension: selectedSensor,
                         from_timestamp: fromDate.toISOString(),
                         to_timestamp: toDate.toISOString(),
