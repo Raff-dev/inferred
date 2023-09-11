@@ -5,6 +5,7 @@ import FormHelperText from "@mui/material/FormHelperText";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import React, { useEffect } from "react";
+import { API } from "../constants";
 import { Resource } from "../utils/Resource";
 
 const GranulationParamSelect = ({
@@ -62,7 +63,7 @@ const GranulationParamSelectWrapper = ({
     selectedMethod,
 }) => {
     return (
-        <Resource path="http://localhost:8000/api/sensor_reads/granulation_methods/">
+        <Resource path={API.granulation_methods}>
             {({ payload, loading, refresh }) => {
                 return (
                     <GranulationParamSelect

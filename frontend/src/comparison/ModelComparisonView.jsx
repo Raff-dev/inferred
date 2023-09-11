@@ -1,6 +1,7 @@
 import { ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
 import React, { useState } from "react";
+import { API } from "../constants";
 import { darkTheme } from "../themes";
 import { calculateErrorMetrics } from "./Calculations";
 import ComparisonSelection from "./ComparisonSelection";
@@ -19,7 +20,7 @@ const ModelComparisonView = () => {
 
     const handleConfirm = (date, duration) => {
         axios
-            .get("http://localhost:8000/api/model_predictions_comparison/", {
+            .get(API.model_predictions_comparison, {
                 params: {
                     simulation_models: [
                         "naive",

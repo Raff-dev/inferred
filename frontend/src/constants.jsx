@@ -29,4 +29,6 @@ export const API = {
     granulation_methods: API_BASE + "sensor_reads/granulation_methods/",
     simulation_models: API_BASE + "simulation_models/",
     sensor_reads: API_BASE + "sensor_reads/",
+    prediction_timeline: API_BASE + "prediction_timeline/",
+    model_predictions_comparison: API_BASE + "model_predictions_comparison/",
 };

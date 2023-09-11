@@ -25,18 +25,15 @@ const HistoryMenu = ({ setData, setPredictionData }) => {
 
     const onConfirmSetData = async () => {
         try {
-            const response = await axios.get(
-                `http://localhost:8000/api/sensor_reads/`,
-                {
-                    params: {
-                        dimension__name: selectedSensor,
-                        timestamp__gte: fromDate.toISOString(),
-                        timestamp__lte: toDate.toISOString(),
-                        granulation_method: selectedMethod,
-                        param: selectedParam,
-                    },
-                }
-            );
+            const response = await axios.get(API.sensor_reads, {
+                params: {
+                    dimension__name: selectedSensor,
+                    timestamp__gte: fromDate.toISOString(),
+                    timestamp__lte: toDate.toISOString(),
+                    granulation_method: selectedMethod,
+                    param: selectedParam,
+                },
+            });
             setData(response.data);
         } catch (error) {
             console.error("Error fetching data:", error);
@@ -50,17 +47,14 @@ const HistoryMenu = ({ setData, setPredictionData }) => {
         }
 
         try {
-            const response = await axios.get(
-                `http://localhost:8000/api/prediction_timeline/`,
-                {
-                    params: {
-                        simulation_model: selectedModel,
-                        dimension: selectedSensor,
-                        from_timestamp: fromDate.toISOString(),
-                        to_timestamp: toDate.toISOString(),
-                    },
-                }
-            );
+            const response = await axios.get(API.prediction_timeline, {
+                params: {
+                    simulation_model: selectedModel,
+                    dimension: selectedSensor,
+                    from_timestamp: fromDate.toISOString(),
+                    to_timestamp: toDate.toISOString(),
+                },
+            });
             setPredictionData(response.data);
         } catch (error) {
             console.error("Error fetching data:", error);
