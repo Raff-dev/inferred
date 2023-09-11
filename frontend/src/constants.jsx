@@ -21,3 +21,12 @@ export const DURATION_VALUES = {
     3600: "1 hour",
     7200: "2 hours",
 };
+
+const API_BASE = "http://localhost:8000/api/";
+
+export const API = {
+    dimensions: API_BASE + "dimensions/",
+    granulation_methods: API_BASE + "sensor_reads/granulation_methods/",
+    simulation_models: API_BASE + "simulation_models/",
+    sensor_reads: API_BASE + "sensor_reads/",
+};
