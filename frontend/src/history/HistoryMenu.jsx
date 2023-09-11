@@ -113,6 +113,14 @@ const HistoryMenu = ({ setData, setPredictionData }) => {
                         setSelectedParam={setSelectedParam}
                     />
                 </Grid>
+                <Grid item>
+                    <DataSelect
+                        selected={selectedModel}
+                        setSelected={setSelectedModel}
+                        path={API.simulation_models}
+                        label="Simulation model"
+                    />
+                </Grid>
             </Grid>
             <Grid item>
                 <FormControl sx={{ width: 160 }}>
