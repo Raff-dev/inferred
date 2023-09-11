@@ -1,19 +1,20 @@
 import { Button, Grid } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
-import axios from "axios"; // Make sure to install axios package
+import axios from "axios";
 import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
-import SensorSelect from "../comparison/SensorSelect";
+import { API } from "../constants";
+import DataSelect from "../utils/DataSelect";
 import GranulationParamSelect from "./GranulationParamSelect";
-import GranulationSelect from "./GranulationSelect";
 
 const HistoryMenu = ({ setData, setPredictionData }) => {
     const [fromDate, setFromDate] = useState(null);
     const [toDate, setToDate] = useState(null);
     const [selectedSensor, setSelectedSensor] = useState("");
     const [selectedMethod, setSelectedMethod] = useState("");
-    const [selectedParam, setSelectedParam] = useState(null);
+    const [selectedParam, setSelectedParam] = useState("");
+    const [selectedModel, setSelectedModel] = useState("");
 
     useEffect(() => {
         const someTimeAgo = new Date();
@@ -90,15 +91,19 @@ const HistoryMenu = ({ setData, setPredictionData }) => {
                     />
                 </Grid>
                 <Grid item>
-                    <SensorSelect
-                        selectedSensor={selectedSensor}
-                        setSelectedSensor={setSelectedSensor}
+                    <DataSelect
+                        selected={selectedSensor}
+                        setSelected={setSelectedSensor}
+                        path={API.dimensions}
+                        label="Dimension"
                     />
                 </Grid>
                 <Grid item>
-                    <GranulationSelect
-                        selectedMethod={selectedMethod}
-                        setSelectedMethod={setSelectedMethod}
+                    <DataSelect
+                        selected={selectedMethod}
+                        setSelected={setSelectedMethod}
+                        path={API.granulation_methods}
+                        label="Granulation method"
                     />
                 </Grid>
                 <Grid item>

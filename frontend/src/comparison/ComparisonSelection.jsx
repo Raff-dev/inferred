@@ -1,10 +1,11 @@
 // MetricsSelection.js (new component)
 import { Grid } from "@mui/material";
 import React from "react";
+import { API } from "../constants";
+import DataSelect from "../utils/DataSelect";
 import DurationPicker from "./DurationPicker";
 import HorizonSlider from "./HorizonSlider";
-import ModelSelection from "./ModelSelection";
-import SensorSelect from "./SensorSelect";
+import ModelChips from "./ModelChips";
 
 const ComparisonSelection = ({
     onConfirm,
@@ -23,13 +24,15 @@ const ComparisonSelection = ({
                     <DurationPicker onConfirm={onConfirm} />
                 </Grid>
                 <Grid item>
-                    <SensorSelect
-                        selectedSensor={selectedSensor}
-                        setSelectedSensor={setSelectedSensor}
+                    <DataSelect
+                        selected={selectedSensor}
+                        setSelected={setSelectedSensor}
+                        path={API.dimensions}
+                        label="Dimension"
                     />
                 </Grid>
                 <Grid item>
-                    <ModelSelection
+                    <ModelChips
                         modelNames={modelNames}
                         selectedModels={selectedModels}
                         onModelSelect={onModelSelect}

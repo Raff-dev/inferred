@@ -12,7 +12,7 @@ import {
 } from "recharts";
 import { PRIMARY_COLOR, darkTheme } from "../themes";
 import HistoryMenu from "./HistoryMenu";
-import HistoryPrediction from "./HistoryPrediction";
+import PredictionTimeline from "./PredictionTimeline";
 
 const HistoryView = () => {
     const [data, setData] = useState([]);
@@ -42,7 +42,7 @@ const HistoryView = () => {
                     />
                 </LineChart>
             </ResponsiveContainer>
-            <HistoryPrediction predictionData={predictionData} />
+            <PredictionTimeline predictionData={predictionData} />
         </ThemeProvider>
     );
 };
