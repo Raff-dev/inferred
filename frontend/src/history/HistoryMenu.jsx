@@ -44,6 +44,11 @@ const HistoryMenu = ({ setData, setPredictionData }) => {
     };
 
     const onConfirmSetPredictionData = async () => {
+        if (simulation_model === "none") {
+            setPredictionData([]);
+            return;
+        }
+
         try {
             const response = await axios.get(
                 `http://localhost:8000/api/prediction_timeline/`,
@@ -103,7 +108,7 @@ const HistoryMenu = ({ setData, setPredictionData }) => {
                         selected={selectedMethod}
                         setSelected={setSelectedMethod}
                         path={API.granulation_methods}
-                        label="Granulation method"
+                        label="Granulation Method"
                     />
                 </Grid>
                 <Grid item>
@@ -118,7 +123,7 @@ const HistoryMenu = ({ setData, setPredictionData }) => {
                         selected={selectedModel}
                         setSelected={setSelectedModel}
                         path={API.simulation_models}
-                        label="Simulation model"
+                        label="Simulation Model"
                     />
                 </Grid>
             </Grid>

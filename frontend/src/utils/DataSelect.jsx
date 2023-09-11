@@ -27,6 +27,9 @@ const DataSelect = ({ loading, payload, selected, setSelected, label }) => {
     return (
         <FormControl sx={{ width: 160 }}>
             <Select value={selected} onChange={handleChange}>
+                {label === "Simulation Model" && payload.length && (
+                    <MenuItem value={"none"}>none</MenuItem>
+                )}
                 {payload.map((sensor) => (
                     <MenuItem key={sensor.name} value={sensor.name}>
                         {sensor.name}
