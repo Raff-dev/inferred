@@ -1,18 +1,14 @@
 from invoke import Context, task
 
-CONTAINER_SHORT_NAMES = {
-    "backend": "inferred-backend",
-    "frontend": "inferred-frontend",
-    "mock": "inferred-mock",
-    "capture": "inferred-capture",
-    "worker": "inferred-worker",
-    "redis": "inferred-redis",
-}
+
+class Container(str):
+    def __new__(cls, value):
+        return super().__new__(cls, f"inferred-{value}")
 
 
 @task
 def logs(ctx: Context, container_name: str):
-    name = CONTAINER_SHORT_NAMES.get(container_name, container_name)
+    name = Container(container_name)
     ctx.run(f"docker logs -f {name}", pty=True)
 
 
@@ -33,7 +29,7 @@ def restart(ctx: Context, container_name: str):
 
 @task
 def bash(ctx: Context, container_name: str):
-    name = CONTAINER_SHORT_NAMES.get(container_name)
+    name = Container(container_name)
     ctx.run(f"docker exec -it {name} bash", pty=True)
 
 
