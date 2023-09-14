@@ -7,21 +7,21 @@ import IconButton from "@mui/material/IconButton";
 import Slider from "@mui/material/Slider";
 import React from "react";
 
-function HorizonSlider({ horizon, setHorizon }) {
+const ArrowSlider = ({ value, setValue, min, max, label }) => {
     const handleDecrement = () => {
-        if (horizon > 1) {
-            setHorizon(horizon - 1);
+        if (value > min) {
+            setValue(value - 1);
         }
     };
 
     const handleIncrement = () => {
-        if (horizon < 100) {
-            setHorizon(horizon + 1);
+        if (value < max) {
+            setValue(value + 1);
         }
     };
 
     const handleChange = (event, newValue) => {
-        setHorizon(newValue);
+        setValue(newValue);
     };
 
     return (
@@ -38,12 +38,12 @@ function HorizonSlider({ horizon, setHorizon }) {
                 </Grid>
                 <Grid item xs>
                     <Slider
-                        value={horizon}
+                        value={value}
                         onChange={handleChange}
                         valueLabelDisplay="auto"
                         marks={true}
-                        min={1}
-                        max={100}
+                        min={min}
+                        max={max}
                         track={false}
                     />
                 </Grid>
@@ -57,9 +57,11 @@ function HorizonSlider({ horizon, setHorizon }) {
                     </IconButton>
                 </Grid>
             </Grid>
-            <FormHelperText>horizon: {horizon}</FormHelperText>
+            <FormHelperText>
+                {label}: {value}
+            </FormHelperText>
         </FormControl>
     );
-}
+};
 
-export default HorizonSlider;
+export default ArrowSlider;

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
     CartesianGrid,
     Line,
@@ -48,6 +48,7 @@ const PredictionTimeline = ({ predictionData }) => {
     const lineNames = Array.from({ length: predictionData.length }, (_, i) =>
         lineName(i + 1)
     );
+    const [previewIndex, setPreviewIndex] = useState(0);
 
     return (
         <div>

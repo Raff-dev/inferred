@@ -2,9 +2,9 @@
 import { Grid } from "@mui/material";
 import React from "react";
 import { API } from "../constants";
+import ArrowSlider from "../utils/ArrowSlider";
 import DataSelect from "../utils/DataSelect";
 import DurationPicker from "./DurationPicker";
-import HorizonSlider from "./HorizonSlider";
 import ModelChips from "./ModelChips";
 
 const ComparisonSelection = ({
@@ -40,7 +40,13 @@ const ComparisonSelection = ({
                 </Grid>
             </Grid>
             <Grid item>
-                <HorizonSlider horizon={horizon} setHorizon={setHorizon} />
+                <ArrowSlider
+                    value={horizon}
+                    setValue={setHorizon}
+                    min={1}
+                    max={100}
+                    label="Horizon"
+                />
             </Grid>
         </Grid>
     );
