@@ -7,7 +7,7 @@ import DataSelect from "../utils/DataSelect";
 import DurationPicker from "./DurationPicker";
 import ModelChips from "./ModelChips";
 
-const ComparisonSelection = ({
+const ComparisonMenu = ({
     onConfirm,
     modelNames,
     onModelSelect,
@@ -52,4 +52,4 @@ const ComparisonSelection = ({
     );
 };
 
-export default ComparisonSelection;
+export default ComparisonMenu;

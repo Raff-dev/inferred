@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { API } from "../constants";
 import { darkTheme } from "../themes";
 import { calculateErrorMetrics } from "./Calculations";
-import ComparisonSelection from "./ComparisonSelection";
+import ComparisonMenu from "./ComparisonMenu";
 import Metrics from "./Metrics";
 import ModelComparisonCharts from "./ModelComparisonCharts";
 import { parseChartData } from "./utils";
@@ -64,7 +64,7 @@ const ModelComparisonView = () => {
     return (
         <ThemeProvider theme={darkTheme}>
             <h1>Model Comparison</h1>
-            <ComparisonSelection
+            <ComparisonMenu
                 modelNames={modelNames}
                 onConfirm={handleConfirm}
                 onModelSelect={handleModelSelect}
