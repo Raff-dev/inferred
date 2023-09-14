@@ -1,4 +1,16 @@
+import Box from "@mui/material/Box";
+import CircularProgress from "@mui/material/CircularProgress";
 import React from "react";
+import {
+    CartesianGrid,
+    Line,
+    LineChart,
+    ResponsiveContainer,
+    Tooltip,
+    XAxis,
+    YAxis,
+} from "recharts";
+import { SECONDARY_COLOR } from "../themes";
 
 const lineName = (index) => `pred-${index}`;
 
@@ -9,6 +21,7 @@ export const transformPredictions = (inputObject) => {
         ...inputObject.map((item) => item.predictions.length)
     );
     const maxLen = numData + maxPredLen - 1;
+    console.log(inputObject);
 
     for (let i = 0; i < maxLen; i++) {
         const entry = {};
@@ -33,32 +46,45 @@ export const transformPredictions = (inputObject) => {
 
 const PredictionTimeline = ({ predictionData }) => {
     if (predictionData.length === 0) {
-        return <></>;
+        return (
+            <Box sx={{ width: 160 }}>
+                <CircularProgress size={20} />
+            </Box>
+        );
     }
 
     const transformedData = transformPredictions(predictionData);
-    const lineNames = Array.from({ length: n }, (_, i) => lineName(i + 1));
+    const lineNames = Array.from({ length: predictionData.length }, (_, i) =>
+        lineName(i + 1)
+    );
+
+    console.log(transformedData);
 
     return (
         <div>
             <h1>Prediction Timeline</h1>
-            <ul>
-                {predictionData &&
-                    predictionData.map((item, index) => (
-                        <li key={index}>
-                            Start Timestamp: {item.start_timestamp}
-                            <ul>
-                                {item.predictions.map(
-                                    (prediction, subIndex) => (
-                                        <li key={subIndex}>
-                                            Prediction: {prediction}
-                                        </li>
-                                    )
-                                )}
-                            </ul>
-                        </li>
+            <ResponsiveContainer width="100%" height={800}>
+                <LineChart
+                    data={transformedData}
+                    margin={{ right: 25, top: 10 }}
+                >
+                    <XAxis dataKey="timestamp" angle={-20} />
+                    <YAxis />
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <Tooltip />
+                    {lineNames.map((name, i) => (
+                        <Line
+                            type="monotone"
+                            dataKey={name}
+                            name={name}
+                            stroke={SECONDARY_COLOR}
+                            isAnimationActive={false}
+                            dot={false}
+                            opacity={0.3}
+                        />
                     ))}
-            </ul>
+                </LineChart>
+            </ResponsiveContainer>
         </div>
     );
 };

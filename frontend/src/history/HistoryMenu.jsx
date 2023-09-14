@@ -41,7 +41,7 @@ const HistoryMenu = ({ setData, setPredictionData }) => {
     };
 
     const onConfirmSetPredictionData = async () => {
-        if (simulation_model === "none") {
+        if (selectedModel === "none") {
             setPredictionData([]);
             return;
         }
