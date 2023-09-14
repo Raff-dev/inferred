@@ -8,25 +8,19 @@ import {
     XAxis,
     YAxis,
 } from "recharts";
-import { extendTimestamps } from "../prediction/utils";
-import { SECONDARY_COLOR } from "../themes";
+import { PRIMARY_COLOR, SECONDARY_COLOR } from "../themes";
 import ArrowSlider from "../utils/ArrowSlider";
 
 const lineName = (index) => `pred-${index}`;
 
-export const transformPredictions = (inputObject) => {
+export const transformPredictions = (inputObject, timestamps) => {
     const output = [];
     const numData = inputObject.length;
-    const maxPredLen = Math.max(
-        ...inputObject.map((item) => item.predictions.length)
-    );
-    const maxLen = numData + maxPredLen - 1;
-    const timestamps = inputObject.map((item) => item.start_timestamp);
-    const extendedTimestamps = extendTimestamps(timestamps);
+    const maxLen = inputObject.length;
 
     for (let i = 0; i < maxLen; i++) {
         const entry = {};
-        entry["timestamp"] = extendedTimestamps[i];
+        entry["timestamp"] = timestamps[i];
 
         for (let j = 0; j < numData; j++) {
             const obj = inputObject[j];
@@ -44,12 +38,14 @@ export const transformPredictions = (inputObject) => {
     return output;
 };
 
-const PredictionTimeline = ({ predictionData }) => {
-    const transformedData = transformPredictions(predictionData);
+const PredictionTimeline = ({ predictionData, data }) => {
+    const [previewIndex, setPreviewIndex] = useState(0);
+
+    const timestamps = data.map((item) => item.timestamp);
+    const transformedData = transformPredictions(predictionData, timestamps);
     const lineNames = Array.from({ length: predictionData.length }, (_, i) =>
         lineName(i + 1)
     );
-    const [previewIndex, setPreviewIndex] = useState(0);
 
     useEffect(() => setPreviewIndex(0), [predictionData]);
 
@@ -59,12 +55,24 @@ const PredictionTimeline = ({ predictionData }) => {
             <ResponsiveContainer width="100%" height={800}>
                 <LineChart
                     data={transformedData}
-                    margin={{ right: 25, top: 10 }}
+                    margin={{ right: 25, top: 10, bottom: 20 }}
                 >
                     <XAxis dataKey="timestamp" angle={-20} />
                     <YAxis />
                     <CartesianGrid strokeDasharray="3 3" />
                     <Tooltip />
+                    {predictionData.length && (
+                        <Line
+                            data={data}
+                            type="monotone"
+                            dataKey="value"
+                            name="Sensor data"
+                            stroke={PRIMARY_COLOR}
+                            strokeWidth={2}
+                            isAnimationActive={false}
+                            dot={false}
+                        />
+                    )}
                     {lineNames.map((name, i) => (
                         <Line
                             type="monotone"
@@ -74,7 +82,7 @@ const PredictionTimeline = ({ predictionData }) => {
                             stroke={SECONDARY_COLOR}
                             isAnimationActive={false}
                             dot={false}
-                            opacity={i == previewIndex ? 1 : 0.25}
+                            opacity={i == previewIndex ? 1 : 0.2}
                             strokeWidth={i == previewIndex ? 2 : 1}
                         />
                     ))}

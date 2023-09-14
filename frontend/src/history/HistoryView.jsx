@@ -39,10 +39,11 @@ const HistoryView = () => {
                         stroke={PRIMARY_COLOR}
                         isAnimationActive={false}
                         dot={false}
+                        strokeWidth={2}
                     />
                 </LineChart>
             </ResponsiveContainer>
-            <PredictionTimeline predictionData={predictionData} />
+            <PredictionTimeline predictionData={predictionData} data={data} />
         </ThemeProvider>
     );
 };
