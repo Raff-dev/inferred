@@ -24,6 +24,7 @@ const HistoryMenu = ({ setData, setPredictionData }) => {
     }, []);
 
     const onConfirmSetData = async () => {
+        setData([]);
         try {
             const response = await axios.get(API.sensor_reads, {
                 params: {
@@ -41,8 +42,9 @@ const HistoryMenu = ({ setData, setPredictionData }) => {
     };
 
     const onConfirmSetPredictionData = async () => {
+        setPredictionData([]);
+
         if (selectedModel === "none") {
-            setPredictionData([]);
             return;
         }
 

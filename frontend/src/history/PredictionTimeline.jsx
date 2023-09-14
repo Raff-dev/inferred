@@ -1,5 +1,3 @@
-import Box from "@mui/material/Box";
-import CircularProgress from "@mui/material/CircularProgress";
 import React from "react";
 import {
     CartesianGrid,
@@ -24,7 +22,6 @@ export const transformPredictions = (inputObject) => {
     const maxLen = numData + maxPredLen - 1;
     const timestamps = inputObject.map((item) => item.start_timestamp);
     const extendedTimestamps = extendTimestamps(timestamps);
-    console.log(inputObject);
 
     for (let i = 0; i < maxLen; i++) {
         const entry = {};
@@ -47,20 +44,10 @@ export const transformPredictions = (inputObject) => {
 };
 
 const PredictionTimeline = ({ predictionData }) => {
-    if (predictionData.length === 0) {
-        return (
-            <Box sx={{ width: 160 }}>
-                <CircularProgress size={20} />
-            </Box>
-        );
-    }
-
     const transformedData = transformPredictions(predictionData);
     const lineNames = Array.from({ length: predictionData.length }, (_, i) =>
         lineName(i + 1)
     );
-
-    console.log(transformedData);
 
     return (
         <div>
