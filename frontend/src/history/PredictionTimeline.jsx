@@ -10,6 +10,7 @@ import {
     XAxis,
     YAxis,
 } from "recharts";
+import { extendTimestamps } from "../prediction/utils";
 import { SECONDARY_COLOR } from "../themes";
 
 const lineName = (index) => `pred-${index}`;
@@ -21,12 +22,13 @@ export const transformPredictions = (inputObject) => {
         ...inputObject.map((item) => item.predictions.length)
     );
     const maxLen = numData + maxPredLen - 1;
+    const timestamps = inputObject.map((item) => item.start_timestamp);
+    const extendedTimestamps = extendTimestamps(timestamps);
     console.log(inputObject);
 
     for (let i = 0; i < maxLen; i++) {
         const entry = {};
-        const timestamp = `t${i + 1}`;
-        entry["timestamp"] = timestamp;
+        entry["timestamp"] = extendedTimestamps[i];
 
         for (let j = 0; j < numData; j++) {
             const obj = inputObject[j];
@@ -75,6 +77,7 @@ const PredictionTimeline = ({ predictionData }) => {
                     {lineNames.map((name, i) => (
                         <Line
                             type="monotone"
+                            key={name}
                             dataKey={name}
                             name={name}
                             stroke={SECONDARY_COLOR}

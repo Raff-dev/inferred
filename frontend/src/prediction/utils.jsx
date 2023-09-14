@@ -14,3 +14,8 @@ export const getFutureTimestamps = (timestamps) => {
 
     return futureTimestamps;
 };
+
+export const extendTimestamps = (timestamps) => {
+    const futureTimestamps = getFutureTimestamps(timestamps);
+    return [...timestamps, ...futureTimestamps];
+};
