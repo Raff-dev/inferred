@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     CartesianGrid,
     Line,
@@ -10,6 +10,7 @@ import {
 } from "recharts";
 import { extendTimestamps } from "../prediction/utils";
 import { SECONDARY_COLOR } from "../themes";
+import ArrowSlider from "../utils/ArrowSlider";
 
 const lineName = (index) => `pred-${index}`;
 
@@ -50,6 +51,8 @@ const PredictionTimeline = ({ predictionData }) => {
     );
     const [previewIndex, setPreviewIndex] = useState(0);
 
+    useEffect(() => setPreviewIndex(0), [predictionData]);
+
     return (
         <div>
             <h1>Prediction Timeline</h1>
@@ -71,11 +74,19 @@ const PredictionTimeline = ({ predictionData }) => {
                             stroke={SECONDARY_COLOR}
                             isAnimationActive={false}
                             dot={false}
-                            opacity={0.3}
+                            opacity={i == previewIndex ? 1 : 0.12}
+                            strokeWidth={i == previewIndex ? 2 : 1}
                         />
                     ))}
                 </LineChart>
             </ResponsiveContainer>
+            <ArrowSlider
+                value={previewIndex}
+                setValue={setPreviewIndex}
+                min={0}
+                max={transformedData.length - 1}
+                label="Preview Index"
+            />
         </div>
     );
 };
