@@ -74,7 +74,7 @@ const PredictionTimeline = ({ predictionData }) => {
                             stroke={SECONDARY_COLOR}
                             isAnimationActive={false}
                             dot={false}
-                            opacity={i == previewIndex ? 1 : 0.12}
+                            opacity={i == previewIndex ? 1 : 0.25}
                             strokeWidth={i == previewIndex ? 2 : 1}
                         />
                     ))}
@@ -84,7 +84,7 @@ const PredictionTimeline = ({ predictionData }) => {
                 value={previewIndex}
                 setValue={setPreviewIndex}
                 min={0}
-                max={transformedData.length - 1}
+                max={lineNames.length - 1}
                 label="Preview Index"
             />
         </div>
