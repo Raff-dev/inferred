@@ -14,8 +14,7 @@
 <p>- Cel pracy</p>
 <p>- Zakres pracy</p>
 <p>- Struktura pracy</p>
-<p>- Metodologia</p>
-<p>1. **Podstawy teoretyczne**</p>
+<p>1. Podstawy teoretyczne</p>
 <p>- 1.1 Technologia Digital Twin</p>
 <p>- 1.1.1 Definicja i zastosowania</p>
 <p>- 1.1.2 Istniejące rozwiązania</p>
@@ -25,20 +24,31 @@
 <p>- 1.2.2 Metody maszynowego uczenia</p>
 <p>- 1.3 Metody granulacji danych</p>
 <p>- 1.4 Architektura systemów wielokomponentowych</p>
-<p>- 1.4.1 Komunikacja między komponentami</p>
-<p>- 1.4.2 Diagram komponentów</p>
-<p>2. **Architektura**</p>
-<p>- 2.1 Architektura backendu</p>
+<p>2. Architektura</p>
+<p>- 2.1 Diagram komponentów</p>
+<p>- 2.1 Warstwa serwerowa</p>
 <p>- 2.1.1 REST API</p>
 <p>- 2.1.2 Integracja modeli symulacyjnych</p>
 <p>- 2.1.3 Zastosowanie Celery w zarządzaniu zadaniami</p>
-<p>- 2.2 Architektura frontendu</p>
+<p>- 2.1.4 Wykorzystanie Django, djangorestframework</p>
+<p>- 2.1.5 Poetry jako zarządcze narzędzie wirtualizacji, obsługi zależności oraz budowy paczki</p>
+<p>- 2.2 Warstwa interfejsu użytkownika</p>
 <p>- 2.2.1 Wykorzystanie ReactJS</p>
+<p>- wykorzystanie vite</p>
 <p>- 2.2.2 Wykorzystanie Recharts i Material-UI</p>
 <p>- 2.3 Konteneryzacja i orkiestracja</p>
 <p>- 2.3.1 Zastosowanie Dockera</p>
+<p>- uprodukcyjnianie</p>
+<p>- skalowalność</p>
+<p>- deployment</p>
 <p>- 2.3.2 Komunikacja między komponentami</p>
-<p>3. **Implementacja**</p>
+<p>- sieć wewnętrzna dockera</p>
+<p>- http, websocket, redis</p>
+<p>- 2.4 Wybrane aspekty procesu CI/CD</p>
+<p>- 2.4.1 Github pipelines</p>
+<p>- 2.4.2 Github workflow</p>
+<p>- 2.4.3 Budowa oraz publikacja paczki</p>
+<p>3. Implementacja</p>
 <p>- 3.1 Moduł symulacyjny (Mock)</p>
 <p>- 3.1.1 Generowanie losowych danych</p>
 <p>- 3.1.2 Imitacja modeli symulacyjnych</p>
@@ -59,7 +69,7 @@
 <p>- 3.6 Moduł monitorowania w czasie rzeczywistym</p>
 <p>- 3.6.1 Odbiór i przetwarzanie danych</p>
 <p>- 3.6.2 Komunikacja WebSocket</p>
-<p>4. **Testy**</p>
+<p>4. Testy</p>
 <p>- 4.1 Środowisko testowe</p>
 <p>- 4.1.1 Selekcja i charakteryzacja narzędzi testujących</p>
 <p>- 4.1.2 Konfiguracja i parametryzacja środowiska testowego</p>
@@ -69,9 +79,12 @@
 <p>- 4.4 Analiza i optymalizacja zużycia zasobów</p>
 <p>- 4.5 Identyfikacja i rekomendacje wobec wykrytych nieprawidłowości</p>
 <p>- 4.6 Analiza kodu przy wykorzystaniu testów statycznych</p>
-<p>5. **Dyskusja**</p>
-<p>6. **Podsumowanie**</p>
-<p>7. **Bibliografia**</p>
-<p>8. **Dodatki**</p>
-<p>- 8.1 Kod źródłowy</p>
-<p>- 8.2 Dodatkowe materiały i zrzuty ekranu</p>
+<p>5. Dyskusja</p>
+<p>- 4.4 Analiza wyników</p>
+<p>- 4.5 Ograniczenia i Wyzwania</p>
+<p>- 4.6 Możliwości dalszego rozwoju</p>
+<p>- caching z wykorzystaniem redis</p>
+<p>- wykorzystanie analitycznej bazy danych (cassandra/clickhouse)</p>
+<p>- zbudowanie dedykowanego narzędzia wizualizacji danych</p>
+<p>6. Podsumowanie</p>
+<p>7. Bibliografia</p>
