@@ -9,16 +9,14 @@ import {
     YAxis,
 } from "recharts";
 import { LOOKAHEAD } from "../constants";
-import { PRIMARY_COLOR, SECONDARY_COLOR } from "../themes";
+import { PRIMARY_COLOR, SECONDARY_COLOR, TRIETARY_COLOR } from "../themes";
 import ArrowSlider from "../utils/ArrowSlider";
-
 import {
     extendDomainRange,
     getDomainRangeData,
     getDomainRangePredictions,
     mergeDomainRanges,
 } from "../utils/utils";
-import HorizonLine from "./HorizonLine";
 
 const lineName = (index) => `pred-${index}`;
 
@@ -47,6 +45,27 @@ export const transformPredictions = (inputObject, timestamps) => {
     return output;
 };
 
+const getHorizonLine = (predictionData, timestamps, horizon) => {
+    const horizonLine = [];
+    if (horizon > 0 && predictionData.length > horizon) {
+        for (let i = 0; i < horizon - 1; i++) {
+            horizonLine.push({
+                timestamp: timestamps[i],
+                value: null,
+            });
+        }
+
+        let predictionDataHorizon = predictionData.slice(0, -horizon);
+        for (let [index, item] of predictionDataHorizon.entries()) {
+            horizonLine.push({
+                timestamp: timestamps[index + horizon - 1],
+                value: item.predictions[horizon - 1],
+            });
+        }
+    }
+    return horizonLine;
+};
+
 const PredictionTimeline = ({ predictionData, data }) => {
     const [previewIndex, setPreviewIndex] = useState(0);
     const [horizon, setHorizon] = useState(1);
@@ -56,14 +75,14 @@ const PredictionTimeline = ({ predictionData, data }) => {
     const lineNames = Array.from({ length: predictionData.length }, (_, i) =>
         lineName(i + 1)
     );
-
-    useEffect(() => setPreviewIndex(0), [predictionData]);
-
     const domain = mergeDomainRanges(
         getDomainRangePredictions(predictionData),
         getDomainRangeData(data)
     );
-    const extendedDomain = extendDomainRange(0.3, domain);
+    const extendedDomain = extendDomainRange(domain);
+    const horizonLine = getHorizonLine(predictionData, timestamps, horizon);
+
+    useEffect(() => setPreviewIndex(0), [predictionData]);
 
     return (
         <div>
@@ -102,7 +121,16 @@ const PredictionTimeline = ({ predictionData, data }) => {
                             strokeWidth={i == previewIndex ? 2 : 1}
                         />
                     ))}
-                    <HorizonLine {...{ timestamps, predictionData, horizon }} />
+                    <Line
+                        xAxisId={"0"}
+                        type="monotone"
+                        data={horizonLine}
+                        dataKey="value"
+                        name="Horizon Line"
+                        stroke={TRIETARY_COLOR}
+                        isAnimationActive={false}
+                        dot={false}
+                    />
                 </LineChart>
             </ResponsiveContainer>
             <ArrowSlider
