@@ -106,7 +106,7 @@ inv logs {container_name}
 inv bash {container_name}
 
 # Run django migrations
-inv migrate [--rm] [--migrate]
+inv migrate [--rm] [--make]
 
 # Restart a container
 inv restart {container_name}
