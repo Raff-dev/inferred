@@ -18,7 +18,7 @@ const HistoryMenu = ({ setData, setPredictionData }) => {
 
     useEffect(() => {
         const someTimeAgo = new Date();
-        someTimeAgo.setMinutes(someTimeAgo.getMinutes() - 60 * 12);
+        someTimeAgo.setMinutes(someTimeAgo.getMinutes() - 5);
         setFromDate(dayjs(someTimeAgo));
         setToDate(dayjs(new Date()));
     }, []);
