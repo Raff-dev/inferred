@@ -49,7 +49,6 @@ const PredictionTimeline = ({ predictionData, data }) => {
     );
 
     useEffect(() => setPreviewIndex(0), [predictionData]);
-    console.log(transformedData);
 
     const [horizon, setHorizon] = useState(1);
     const horizonLine = [];
@@ -70,11 +69,6 @@ const PredictionTimeline = ({ predictionData, data }) => {
             });
         }
     }
-
-    console.log("horinso");
-    console.log(predictionData);
-    console.log(horizonLine);
-    console.log("horinso");
 
     return (
         <div>
