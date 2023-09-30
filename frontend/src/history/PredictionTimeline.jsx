@@ -8,7 +8,8 @@ import {
     XAxis,
     YAxis,
 } from "recharts";
-import { PRIMARY_COLOR, SECONDARY_COLOR } from "../themes";
+import { LOOKAHEAD } from "../constants";
+import { PRIMARY_COLOR, SECONDARY_COLOR, TRIETARY_COLOR } from "../themes";
 import ArrowSlider from "../utils/ArrowSlider";
 
 const lineName = (index) => `pred-${index}`;
@@ -48,6 +49,32 @@ const PredictionTimeline = ({ predictionData, data }) => {
     );
 
     useEffect(() => setPreviewIndex(0), [predictionData]);
+    console.log(transformedData);
+
+    const [horizon, setHorizon] = useState(1);
+    const horizonLine = [];
+
+    if (horizon > 0 && predictionData.length > horizon) {
+        for (let i = 0; i < horizon; i++) {
+            horizonLine.push({
+                timestamp: transformedData[i].timestamp,
+                value: null,
+            });
+        }
+
+        let predictionDataHorizon = predictionData.slice(0, -horizon);
+        for (let [index, item] of predictionDataHorizon.entries()) {
+            horizonLine.push({
+                timestamp: transformedData[index + horizon].timestamp,
+                value: item.predictions[horizon - 1],
+            });
+        }
+    }
+
+    console.log("horinso");
+    console.log(predictionData);
+    console.log(horizonLine);
+    console.log("horinso");
 
     return (
         <div>
@@ -57,7 +84,7 @@ const PredictionTimeline = ({ predictionData, data }) => {
                     data={transformedData}
                     margin={{ right: 25, top: 10, bottom: 20 }}
                 >
-                    <XAxis dataKey="timestamp" angle={-20} />
+                    <XAxis dataKey="timestamp" angle={-20} xAxisId={0} />
                     <YAxis />
                     <CartesianGrid strokeDasharray="3 3" />
                     <Tooltip />
@@ -86,6 +113,16 @@ const PredictionTimeline = ({ predictionData, data }) => {
                             strokeWidth={i == previewIndex ? 2 : 1}
                         />
                     ))}
+                    <Line
+                        xAxisId={"0"}
+                        type="monotone"
+                        data={horizonLine}
+                        dataKey="value"
+                        name="Horizon Line"
+                        stroke={TRIETARY_COLOR}
+                        isAnimationActive={false}
+                        dot={false}
+                    />
                 </LineChart>
             </ResponsiveContainer>
             <ArrowSlider
@@ -94,6 +131,13 @@ const PredictionTimeline = ({ predictionData, data }) => {
                 min={0}
                 max={lineNames.length - 1}
                 label="Preview Index"
+            />
+            <ArrowSlider
+                value={horizon}
+                setValue={setHorizon}
+                min={0}
+                max={LOOKAHEAD}
+                label="Horizon"
             />
         </div>
     );
