@@ -1,3 +1,5 @@
+import { DOMAIN_RANGE_EXTEND } from "../constants";
+
 export const parseDate = (value) => {
     const date = new Date(value);
     let hours = date.getHours();
@@ -15,6 +17,13 @@ export const parseDate = (value) => {
     );
 };
 
+export const extendDomainRange = (range, extend = DOMAIN_RANGE_EXTEND) => {
+    const [min, max] = range;
+    const diff = Math.abs(max - min);
+    const r = [min - diff * extend, max + diff * extend];
+    return r;
+};
+
 export const getDomainRangePredictions = (data) => {
     // data = [{
     //    timestamp: 0,
@@ -24,21 +33,16 @@ export const getDomainRangePredictions = (data) => {
     let max = -Infinity;
     for (let item of data) {
         for (let prediction of item.predictions) {
-            if (prediction < min) {
-                min = prediction;
+            let value = parseFloat(`${prediction}`);
+            if (value < min) {
+                min = value;
             }
-            if (prediction > max) {
-                max = prediction;
+            if (value > max) {
+                max = value;
             }
         }
     }
     return [min, max];
-};
-
-export const extendDomainRange = (extend, range) => {
-    const [min, max] = range;
-    const diff = max - min;
-    return [min - diff * extend, max + diff * extend];
 };
 
 export const getDomainRangeData = (data) => {
@@ -49,28 +53,29 @@ export const getDomainRangeData = (data) => {
     let min = Infinity;
     let max = -Infinity;
     for (let item of data) {
-        if (item.value < min) {
-            min = item.value;
+        let value = parseFloat(`${item.value}`);
+        if (value < min) {
+            min = value;
         }
-        if (item.value > max) {
-            max = item.value;
+        if (value > max) {
+            max = value;
         }
     }
     return [min, max];
 };
 
 export const mergeDomainRanges = (...ranges) => {
-    let globalMin = Infinity;
-    let globalMax = -Infinity;
+    let mergeMin = Infinity;
+    let mergeMax = -Infinity;
 
     ranges.forEach(([min, max]) => {
-        if (min < globalMin) {
-            globalMin = min;
+        if (min < mergeMin) {
+            mergeMin = min;
         }
-        if (max > globalMax) {
-            globalMax = max;
+        if (max > mergeMax) {
+            mergeMax = max;
         }
     });
 
-    return [globalMin, globalMax];
+    return [mergeMin, mergeMax];
 };
