@@ -55,7 +55,7 @@ const PredictionTimeline = ({ predictionData, data }) => {
     const horizonLine = [];
 
     if (horizon > 0 && predictionData.length > horizon) {
-        for (let i = 0; i < horizon; i++) {
+        for (let i = 0; i < horizon - 1; i++) {
             horizonLine.push({
                 timestamp: transformedData[i].timestamp,
                 value: null,
@@ -65,7 +65,7 @@ const PredictionTimeline = ({ predictionData, data }) => {
         let predictionDataHorizon = predictionData.slice(0, -horizon);
         for (let [index, item] of predictionDataHorizon.entries()) {
             horizonLine.push({
-                timestamp: transformedData[index + horizon].timestamp,
+                timestamp: transformedData[index + horizon - 1].timestamp,
                 value: item.predictions[horizon - 1],
             });
         }
