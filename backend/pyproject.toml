@@ -7,30 +7,33 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-black = "^23.9.1"
-isort = "^5.12.0"
-autoflake = "^2.2.1"
-mypy = "^1.5.1"
-pytest = "^7.4.2"
-django = "^4.2.5"
-djangorestframework = "^3.14.0"
-django-environ = "^0.10.0"
-psycopg2-binary = "^2.9.7"
+celery = "^5.3.4"
 channels = "3.0.5"
 channels-redis = "^4.1.0"
+django = "^4.2.5"
 django-cors-headers = "^3.14.0"
-uvicorn = { extras = ["standard"], version = "^0.21.1" }
-celery = "^5.3.4"
-invoke = "^2.2.0"
-pylint = "^2.17.5"
-pylint-django = "^2.5.3"
-debugpy = "^1.8.0"
-django-filter = "^23.2"
+django-environ = "^0.10.0"
 django-extensions = "^3.2.3"
+django-filter = "^23.2"
+djangorestframework = "^3.14.0"
+psycopg2-binary = "^2.9.7"
+uvicorn = { extras = ["standard"], version = "^0.21.1" }
+
+[tool.poetry.group.run.dependencies]
+invoke = "^2.2.0"
 
 [tool.poetry.group.dev.dependencies]
-pyparsing = "^3.1.1"
+autoflake = "^2.2.1"
+black = "^23.9.1"
+debugpy = "^1.8.0"
+isort = "^5.12.0"
+mypy = "^1.5.1"
 pydot = "^1.4.2"
+pylint = "^2.17.5"
+pylint-django = "^2.5.3"
+pyparsing = "^3.1.1"
+pytest = "^7.4.2"
+pre-commit = "^3.4.0"
 
 [build-system]
 requires = ["poetry-core"]

@@ -15,7 +15,7 @@ RUN pip install --upgrade pip && \
 
 COPY ./pyproject.toml ./poetry.lock* /app/
 
-RUN poetry install
+RUN poetry install --with dev
 
 ADD . /app/
 
