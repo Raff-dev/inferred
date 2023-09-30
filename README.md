@@ -76,7 +76,7 @@ poetry shell
 # Build docker images
 inv build
 
-# Flush the database, run migrations, create a superuser, load fixtures.
+# Flush the database, run migrations, create a superuser, load fixtures, spin up the containers
 inv reset
 ```
 
