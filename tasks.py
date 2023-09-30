@@ -53,7 +53,7 @@ def build(ctx: Context):
 
 
 @task
-def flush(ctx: Context):
-    ctx.run("docker compose run --rm backend bash flush.sh", pty=True)
+def reset(ctx: Context):
+    ctx.run("docker compose run --rm backend bash reset.sh", pty=True)
     ctx.run("inv down")
     ctx.run("inv up")
