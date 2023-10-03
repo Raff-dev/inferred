@@ -41,12 +41,13 @@ const ScalarMetricsRadarChart = ({ scalarMetricsData, modelNames }) => {
 
     if (parsedData.length === 0) return <div>No data.</div>;
 
+    // TODO: Add dynamic domain for the radius axis
     return (
         <ResponsiveContainer width="100%" height={400}>
             <RadarChart cx="50%" cy="50%" outerRadius="80%" data={parsedData}>
                 <PolarGrid />
                 <PolarAngleAxis dataKey="metric" />
-                <PolarRadiusAxis angle={30} domain={[-10, 25]} />
+                <PolarRadiusAxis angle={30} domain={[0, 1]} />
                 {modelNames.map((model, index) => (
                     <Radar
                         key={model}
