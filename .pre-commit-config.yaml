@@ -38,9 +38,3 @@ repos:
         entry: pylint -rn -sn
         language: system
         types: [python]
-
--   repo: https://github.com/Raff-dev/docx2md
-    rev: 1.0.0
-    hooks:
-    -   id: docx2md
-        verbose: true
