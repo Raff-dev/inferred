@@ -141,29 +141,24 @@ class PAAGranulationMixin:
 
         return result
 
+    def granulation(self, param: int) -> list[float]:
+        segment_size = param
+        return self._paa(segment_size, self.func)
+
 
 class PAAminGranulation(PAAGranulationMixin, Granulation):
     name = "paa_min"
     label = "Piecewise Aggregate Approximation - MIN"
-
-    def granulation(self, param: int) -> list[float]:
-        segment_size = param
-        return self._paa(segment_size, min)
+    func = min
 
 
 class PAAmaxGranulation(PAAGranulationMixin, Granulation):
     name = "paa_max"
     label = "Piecewise Aggregate Approximation - MAX"
-
-    def granulation(self, param: int) -> list[float]:
-        segment_size = param
-        return self._paa(segment_size, max)
+    func = max
 
 
 class PAAavgGranulation(PAAGranulationMixin, Granulation):
     name = "paa_avg"
     label = "Piecewise Aggregate Approximation - AVG"
-
-    def granulation(self, param: int) -> list[float]:
-        segment_size = param
-        return self._paa(segment_size, lambda x: sum(x) / len(x))
+    func = lambda x: sum(x) / len(x)

@@ -35,6 +35,7 @@ disable = [
     "missing-module-docstring",
     "missing-class-docstring",
     "too-few-public-methods",
+    "unnecessary-lambda-assignment",
     "import-error",
     "line-too-long",
 ]
