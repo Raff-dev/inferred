@@ -30,13 +30,13 @@ ignore-paths = '''
     .*/migrations
 '''
 disable = [
-    "too-many-ancestors",
-    "missing-function-docstring",
-    "missing-module-docstring",
-    "missing-class-docstring",
-    "too-few-public-methods",
-    "unnecessary-lambda-assignment",
     "import-error",
     "line-too-long",
+    "missing-class-docstring",
+    "missing-function-docstring",
+    "missing-module-docstring",
+    "too-few-public-methods",
+    "too-many-ancestors",
+    "unnecessary-lambda-assignment",
 ]
 recursive = true
