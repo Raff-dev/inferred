@@ -43,8 +43,8 @@ const ComparisonMenu = ({
                 <ArrowSlider
                     value={horizon}
                     setValue={setHorizon}
-                    min={1}
-                    max={100}
+                    min={0}
+                    max={99}
                     label="Horizon"
                 />
             </Grid>
