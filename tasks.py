@@ -57,3 +57,21 @@ def reset(ctx: Context):
     ctx.run("docker compose run --rm backend bash reset.sh", pty=True)
     ctx.run("inv down")
     ctx.run("inv up")
+
+
+@task
+def pylint(ctx: Context, files: str) -> None:
+    files = set(files.split())
+    backend_files = {f for f in files if f.startswith("backend/")}
+    other_files = files - backend_files
+
+    backend_files = " ".join(backend_files)
+    other_files = " ".join(other_files)
+
+    if backend_files:
+        ctx.run(
+            f"pylint -sn -rn --rcfile=./backend/pyproject.toml {backend_files}",
+            pty=True,
+        )
+    if other_files:
+        ctx.run(f"pylint -sn -rn {other_files}", pty=True)

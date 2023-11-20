@@ -38,3 +38,23 @@ pre-commit = "^3.4.0"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pylint.MASTER]
+load-plugins = ["pylint_django"]
+django-settings-module = "inferred.core.settings"
+
+[tool.pylint.messages_control]
+good-names = ["_", "up"]
+ignore-paths = '''
+    .*/migrations
+'''
+disable = [
+    "import-error",
+    "line-too-long",
+    "missing-class-docstring",
+    "missing-function-docstring",
+    "missing-module-docstring",
+    "too-few-public-methods",
+    "too-many-ancestors",
+    "unnecessary-lambda-assignment",
+]

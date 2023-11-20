@@ -2,6 +2,9 @@ import os
 import time
 
 import requests
+from dotenv import load_dotenv
+
+load_dotenv()
 
 API_KEY = os.environ.get("OPEN_WEATHER_MAP_API_KEY")
 BASE_URL = "http://api.openweathermap.org/data/2.5/weather?"
@@ -10,7 +13,7 @@ INTERVAL = 1
 
 while True:
     url = f"{BASE_URL}q={CITY}&appid={API_KEY}"
-    response = requests.get(url)
+    response = requests.get(url, timeout=5)
     if not response.status_code == 200:
         print(f"Nie udało się pobrać danych, kod statusu: {response.status_code}")
         break

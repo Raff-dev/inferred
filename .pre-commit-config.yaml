@@ -35,6 +35,6 @@ repos:
     -   id: pylint
         verbose: true
         name: pylint
-        entry: pylint -rn -sn
+        entry: bash -c 'inv pylint "$0 $*"'
         language: system
         types: [python]

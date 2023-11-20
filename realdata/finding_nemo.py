@@ -2,38 +2,33 @@ from datetime import datetime
 
 import requests
 
-# Initialize
-base_url = "https://api.opensensorweb.de/v0/networks/luftdaten-info/devices"
+TIMEOUT = 5
+BASE_URL = "https://api.opensensorweb.de/v0/networks/luftdaten-info/devices"
+
+
 target_date = datetime.strptime("2023-10-07", "%Y-%m-%d")
 active_sensors = []
-
-# Fetch list of devices
-response = requests.get(base_url)
+response = requests.get(BASE_URL, timeout=TIMEOUT)
 devices = response.json()["items"]
 
-# Iterate through each device
 for device in devices:
     device_name = device["name"]
-    device_url = f"{base_url}/{device_name}"
+    device_url = f"{BASE_URL}/{device_name}"
 
-    # Fetch device details to get sensors_url
-    device_details = requests.get(device_url).json()
+    device_details = requests.get(device_url, timeout=TIMEOUT).json()
     sensors_url = device_details.get("sensors_url", "")
 
     if not sensors_url:
         continue
 
-    # Fetch list of sensors for this device
-    sensors_response = requests.get(sensors_url)
+    sensors_response = requests.get(sensors_url, timeout=TIMEOUT)
     sensors = sensors_response.json()["items"]
 
-    # Iterate through each sensor
     for sensor in sensors:
         sensor_name = sensor["name"]
-        sensor_url = f"{base_url}/{device_name}/sensors/{sensor_name}"
+        sensor_url = f"{BASE_URL}/{device_name}/sensors/{sensor_name}"
 
-        # Fetch sensor details
-        sensor_details = requests.get(sensor_url).json()
+        sensor_details = requests.get(sensor_url, timeout=TIMEOUT).json()
         max_time_str = sensor_details.get("sensor_stats", {}).get("max_time", "")
 
         if not max_time_str:
