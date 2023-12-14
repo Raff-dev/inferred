@@ -18,7 +18,7 @@ skip = ["manage.py", "migrations", ".env"]
 src_paths = ["backend", "mock"]
 
 [tool.pylint.messages_control]
-good-names = ["_", "up", "v", "rm"]
+good-names = ["_", "up", "v", "rm", "db", "n", "i"]
 ignore-paths = '''
     .*/migrations
 '''

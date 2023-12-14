@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class Dimension(models.Model):
+class Sensor(models.Model):
     name = models.CharField(max_length=255, unique=True)
 
     def __str__(self) -> str:
@@ -11,15 +11,15 @@ class Dimension(models.Model):
 class SensorRead(models.Model):
     timestamp = models.DateTimeField()
     value = models.DecimalField(max_digits=10, decimal_places=2)
-    dimension = models.ForeignKey(Dimension, on_delete=models.CASCADE)
+    sensor = models.ForeignKey(Sensor, on_delete=models.CASCADE)
 
     def __str__(self) -> str:
-        return f"{self.timestamp} - {self.dimension.name}: {self.value}"
+        return f"{self.timestamp} - {self.sensor.name}: {self.value}"
 
     class Meta:
-        ordering = ["timestamp", "dimension"]
+        ordering = ["timestamp", "sensor"]
         indexes = [
-            models.Index(fields=["timestamp", "dimension"]),
+            models.Index(fields=["timestamp", "sensor"]),
         ]
 
 
@@ -36,7 +36,7 @@ class Prediction(models.Model):
     read = models.ForeignKey(SensorRead, on_delete=models.CASCADE)
 
     def __str__(self) -> str:
-        return f"{self.simulation_model.name} - {self.read.dimension.name}: {self.read.timestamp} prediction"
+        return f"{self.simulation_model.name} - {self.read.sensor.name}: {self.read.timestamp} prediction"
 
     class Meta:
         ordering = ["simulation_model", "read"]
@@ -59,7 +59,7 @@ class PredictionRead(models.Model):
     )
 
     def __str__(self) -> str:
-        return f"{self.prediction.simulation_model.name} - {self.prediction.read.dimension.name}: {self.offset}"
+        return f"{self.prediction.simulation_model.name} - {self.prediction.read.sensor.name}: {self.offset}"
 
     class Meta:
         ordering = ["offset", "prediction"]

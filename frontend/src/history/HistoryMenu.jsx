@@ -28,7 +28,7 @@ const HistoryMenu = ({ setData, setPredictionData }) => {
         try {
             const response = await axios.get(API.sensor_reads, {
                 params: {
-                    dimension__name: selectedSensor,
+                    sensor__name: selectedSensor,
                     timestamp__gte: fromDate.toISOString(),
                     timestamp__lte: toDate.toISOString(),
                     granulation_method: selectedMethod,
@@ -52,7 +52,7 @@ const HistoryMenu = ({ setData, setPredictionData }) => {
             const response = await axios.get(API.prediction_timeline, {
                 params: {
                     simulation_model: selectedModel,
-                    dimension: selectedSensor,
+                    sensor: selectedSensor,
                     from_timestamp: fromDate.toISOString(),
                     to_timestamp: toDate.toISOString(),
                 },
@@ -95,8 +95,8 @@ const HistoryMenu = ({ setData, setPredictionData }) => {
                     <DataSelect
                         selected={selectedSensor}
                         setSelected={setSelectedSensor}
-                        path={API.dimensions}
-                        label="Dimension"
+                        path={API.sensors}
+                        label="Sensor"
                     />
                 </Grid>
                 <Grid item>

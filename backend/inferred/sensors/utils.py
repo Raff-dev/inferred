@@ -36,7 +36,7 @@ class ComparisonQueryParams:
         start_timestamp = request.query_params.get("start_timestamp")
         self.sim_model_names = request.query_params.getlist("simulation_models[]", [])
         self.start_timestamp = aware_timestamp(start_timestamp)
-        self.dim_name = request.query_params.get("dimension")
+        self.dim_name = request.query_params.get("sensor")
         self.duration = int(request.query_params.get("duration"))
         self.horizon = int(request.query_params.get("horizon"))
 
@@ -48,4 +48,4 @@ class PredictionTimelineQueryParams:
         self.from_timestamp = aware_timestamp(from_timestamp)
         self.to_timestamp = aware_timestamp(to_timestamp)
         self.sim_model_name = request.query_params.get("simulation_model")
-        self.dim_name = request.query_params.get("dimension")
+        self.dim_name = request.query_params.get("sensor")

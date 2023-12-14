@@ -1,16 +1,11 @@
 from rest_framework import serializers
 
-from inferred.sensors.models import (
-    Dimension,
-    PredictionRead,
-    SensorRead,
-    SimulationModel,
-)
+from inferred.sensors.models import PredictionRead, Sensor, SensorRead, SimulationModel
 
 
-class DimensionSerializer(serializers.ModelSerializer):
+class SensorSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Dimension
+        model = Sensor
         fields = ["name"]
 
 

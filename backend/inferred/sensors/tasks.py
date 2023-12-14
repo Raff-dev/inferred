@@ -1,9 +1,9 @@
 from celery import shared_task
 
 from inferred.sensors.models import (
-    Dimension,
     Prediction,
     PredictionRead,
+    Sensor,
     SensorRead,
     SimulationModel,
 )
@@ -33,18 +33,17 @@ def process_sensors_reads(data):
     timestamp = aware_timestamp(timestamp_str)
     sensor_names = data["reads"].keys()
 
-    dimensions = {
-        dimension.name: dimension
-        for dimension in Dimension.objects.filter(name__in=sensor_names)
+    sensors = {
+        sensor.name: sensor for sensor in Sensor.objects.filter(name__in=sensor_names)
     }
 
     reads = {}
     for sensor_name, value in data["reads"].items():
-        dimension = dimensions[sensor_name]
+        sensor = sensors[sensor_name]
         reads[sensor_name] = SensorRead.objects.create(
             timestamp=timestamp,
             value=value,
-            dimension=dimension,
+            sensor=sensor,
         )
 
     prediction_reads = []

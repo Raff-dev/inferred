@@ -28,7 +28,7 @@ const PredictionView = () => {
             const newData = JSON.parse(event.data);
             if (newData.past) {
                 // set 100 most recent reads
-                const sensorNamesSorted = newData.dimensions.sort((a, b) =>
+                const sensorNamesSorted = newData.sensors.sort((a, b) =>
                     a.localeCompare(b, undefined, { numeric: true })
                 );
                 setSensors(sensorNamesSorted);

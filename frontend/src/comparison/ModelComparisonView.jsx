@@ -28,7 +28,7 @@ const ModelComparisonView = () => {
                         "random_walk",
                         "exponential_smoothing",
                     ],
-                    dimension: selectedSensor,
+                    sensor: selectedSensor,
                     start_timestamp: date,
                     duration: duration,
                     horizon: horizon,

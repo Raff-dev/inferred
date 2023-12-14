@@ -37,7 +37,7 @@ const MonitorView = () => {
             }
 
             setData(newData.reads);
-            setSensorNames(newData.dimensions);
+            setSensorNames(newData.sensors);
             return;
         }
 

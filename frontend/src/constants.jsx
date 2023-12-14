@@ -27,7 +27,7 @@ export const DURATION_VALUES = {
 const API_BASE = "http://localhost:8000/api/";
 
 export const API = {
-    dimensions: API_BASE + "dimensions/",
+    sensors: API_BASE + "sensors/",
     granulation_methods: API_BASE + "sensor_reads/granulation_methods/",
     simulation_models: API_BASE + "simulation_models/",
     sensor_reads: API_BASE + "sensor_reads/",

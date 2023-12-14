@@ -27,8 +27,8 @@ const ComparisonMenu = ({
                     <DataSelect
                         selected={selectedSensor}
                         setSelected={setSelectedSensor}
-                        path={API.dimensions}
-                        label="Dimension"
+                        path={API.sensors}
+                        label="Sensor"
                     />
                 </Grid>
                 <Grid item>

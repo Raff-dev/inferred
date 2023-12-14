@@ -10,23 +10,23 @@ from rest_framework.response import Response
 
 from inferred.sensors.granulation import Granulation, NoGranulation
 from inferred.sensors.models import (
-    Dimension,
     Prediction,
     PredictionRead,
+    Sensor,
     SensorRead,
     SimulationModel,
 )
 from inferred.sensors.serializers import (
-    DimensionSerializer,
     SensorReadSerializer,
+    SensorSerializer,
     SimulationModelSerializer,
 )
 from inferred.sensors.utils import ComparisonQueryParams, PredictionTimelineQueryParams
 
 
-class DimensionViewSet(viewsets.ModelViewSet):
-    queryset = Dimension.objects.all()
-    serializer_class = DimensionSerializer
+class SensorViewSet(viewsets.ModelViewSet):
+    queryset = Sensor.objects.all()
+    serializer_class = SensorSerializer
 
 
 class SimulationModelViewSet(viewsets.ModelViewSet):
@@ -41,13 +41,13 @@ class SensorPredictionsViewSet(viewsets.ViewSet):
         simulation_models = SimulationModel.objects.filter(
             name__in=params.sim_model_names
         )
-        dimension = get_object_or_404(Dimension, name=params.dim_name)
+        sensor = get_object_or_404(Sensor, name=params.dim_name)
 
         delta_time = datetime.timedelta(seconds=params.duration + params.horizon)
         reads = SensorRead.objects.filter(
             timestamp__gte=params.start_timestamp,
             timestamp__lte=params.start_timestamp + delta_time,
-            dimension=dimension,
+            sensor=sensor,
         ).order_by("timestamp")
 
         if not reads.exists():
@@ -85,7 +85,7 @@ class SensorPredictionsViewSet(viewsets.ViewSet):
             Prediction.objects.filter(
                 read__timestamp__gte=params.from_timestamp,
                 read__timestamp__lte=params.to_timestamp,
-                read__dimension__name=params.dim_name,
+                read__sensor__name=params.dim_name,
                 simulation_model__name=params.sim_model_name,
             )
             .prefetch_related("prediction_reads")
@@ -110,7 +110,7 @@ class SensorReadViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = {
         "timestamp": ["gte", "lte"],
-        "dimension__name": ["exact"],
+        "sensor__name": ["exact"],
     }
 
     def list(self, request, *args, **kwargs):

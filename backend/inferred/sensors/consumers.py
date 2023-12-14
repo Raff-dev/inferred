@@ -18,24 +18,24 @@ def get_grouped_sensor_data() -> tuple[list[dict[str, Any]], list[str]]:
     two_hours_ago = utils.aware_now() - datetime.timedelta(hours=2)
     reads = SensorRead.objects.filter(timestamp__gte=two_hours_ago)
     sensor_data = reads.order_by("timestamp").values(
-        "timestamp", "value", "dimension__name"
+        "timestamp", "value", "sensor__name"
     )
 
-    dimensions = set()
+    sensors = set()
     grouped_data = defaultdict(lambda: defaultdict(dict))
     for item in sensor_data:
         timestamp = item["timestamp"].isoformat()
-        dimension = item["dimension__name"]
-        dimensions.add(dimension)
+        sensor = item["sensor__name"]
+        sensors.add(sensor)
         value = float(item["value"])
 
         if "timestamp" not in grouped_data[timestamp]:
             grouped_data[timestamp]["timestamp"] = timestamp
 
-        grouped_data[timestamp][dimension] = value
+        grouped_data[timestamp][sensor] = value
 
-    dimensions_sorted = sorted(dimensions, key=lambda x: int(x.split("_")[1]))
-    return list(grouped_data.values()), dimensions_sorted
+    sensors_sorted = sorted(sensors, key=lambda x: int(x.split("_")[1]))
+    return list(grouped_data.values()), sensors_sorted
 
 
 class SensorDataConsumer(WebsocketConsumer):
@@ -62,11 +62,11 @@ class SensorDataConsumer(WebsocketConsumer):
         self.client.close()
 
     def listen(self):
-        reads, dimensions = get_grouped_sensor_data()
+        reads, sensors = get_grouped_sensor_data()
         past_data = {
             "reads": reads,
             "past": True,
-            "dimensions": dimensions,
+            "sensors": sensors,
         }
         json_str_past_data = json.dumps(past_data)
         self.send(json_str_past_data)
