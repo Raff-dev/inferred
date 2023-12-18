@@ -3,6 +3,9 @@ from invoke import Context, task
 
 class Container(str):
     def __new__(cls, value):
+        assert (
+            isinstance(value, str) and value
+        ), "Container name must be a non-empty string"
         return super().__new__(cls, f"inferred-{value}")
 
 
