@@ -6,15 +6,7 @@ export const parseDate = (value) => {
     let minutes = date.getMinutes();
     let seconds = date.getSeconds();
     seconds = seconds < 10 ? "0" + seconds : seconds;
-    return (
-        hours +
-        ":" +
-        minutes +
-        ":" +
-        seconds +
-        ":" +
-        Math.round(date.getMilliseconds() / 10)
-    );
+    return hours + ":" + minutes + ":" + seconds;
 };
 
 export const extendDomainRange = (range, extend = DOMAIN_RANGE_EXTEND) => {

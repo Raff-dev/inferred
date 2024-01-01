@@ -34,15 +34,15 @@ function App({ onLogout }) {
     };
 
     const GlobalStyles = createGlobalStyle`
-    :root {
-        font-family: Roboto, Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-        background-color: ${theme.palette.background.default};
-        max-width: 1280px;
-        margin: 0 auto;
-        padding: 2rem;
-        text-align: center;
-    }
-`;
+        :root {
+            font-family: Roboto, Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+            background-color: ${theme.palette.background.default};
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 2rem;
+            text-align: center;
+        }
+    `;
     return (
         <ThemeProvider theme={theme}>
             <GlobalStyles />
