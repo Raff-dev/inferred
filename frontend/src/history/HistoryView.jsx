@@ -1,4 +1,4 @@
-import { ThemeProvider } from "@mui/material/styles";
+import { Typography } from "@mui/material";
 import React, { useState } from "react";
 import {
     CartesianGrid,
@@ -10,7 +10,7 @@ import {
     XAxis,
     YAxis,
 } from "recharts";
-import { PRIMARY_COLOR, darkTheme } from "../themes";
+import { PRIMARY_COLOR } from "../themes";
 import { extendDomainRange, getDomainRangeData } from "../utils/utils";
 import HistoryMenu from "./HistoryMenu";
 import PredictionTimeline from "./PredictionTimeline";
@@ -23,8 +23,8 @@ const HistoryView = () => {
     const extendedDomain = extendDomainRange(domain);
 
     return (
-        <ThemeProvider theme={darkTheme}>
-            <h1>History</h1>
+        <>
+            <Typography variant="h4">History</Typography>
             <HistoryMenu
                 setData={setData}
                 setPredictionData={setPredictionData}
@@ -48,7 +48,7 @@ const HistoryView = () => {
                 </LineChart>
             </ResponsiveContainer>
             <PredictionTimeline predictionData={predictionData} data={data} />
-        </ThemeProvider>
+        </>
     );
 };
 

@@ -10,8 +10,7 @@ import {
 } from "../constants";
 import { parseDate } from "../utils/utils";
 
-import { ThemeProvider } from "@mui/material/styles";
-import { darkTheme } from "../themes";
+import { useTheme } from "@emotion/react";
 import SensorGrid from "./SensorGrid";
 
 function valuetext(value) {
@@ -28,6 +27,8 @@ const MonitorView = () => {
     const [sensorNames, setSensorNames] = useState([]);
     const [windowData, setWindowData] = useState([]);
     const [windowSize, setWindowSize] = useState(DATA_WINDOW_SIZE_DEFAULT);
+
+    const theme = useTheme();
 
     const onMessage = (event) => {
         const newData = JSON.parse(event.data);
@@ -59,9 +60,9 @@ const MonitorView = () => {
     }, []);
 
     return (
-        <ThemeProvider theme={darkTheme}>
-            <h1>Sensors Data</h1>
-            <Typography id="duration-slider" gutterBottom>
+        <>
+            <Typography variant="h4">Sensors Data</Typography>
+            <Typography variant="span" gutterBottom>
                 Duration
             </Typography>
             <Slider
@@ -75,7 +76,7 @@ const MonitorView = () => {
                 max={DATA_WINDOW_SIZE_MAX}
             />
             <SensorGrid data={windowData} sensorNames={sensorNames} />
-        </ThemeProvider>
+        </>
     );
 };
 

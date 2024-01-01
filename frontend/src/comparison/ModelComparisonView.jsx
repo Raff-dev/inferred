@@ -1,8 +1,6 @@
-import { ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
 import React, { useState } from "react";
 import { API } from "../constants";
-import { darkTheme } from "../themes";
 import { calculateErrorMetrics } from "./Calculations";
 import ComparisonMenu from "./ComparisonMenu";
 import Metrics from "./Metrics";
@@ -62,7 +60,7 @@ const ModelComparisonView = () => {
 
     const handleModelSelect = (event) => setSelectedModels(event.target.value);
     return (
-        <ThemeProvider theme={darkTheme}>
+        <>
             <h1>Model Comparison</h1>
             <ComparisonMenu
                 modelNames={modelNames}
@@ -83,7 +81,7 @@ const ModelComparisonView = () => {
                 errorNames={errorNames}
                 modelNames={selectedModels} // Pass selected models to the chart component
             />
-        </ThemeProvider>
+        </>
     );
 };
 

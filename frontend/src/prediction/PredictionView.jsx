@@ -1,13 +1,11 @@
-import { ThemeProvider } from "@mui/material/styles";
+import { Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { WEB_SOCKET_URL } from "../constants";
-import { darkTheme } from "../themes";
 import { SensorChart } from "./SensorChart";
 import { SensorTabs } from "./SensorTabs";
 
 export const StyledChartDiv = styled.div`
-    background-color: #0003;
     border-radius: 12px;
     padding: 20px;
     padding-right: 50px;
@@ -60,14 +58,14 @@ const PredictionView = () => {
     }, []);
 
     return (
-        <ThemeProvider theme={darkTheme}>
+        <>
             <SensorTabs
                 sensors={sensors}
                 selectedSensor={selectedSensor}
                 setSelectedSensor={setSelectedSensor}
             />
             <StyledChartDiv>
-                <h2>{selectedSensor}</h2>
+                <Typography variant="h4">{selectedSensor}</Typography>
                 <SensorChart
                     reads={reads}
                     models={models}
@@ -75,7 +73,7 @@ const PredictionView = () => {
                     selectedSensor={selectedSensor}
                 />
             </StyledChartDiv>
-        </ThemeProvider>
+        </>
     );
 };
 

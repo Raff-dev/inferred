@@ -1,5 +1,12 @@
-import { AppBar, Button, Toolbar } from "@mui/material";
-import { default as React } from "react";
+import {
+    AppBar,
+    Button,
+    ThemeProvider,
+    ToggleButton,
+    ToggleButtonGroup,
+    Toolbar,
+} from "@mui/material";
+import { default as React, useState } from "react";
 import {
     Link,
     Route,
@@ -7,42 +14,80 @@ import {
     Link as RouterLink,
     Routes,
 } from "react-router-dom";
+import { createGlobalStyle } from "styled-components";
 import ModelComparisonView from "./comparison/ModelComparisonView";
-import History from "./history/HistoryView";
-import "./index.css";
-import Monitor from "./monitor/MonitorView";
-import Graph from "./prediction/PredictionView";
+import HistoryView from "./history/HistoryView";
+import MonitorView from "./monitor/MonitorView";
+import PredictionView from "./prediction/PredictionView";
+import { darkTheme, lightTheme } from "./themes";
 
 function App({ onLogout }) {
-    return (
-        <Router>
-            <AppBar position="static">
-                <Toolbar>
-                    <Link component={RouterLink} to="/">
-                        <Button color="inherit">Monitor</Button>
-                    </Link>
-                    <Link component={RouterLink} to="/history">
-                        <Button color="inherit">History</Button>
-                    </Link>
-                    <Link component={RouterLink} to="/prediction">
-                        <Button color="inherit">Prediction</Button>
-                    </Link>
-                    <Link component={RouterLink} to="/comparison">
-                        <Button color="inherit">Comparison</Button>
-                    </Link>
-                    <Button color="inherit" onClick={onLogout}>
-                        Logout
-                    </Button>
-                </Toolbar>
-            </AppBar>
+    const currentTheme = sessionStorage.getItem("theme");
+    const [theme, setTheme] = useState(
+        currentTheme === "light" ? lightTheme : darkTheme
+    );
 
-            <Routes>
-                <Route path="/" element={<Monitor />} />
-                <Route path="/history" element={<History />} />
-                <Route path="/prediction" element={<Graph />} />
-                <Route path="/comparison" element={<ModelComparisonView />} />
-            </Routes>
-        </Router>
+    const handleThemeChange = (event, newTheme) => {
+        const selectedTheme = newTheme === "light" ? lightTheme : darkTheme;
+        setTheme(selectedTheme);
+        sessionStorage.setItem("theme", newTheme);
+    };
+
+    const GlobalStyles = createGlobalStyle`
+    :root {
+        font-family: Roboto, Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+        background-color: ${theme.palette.background.default};
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 2rem;
+        text-align: center;
+    }
+`;
+    return (
+        <ThemeProvider theme={theme}>
+            <GlobalStyles />
+            <Router>
+                <AppBar position="static">
+                    <Toolbar>
+                        <Link component={RouterLink} to="/">
+                            <Button color="inherit">Monitor</Button>
+                        </Link>
+                        <Link component={RouterLink} to="/history">
+                            <Button color="inherit">History</Button>
+                        </Link>
+                        <Link component={RouterLink} to="/prediction">
+                            <Button color="inherit">Prediction</Button>
+                        </Link>
+                        <Link component={RouterLink} to="/comparison">
+                            <Button color="inherit">Comparison</Button>
+                        </Link>
+                        <Button color="inherit" onClick={onLogout}>
+                            Logout
+                        </Button>
+                        <div style={{ marginLeft: "auto" }}>
+                            <ToggleButtonGroup
+                                value={theme === lightTheme ? "light" : "dark"}
+                                exclusive
+                                onChange={handleThemeChange}
+                            >
+                                <ToggleButton value="light">Light</ToggleButton>
+                                <ToggleButton value="dark">Dark</ToggleButton>
+                            </ToggleButtonGroup>
+                        </div>
+                    </Toolbar>
+                </AppBar>
+
+                <Routes>
+                    <Route path="/" element={<MonitorView />} />
+                    <Route path="/history" element={<HistoryView />} />
+                    <Route path="/prediction" element={<PredictionView />} />
+                    <Route
+                        path="/comparison"
+                        element={<ModelComparisonView />}
+                    />
+                </Routes>
+            </Router>
+        </ThemeProvider>
     );
 }
 

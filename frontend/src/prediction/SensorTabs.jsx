@@ -1,8 +1,10 @@
 import { Tab, Tabs } from "@mui/material";
 import Box from "@mui/material/Box";
+import { useTheme } from "@mui/material/styles";
 import React from "react";
 
 export const SensorTabs = ({ sensors, selectedSensor, setSelectedSensor }) => {
+    const theme = useTheme();
     const handleChange = (event, newValue) => {
         setSelectedSensor(newValue);
     };

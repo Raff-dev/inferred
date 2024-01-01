@@ -1,6 +1,5 @@
-import { Chip, ThemeProvider } from "@mui/material";
+import { Chip } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { darkTheme } from "../themes";
 import { SensorLineChart } from "./SensorLineChart";
 
 const SensorGrid = ({ data, sensorNames }) => {
@@ -21,35 +20,33 @@ const SensorGrid = ({ data, sensorNames }) => {
     };
 
     return (
-        <ThemeProvider theme={darkTheme}>
+        <div>
             <div>
-                <div>
-                    {sensorNames.map((sensorName) => (
-                        <Chip
-                            key={sensorName}
-                            label={sensorName}
-                            value={sensorName}
-                            variant={
-                                visibleSensors.includes(sensorName)
-                                    ? "filled"
-                                    : "outlined"
-                            }
-                            onClick={() => handleSensorToggle(sensorName)}
-                            style={{ margin: "4px" }}
-                        />
-                    ))}
-                </div>
-                <div style={{ display: "flex", flexWrap: "wrap" }}>
-                    {visibleSensors.map((sensorName) => (
-                        <SensorLineChart
-                            key={sensorName}
-                            data={data}
-                            sensorName={sensorName}
-                        />
-                    ))}
-                </div>
+                {sensorNames.map((sensorName) => (
+                    <Chip
+                        key={sensorName}
+                        label={sensorName}
+                        value={sensorName}
+                        variant={
+                            visibleSensors.includes(sensorName)
+                                ? "filled"
+                                : "outlined"
+                        }
+                        onClick={() => handleSensorToggle(sensorName)}
+                        style={{ margin: "4px" }}
+                    />
+                ))}
             </div>
-        </ThemeProvider>
+            <div style={{ display: "flex", flexWrap: "wrap" }}>
+                {visibleSensors.map((sensorName) => (
+                    <SensorLineChart
+                        key={sensorName}
+                        data={data}
+                        sensorName={sensorName}
+                    />
+                ))}
+            </div>
+        </div>
     );
 };
 
