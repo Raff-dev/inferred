@@ -71,6 +71,8 @@ Download them unless you enjoy error messages. 😉
 
 ## Quick Setup - How to get it running quickly 🚀
 ```bash
+cp backend/.env.example backend/.env
+
 # Fetch all the Python dependencies
 cd backend && poetry install --only run
 
