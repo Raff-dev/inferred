@@ -54,7 +54,11 @@ Uses a Docker Compose YAML file to handle container orchestration, streamlining 
 
 ## Pre-requisites 📋
 
+
 Must-haves for a smooth ride:
+
+- 🐧Ubuntu 22 (other OS and distros are not actively tested, nor supported)
+
 - 🐳 Docker [install](https://docs.docker.com/engine/install/)
 
 - 🐳 Docker Compose [install](https://docs.docker.com/compose/install/)
