@@ -8,13 +8,15 @@ SELECT
     sr.value as "Sensor Read Value",
     to_char(sr.timestamp + ((sm.interval * pr.offset) || ' milliseconds')::INTERVAL, 'HH24:MI:SS') as "Prediction Timestamp",
     pr.id as "Prediction Id",
-    pr.value as "Prediction Value"
+    pr.value as "Prediction Value",
+    pr.offset as "Offset"
 FROM sensors_prediction p
 INNER JOIN sensors_simulationmodel sm on p.simulation_model_id = sm.id
 INNER JOIN sensors_sensorread sr on p.read_id = sr.id
 INNER JOIN sensors_predictionread pr on p.id = pr.prediction_id
 WHERE sm.name='naive'
 ORDER BY sr.timestamp ASC
+OFFSET 1
 LIMIT 10;
 """
 from django.db import models
